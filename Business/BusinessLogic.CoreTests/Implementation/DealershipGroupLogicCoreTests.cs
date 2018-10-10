@@ -15,7 +15,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
     {
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
         private Mock<IDataRepository<IDealershipGroup>> dealershipGroupDataRepositoryMock;
-        private DealershipGroupLogic businessObject;
+        private DealershipGroupLogic businessLogic;
         private Mock<IDealershipGroup> dealershipGroupMock;
 
         [TestInitialize]
@@ -24,7 +24,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
             contextInfoAccessorMock = new Mock<IContextInfoAccessor>();
             dealershipGroupDataRepositoryMock = new Mock<IDataRepository<IDealershipGroup>>();
 
-            businessObject =
+            businessLogic =
                 new DealershipGroupLogic(contextInfoAccessorMock.Object, dealershipGroupDataRepositoryMock.Object);
             dealershipGroupMock = new Mock<IDealershipGroup>();
         }
@@ -34,7 +34,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(dealershipGroupMock.Object);
 
-            var returnedDealershipGroup = businessObject.GetAsync(1);
+            var returnedDealershipGroup = businessLogic.GetAsync(1);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
             dealershipGroupDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>()))
                 .Throws<KeyNotFoundException>();
 
-            var returnedDealershipGroup = await businessObject.GetAsync(1);
+            var returnedDealershipGroup = await businessLogic.GetAsync(1);
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(true);
-            var wasDeleted = await businessObject.DeleteAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
             Assert.IsTrue(wasDeleted);
         }
 
@@ -61,7 +61,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(false);
-            var wasDeleted = await businessObject.DeleteAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
             Assert.IsFalse(wasDeleted);
         }
 
@@ -71,7 +71,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .Throws(new NullReferenceException("Test NRE"));
-            var wasDeleted = await businessObject.DeleteAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
         }
     }
 }

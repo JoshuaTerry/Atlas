@@ -9,8 +9,8 @@ namespace DriveCentric.ServiceLayer.Services
     {
         public CustomerService(
             IContextInfoAccessor contextInfoAccessor,
-            ICustomerLogic businessObject
-            ) : base(contextInfoAccessor, businessObject)
+            ICustomerLogic businessLogic
+            ) : base(contextInfoAccessor, businessLogic)
         { }
     }
 }

@@ -14,7 +14,7 @@ namespace DriveCentric.ServiceLayer.CoreTests.Services
     public class DealershipGroupServiceCoreTests
     {
         private DealershipGroupService service;
-        private Mock<IDealershipGroupLogic> businessObjectMock;
+        private Mock<IDealershipGroupLogic> businessLogicMock;
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
         private Mock<IDealershipGroup> dealershipGroupMock;
 
@@ -22,15 +22,15 @@ namespace DriveCentric.ServiceLayer.CoreTests.Services
         public void TestInitialize()
         {
             contextInfoAccessorMock = new Mock<IContextInfoAccessor>();
-            businessObjectMock = new Mock<IDealershipGroupLogic>();
-            service = new DealershipGroupService(contextInfoAccessorMock.Object, businessObjectMock.Object);
+            businessLogicMock = new Mock<IDealershipGroupLogic>();
+            service = new DealershipGroupService(contextInfoAccessorMock.Object, businessLogicMock.Object);
             dealershipGroupMock = new Mock<IDealershipGroup>();
         }
 
         [TestMethod]
         public async Task GetDealershipGroup_ValidId_ReturnsDealershipGroup()
         {
-            businessObjectMock.Setup(mock => mock.GetAsync(It.IsAny<int>()))
+            businessLogicMock.Setup(mock => mock.GetAsync(It.IsAny<int>()))
                 .ReturnsAsync(dealershipGroupMock.Object);
 
             var returnedDealershipGroup = await service.GetAsync(1);
@@ -42,7 +42,7 @@ namespace DriveCentric.ServiceLayer.CoreTests.Services
         [ExpectedException(typeof(KeyNotFoundException))]
         public async Task GetDealershipGroup_KeyNotFound_Throws()
         {
-            businessObjectMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).Throws<KeyNotFoundException>();
+            businessLogicMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).Throws<KeyNotFoundException>();
 
             var returnedDealershipGroup = await service.GetAsync(1);
         }
@@ -50,7 +50,7 @@ namespace DriveCentric.ServiceLayer.CoreTests.Services
         [TestMethod]
         public async Task Delete_ValidId_ReturnsTrue()
         {
-            businessObjectMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
+            businessLogicMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .ReturnsAsync(true);
             var wasDeleted = await service.DeleteAsync(1);
             Assert.IsTrue(wasDeleted);
@@ -59,7 +59,7 @@ namespace DriveCentric.ServiceLayer.CoreTests.Services
         [TestMethod]
         public async Task Delete_IdNotExists_ReturnsFalse()
         {
-            businessObjectMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
+            businessLogicMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .ReturnsAsync(false);
             var wasDeleted = await service.DeleteAsync(1);
             Assert.IsFalse(wasDeleted);
@@ -69,7 +69,7 @@ namespace DriveCentric.ServiceLayer.CoreTests.Services
         [ExpectedException(typeof(NullReferenceException))]
         public async Task Delete_NullReferenceException_Throws()
         {
-            businessObjectMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
+            businessLogicMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .Throws(new NullReferenceException("Test NRE"));
             var wasDeleted = await service.DeleteAsync(1);
         }
