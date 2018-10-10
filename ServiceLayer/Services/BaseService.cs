@@ -12,26 +12,26 @@ namespace DriveCentric.ServiceLayer.Services
     public abstract class BaseService<T> : BaseWithContextInfoAccessor, IBaseService<T>
         where T : IBaseModel
     {
-        protected readonly IBaseLogic<T> businessObject;
+        protected readonly IBaseLogic<T> businessLogic;
 
         protected BaseService(
             IContextInfoAccessor contextInfoAccessor,
-            IBaseLogic<T> businessObject
+            IBaseLogic<T> businessLogic
             ) : base(contextInfoAccessor)
         {
-            this.businessObject = businessObject;
+            this.businessLogic = businessLogic;
         }
 
         [MonitorAsyncAspect]
         public Task<bool> DeleteAsync(int id)
         {
-            return businessObject.DeleteAsync(id);
+            return businessLogic.DeleteAsync(id);
         }
 
         [MonitorAsyncAspect]
         public Task<T> GetAsync(int id)
         {
-            return businessObject.GetAsync(id);
+            return businessLogic.GetAsync(id);
         }
 
         [MonitorAsyncAspect]
@@ -40,25 +40,25 @@ namespace DriveCentric.ServiceLayer.Services
             int? offset = null,
             Expression predicate = null)
         {
-            return businessObject.GetAsync(limit, offset, predicate);
+            return businessLogic.GetAsync(limit, offset, predicate);
         }
 
         [MonitorAsyncAspect]
         public Task<bool> InsertAsync(T item)
         {
-            return businessObject.InsertAsync(item);
+            return businessLogic.InsertAsync(item);
         }
 
         [MonitorAsyncAspect]
         public Task<bool> SaveAsync()
         {
-            return businessObject.SaveAsync();
+            return businessLogic.SaveAsync();
         }
 
         [MonitorAsyncAspect]
         public Task<bool> UpdateAsync(T item)
         {
-            return businessObject.UpdateAsync(item);
+            return businessLogic.UpdateAsync(item);
         }
     }
 }
