@@ -13,13 +13,13 @@ namespace DriveCentric.Data.SqlORM.Data
     public class DataAccessor : IDataAccessor
     {
         public Task<T> GetByIdAsync<T>(int id, IDbConnection connection, string query = null)
-            where T : IBaseExternalIdModel
+            where T : IBaseModel
         {
             return connection.LoadSingleByIdAsync<T>(id);
         }
 
         public Task<int> DeleteByIdAsync<T>(int id, IDbConnection connection, string query = null)
-            where T : IBaseExternalIdModel
+            where T : IBaseModel
         {
             return connection.DeleteByIdAsync<T>(id);
         }
@@ -30,7 +30,7 @@ namespace DriveCentric.Data.SqlORM.Data
             int? offset = null,
             Expression<Func<T, bool>> predicate = null
             )
-            where T : IBaseExternalIdModel
+            where T : IBaseModel
         {
             return await connection.SelectAsync(connection.From<T>().Where(predicate).Limit(skip: offset, rows: limit));
         }
@@ -41,7 +41,7 @@ namespace DriveCentric.Data.SqlORM.Data
             int? offset = null,
             Expression<Func<T, bool>> predicate = null
             )
-            where T : IBaseExternalIdModel
+            where T : IBaseModel
         {
             return  connection.Select(connection.From<T>().Where(predicate).Limit(skip: offset, rows: limit));
         }

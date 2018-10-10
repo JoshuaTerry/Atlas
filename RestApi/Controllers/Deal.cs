@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using DriveCentric.ServiceLayer.Deal;
+using DriveCentric.ServiceLayer.Interfaces;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +12,7 @@ using Serilog;
 namespace DriveCentric.RestApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/Deals")]
+    [Route("api/v1/deal")]
     public class Deal : BaseController
     {
         private readonly IDealService dealService;
@@ -35,7 +35,7 @@ namespace DriveCentric.RestApi.Controllers
 
         // GET: api/v1/Deal/id
         [MonitorAsyncAspect]
-        //[Authorize]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -49,7 +49,7 @@ namespace DriveCentric.RestApi.Controllers
             {
                 var claims = User.Claims.ToList();
 
-                return Ok(await dealService.GetDeal(id));
+                return Ok(await dealService.GetAsync(id));
             }
             catch (Exception exception)
             {

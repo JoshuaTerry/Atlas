@@ -1,6 +1,5 @@
-﻿using DriveCentric.BusinessLogic.Customer;
-using DriveCentric.BusinessLogic.Deal;
-using DriveCentric.BusinessLogic.DealershipGroup;
+﻿using DriveCentric.BusinessLogic.Implementation;
+using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Data.DataRepository.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,9 +9,9 @@ namespace DriveCentric.BusinessLogic.Configuration
     {
         public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
         {
-            services.AddSingleton<ICustomerBusinessObject, CustomerBusinessObject>();
-            services.AddSingleton<IDealBusinessObject, DealBusinessObject>();
-            services.AddSingleton<IDealershipGroupBusinessObject, DealershipGroupBusinessObject>();
+            services.AddSingleton<ICustomerLogic, CustomerLogic>();
+            services.AddSingleton<IDealLogic, DealLogic>();
+            services.AddSingleton<IDealershipGroupLogic, DealershipGroupLogic>();
 
             services.AddDataRepository();
             return services;

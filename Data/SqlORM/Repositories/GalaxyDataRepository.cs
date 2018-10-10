@@ -12,7 +12,7 @@ using ServiceStack.Data;
 namespace DriveCentric.Data.SqlORM.Repositories
 {
     public class GalaxyDataRepository<T, U> : BaseDataRepository, IDataRepository<T>
-        where T : IBaseExternalIdModel where U : T
+        where T : IBaseModel where U : T
     {
         protected readonly IDbConnectionFactory dbFactory;
 

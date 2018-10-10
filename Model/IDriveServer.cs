@@ -1,6 +1,6 @@
 ﻿namespace DriveCentric.Model
 {
-    public interface IDriveServer : IBaseExternalIdModel
+    public interface IDriveServer : IBaseModel
     {
         string ConnectionString { get; set; }
     }

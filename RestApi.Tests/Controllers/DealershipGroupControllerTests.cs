@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DriveCentric.Model;
 using DriveCentric.RestApi.Controllers;
 using DriveCentric.RestApi.Tests.Helpers;
-using DriveCentric.ServiceLayer.DealershipGroup;
+using DriveCentric.ServiceLayer.Interfaces;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +40,7 @@ namespace DriveCentric.RestApi.Tests.Controllers
         [TestMethod]
         public async Task Get_ValidDealershipGroup_ReturnsOk()
         {
-            dealershipGroupServiceMock.Setup(mock => mock.GetDealershipGroupAsync(It.IsAny<int>()))
+            dealershipGroupServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>()))
                 .ReturnsAsync(dealershipGroupMock.Object);
             var result = await controller.Get(1);
 
@@ -50,7 +50,7 @@ namespace DriveCentric.RestApi.Tests.Controllers
         [TestMethod]
         public async Task Get_KeyNotFound_ReturnsNotFound()
         {
-            dealershipGroupServiceMock.Setup(mock => mock.GetDealershipGroupAsync(It.IsAny<int>())).Throws<KeyNotFoundException>();
+            dealershipGroupServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).Throws<KeyNotFoundException>();
             var result = await controller.Get(1);
 
             Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
@@ -59,7 +59,7 @@ namespace DriveCentric.RestApi.Tests.Controllers
         [TestMethod]
         public async Task Get_Exception_ReturnsStatusCode400()
         {
-            dealershipGroupServiceMock.Setup(mock => mock.GetDealershipGroupAsync(It.IsAny<int>())).Throws<Exception>();
+            dealershipGroupServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).Throws<Exception>();
             var result = await controller.Get(1);
 
             Assert.IsInstanceOfType(result, typeof(ObjectResult));
@@ -76,7 +76,7 @@ namespace DriveCentric.RestApi.Tests.Controllers
         [TestMethod]
         public async Task Delete_ValidDealershipGroup_ReturnsOk()
         {
-            dealershipGroupServiceMock.Setup(mock => mock.DeleteDealershipGroupAsync(It.IsAny<int>()))
+            dealershipGroupServiceMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .ReturnsAsync(true);
             var result = await controller.Delete(1);
 
@@ -89,7 +89,7 @@ namespace DriveCentric.RestApi.Tests.Controllers
         [TestMethod]
         public async Task Delete_DealershipGroupNotExists_ReturnsOk()
         {
-            dealershipGroupServiceMock.Setup(mock => mock.DeleteDealershipGroupAsync(It.IsAny<int>()))
+            dealershipGroupServiceMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .ReturnsAsync(false);
             var result = await controller.Delete(1);
 
@@ -102,7 +102,7 @@ namespace DriveCentric.RestApi.Tests.Controllers
         [TestMethod]
         public async Task Delete_NullReferenceException_Returns()
         {
-            dealershipGroupServiceMock.Setup(mock => mock.DeleteDealershipGroupAsync(It.IsAny<int>()))
+            dealershipGroupServiceMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .Throws<NullReferenceException>();
             var result = await controller.Delete(1);
 
