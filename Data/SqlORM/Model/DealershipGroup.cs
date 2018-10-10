@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using DriveCentric.Model;
-using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
 
 namespace DriveCentric.Data.SqlORM.Model
@@ -11,8 +8,7 @@ namespace DriveCentric.Data.SqlORM.Model
     public class DealershipGroup : IDealershipGroup
     {
         [PrimaryKey]
-        [JsonIgnore]
-        [Alias("pkGroupID")]
+        [Alias("fkGroupID")]
         public int Id { get; set; }
 
         [Alias("GUID")]

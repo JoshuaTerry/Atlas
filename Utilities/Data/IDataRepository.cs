@@ -6,7 +6,7 @@ using DriveCentric.Model;
 
 namespace DriveCentric.Utilities.Data
 {
-    public interface IDataRepository<T> where T : IBaseExternalIdModel
+    public interface IDataRepository<T> where T : IBaseModel
     {
         IEnumerable<T> Get(
             int? limit = null,

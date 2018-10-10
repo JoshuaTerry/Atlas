@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DriveCentric.BusinessLogic.DealershipGroup;
+using DriveCentric.BusinessLogic.Implementation;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Context;
 using DriveCentric.Utilities.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace DriveCentric.BusinessLogic.CoreTests.DealershipGroup
+namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 {
     [TestClass]
-    public class DealershipGroupBusinessObjectCoreTests
+    public class DealershipGroupLogicCoreTests
     {
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
         private Mock<IDataRepository<IDealershipGroup>> dealershipGroupDataRepositoryMock;
-        private DealershipGroupBusinessObject businessObject;
+        private DealershipGroupLogic businessLogic;
         private Mock<IDealershipGroup> dealershipGroupMock;
 
         [TestInitialize]
@@ -24,8 +24,8 @@ namespace DriveCentric.BusinessLogic.CoreTests.DealershipGroup
             contextInfoAccessorMock = new Mock<IContextInfoAccessor>();
             dealershipGroupDataRepositoryMock = new Mock<IDataRepository<IDealershipGroup>>();
 
-            businessObject =
-                new DealershipGroupBusinessObject(contextInfoAccessorMock.Object, dealershipGroupDataRepositoryMock.Object);
+            businessLogic =
+                new DealershipGroupLogic(contextInfoAccessorMock.Object, dealershipGroupDataRepositoryMock.Object);
             dealershipGroupMock = new Mock<IDealershipGroup>();
         }
 
@@ -34,7 +34,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.DealershipGroup
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(dealershipGroupMock.Object);
 
-            var returnedDealershipGroup = businessObject.GetDealershipGroupAsync(1);
+            var returnedDealershipGroup = businessLogic.GetAsync(1);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.DealershipGroup
             dealershipGroupDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>()))
                 .Throws<KeyNotFoundException>();
 
-            var returnedDealershipGroup = await businessObject.GetDealershipGroupAsync(1);
+            var returnedDealershipGroup = await businessLogic.GetAsync(1);
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.DealershipGroup
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(true);
-            var wasDeleted = await businessObject.DeleteDealershipGroupAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
             Assert.IsTrue(wasDeleted);
         }
 
@@ -61,7 +61,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.DealershipGroup
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(false);
-            var wasDeleted = await businessObject.DeleteDealershipGroupAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
             Assert.IsFalse(wasDeleted);
         }
 
@@ -71,7 +71,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.DealershipGroup
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .Throws(new NullReferenceException("Test NRE"));
-            var wasDeleted = await businessObject.DeleteDealershipGroupAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
         }
     }
 }

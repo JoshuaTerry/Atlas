@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using DriveCentric.ServiceLayer.Customer;
+using DriveCentric.ServiceLayer.Interfaces;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +12,7 @@ using Serilog;
 namespace DriveCentric.RestApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/Customers")]
+    [Route("api/v1/customer")]
     public class Customer : BaseController
     {
         private readonly ICustomerService customerService;
@@ -34,7 +34,7 @@ namespace DriveCentric.RestApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning($"Invalid state getting {this.GetType().Name}.");
+                Log.Warning($"Invalid state getting {GetType().Name}.");
                 return BadRequest(ModelState);
             }
 
@@ -42,7 +42,7 @@ namespace DriveCentric.RestApi.Controllers
             {
                 var claims = User.Claims.ToList();
 
-                return Ok(await customerService.GetCustomersAsync(limit, offset));
+                return Ok(await customerService.GetAsync(limit, offset));
             }
             catch (Exception exception)
             {
@@ -52,13 +52,13 @@ namespace DriveCentric.RestApi.Controllers
 
         // GET: api/v1/customers/id
         [MonitorAsyncAspect]
-        //[Authorize]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning($"Invalid state getting {this.GetType().Name}({id}).");
+                Log.Warning($"Invalid state getting {GetType().Name}({id}).");
                 return BadRequest(ModelState);
             }
 
@@ -66,7 +66,7 @@ namespace DriveCentric.RestApi.Controllers
             {
                 var claims = User.Claims.ToList();
 
-                return Ok(await customerService.GetCustomerAsync(id));
+                return Ok(await customerService.GetAsync(id));
             }
             catch (Exception exception)
             {
@@ -89,18 +89,18 @@ namespace DriveCentric.RestApi.Controllers
         // DELETE: api/v1/customers/id
         [MonitorAsyncAspect]
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning($"Invalid state deleting {this.GetType().Name}({id}).");
+                Log.Warning($"Invalid state deleting {GetType().Name}({id}).");
                 return BadRequest(ModelState);
             }
 
             try
             {
-                return Ok(await customerService.DeleteCustomerAsync(id));
+                return Ok(await customerService.DeleteAsync(id));
             }
             catch (Exception exception)
             {

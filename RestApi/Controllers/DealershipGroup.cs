@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DriveCentric.ServiceLayer.DealershipGroup;
+using DriveCentric.ServiceLayer.Interfaces;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +11,7 @@ using Serilog;
 namespace DriveCentric.RestApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/DealershipGroup")]
+    [Route("api/v1/dealershipgroup")]
     public class DealershipGroup : BaseController
     {
         private readonly IDealershipGroupService dealershipGroupService;
@@ -46,7 +46,7 @@ namespace DriveCentric.RestApi.Controllers
 
             try
             {
-                return Ok(await dealershipGroupService.GetDealershipGroupAsync(id));
+                return Ok(await dealershipGroupService.GetAsync(id));
             }
             catch (Exception exception)
             {
@@ -80,7 +80,7 @@ namespace DriveCentric.RestApi.Controllers
 
             try
             {
-                return Ok(await dealershipGroupService.DeleteDealershipGroupAsync(id));
+                return Ok(await dealershipGroupService.DeleteAsync(id));
             }
             catch (Exception exception)
             {

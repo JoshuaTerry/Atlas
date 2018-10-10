@@ -1,6 +1,6 @@
 ﻿namespace DriveCentric.Model
 {
-    public interface IDeal : IBaseExternalIdModel
+    public interface IDeal : IBaseModel
     {
         ICustomer Customer { get; set; }
     }

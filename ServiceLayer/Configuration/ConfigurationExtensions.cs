@@ -1,7 +1,6 @@
 ﻿using DriveCentric.BusinessLogic.Configuration;
-using DriveCentric.ServiceLayer.Customer;
-using DriveCentric.ServiceLayer.Deal;
-using DriveCentric.ServiceLayer.DealershipGroup;
+using DriveCentric.ServiceLayer.Interfaces;
+using DriveCentric.ServiceLayer.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DriveCentric.ServiceLayer.Configuration

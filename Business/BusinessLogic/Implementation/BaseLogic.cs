@@ -2,44 +2,64 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using DriveCentric.Utilities.Data;
 
-namespace DriveCentric.BusinessLogic.Deal
+namespace DriveCentric.BusinessLogic.Implementation
 {
-    public class DealBusinessObject : BaseBusinessObject, IDealBusinessObject
+    public abstract class BaseLogic<T> : BaseWithContextInfoAccessor, IBaseLogic<T>
+        where T : IBaseModel
     {
-        private readonly IDataRepository<IDeal> dataRepository;
+        protected readonly IDataRepository<T> dataRepository;
 
-        public DealBusinessObject(
+        protected BaseLogic(
             IContextInfoAccessor contextInfoAccessor,
-            IDataRepository<IDeal> dataRepository
+            IDataRepository<T> dataRepository
             ) : base(contextInfoAccessor)
         {
             this.dataRepository = dataRepository ?? throw new ArgumentNullException(nameof(dataRepository));
         }
 
         [MonitorAsyncAspect]
-        public Task<bool> DeleteDealAsync(int id)
+        public Task<bool> DeleteAsync(int id)
         {
             return dataRepository.DeleteByIdAsync(id);
         }
 
         [MonitorAsyncAspect]
-        public Task<IDeal> GetDealAsync(int id)
+        public Task<T> GetAsync(int id)
         {
             return dataRepository.GetByIdAsync(id);
         }
 
         [MonitorAsyncAspect]
-        public Task<IEnumerable<IDeal>> GetDealsAsync(
+        public Task<IEnumerable<T>> GetAsync(
             int? limit = null,
             int? offset = null,
             Expression predicate = null)
         {
             return dataRepository.GetAsync(limit, offset, predicate);
+        }
+
+        [MonitorAsyncAspect]
+        public Task<bool> InsertAsync(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonitorAsyncAspect]
+        public Task<bool> SaveAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonitorAsyncAspect]
+        public Task<bool> UpdateAsync(T item)
+        {
+            throw new NotImplementedException();
         }
     }
 }

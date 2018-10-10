@@ -18,7 +18,7 @@ using ServiceStack.OrmLite;
 namespace DriveCentric.Data.SqlORM.Repositories
 {
     public class StarDataRepository<T, U> : BaseDataRepository, IDataRepository<T>
-        where T : IBaseExternalIdModel where U : T
+        where T : IBaseModel where U : T
     {
         private readonly IDriveServerCollection driveServerCollection;
 

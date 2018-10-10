@@ -1,39 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DriveCentric.BusinessLogic.Customer;
+using DriveCentric.BusinessLogic.Implementation;
 using DriveCentric.Model;
-using DriveCentric.ServiceLayer.Customer;
 using DriveCentric.Utilities.Context;
+using DriveCentric.Utilities.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace DriveCentric.ServiceLayer.CoreTests.Customer
+namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 {
     [TestClass]
-    public class CustomerServiceCoreTests
+    public class CustomerLogicCoreTests
     {
-        private CustomerService service;
-        private Mock<ICustomerBusinessObject> businessObjectMock;
+        private Mock<IDataRepository<ICustomer>> customerDataRepositoryMock;
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
+        private CustomerLogic businessLogic;
         private Mock<ICustomer> customerMock;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            businessObjectMock = new Mock<ICustomerBusinessObject>();
+            customerDataRepositoryMock = new Mock<IDataRepository<ICustomer>>();
             contextInfoAccessorMock = new Mock<IContextInfoAccessor>();
-            service = new CustomerService(contextInfoAccessorMock.Object, businessObjectMock.Object);
+
+            businessLogic = new CustomerLogic(contextInfoAccessorMock.Object, customerDataRepositoryMock.Object);
             customerMock = new Mock<ICustomer>();
         }
 
         [TestMethod]
-        public async Task GetCustomer_ValidCustomer_ReturnsCustomer()
+        public async Task GetCustomer_ValidId_ReturnsCustomer()
         {
-            businessObjectMock.Setup(mock => mock.GetCustomerAsync(It.IsAny<int>()))
+            customerDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(customerMock.Object);
 
-            var returnedCustomer = await service.GetCustomerAsync(1);
+            var returnedCustomer = await businessLogic.GetAsync(1);
 
             Assert.AreEqual(customerMock.Object, returnedCustomer);
         }
@@ -42,26 +43,27 @@ namespace DriveCentric.ServiceLayer.CoreTests.Customer
         [ExpectedException(typeof(KeyNotFoundException))]
         public async Task GetCustomer_KeyNotFound_Throws()
         {
-            businessObjectMock.Setup(mock => mock.GetCustomerAsync(It.IsAny<int>())).Throws<KeyNotFoundException>();
+            customerDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>()))
+                .Throws<KeyNotFoundException>();
 
-            var returnedCustomer = await service.GetCustomerAsync(1);
+            var returnedCustomer = await businessLogic.GetAsync(1);
         }
 
         [TestMethod]
         public async Task Delete_ValidId_ReturnsTrue()
         {
-            businessObjectMock.Setup(mock => mock.DeleteCustomerAsync(It.IsAny<int>()))
+            customerDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(true);
-            var wasDeleted = await service.DeleteCustomerAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
             Assert.IsTrue(wasDeleted);
         }
 
         [TestMethod]
         public async Task Delete_IdNotExists_ReturnsFalse()
         {
-            businessObjectMock.Setup(mock => mock.DeleteCustomerAsync(It.IsAny<int>()))
+            customerDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(false);
-            var wasDeleted = await service.DeleteCustomerAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
             Assert.IsFalse(wasDeleted);
         }
 
@@ -69,9 +71,9 @@ namespace DriveCentric.ServiceLayer.CoreTests.Customer
         [ExpectedException(typeof(NullReferenceException))]
         public async Task Delete_NullReferenceException_Throws()
         {
-            businessObjectMock.Setup(mock => mock.DeleteCustomerAsync(It.IsAny<int>()))
+            customerDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .Throws(new NullReferenceException("Test NRE"));
-            var wasDeleted = await service.DeleteCustomerAsync(1);
+            var wasDeleted = await businessLogic.DeleteAsync(1);
         }
     }
 }
