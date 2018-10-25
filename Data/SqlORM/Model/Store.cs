@@ -5,23 +5,14 @@ using ServiceStack.DataAnnotations;
 
 namespace DriveCentric.Data.SqlORM.Model
 {
-    public class Customer : ICustomer
+    public class Store : IStore
     {
         [PrimaryKey]
         [JsonIgnore]
-        [Alias("pkCustomerID")]
+        [Alias("pkStoreID")]
         public int Id { get; set; }
 
         [Alias("GUID")]
         public Guid ExternalId { get; set; }
-
-        [Alias("PrimaryFirstName")]
-        public string FirstName { get; set; }
-
-        [Alias("PrimaryLastName")]
-        public string LastName { get; set; }
-
-
     }
 }
-

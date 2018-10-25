@@ -2,7 +2,7 @@
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 
-namespace DriveCentric.RestApi.Context
+namespace DriveCentric.BaseService.Context
 {
     public class ContextInfo : IContextInfo
     {

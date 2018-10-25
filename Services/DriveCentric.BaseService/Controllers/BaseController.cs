@@ -1,10 +1,9 @@
-﻿using DriveCentric.RestApi.Context;
+﻿using DriveCentric.BaseService.Context;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace DriveCentric.RestApi.Controllers
+namespace DriveCentric.BaseService.Controllers
 {
     public abstract class BaseController : Controller, IContextAccessible
     {
