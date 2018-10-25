@@ -46,4 +46,4 @@ test_job:
   script:
     - 'dotnet test .\RestApi.Tests\DriveCentric.RestApi.Tests.csproj'
     - 'dotnet test .\ServiceLayer.CoreTests\DriveCentric.ServiceLayer.CoreTests.csproj'
-    - 'dotnet test .\Utilities\DriveCentric.Utilities.csproj'
+    - 'dotnet test .\Utilities.CoreTests\DriveCentric.Utilities.CoreTests.csproj'
