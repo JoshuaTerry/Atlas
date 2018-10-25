@@ -1,35 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DriveCentric.BaseService.Controllers;
-using DriveCentric.ServiceLayer.Interfaces;
-using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DriveCentric.Task.Services;
+using DriveCentric.Utilities.Aspects;
 using Serilog;
+using DriveCentric.BaseService;
 
-namespace DriveCentric.RestApi.Controllers
+namespace DriveCentric.Task.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/customer")]
-    public class Customer : BaseController
+    [Route("api/v1/task")]
+    public class TaskController : BaseController
     {
-        private readonly ICustomerService customerService;
+        private readonly ITaskService taskService;
 
-        public Customer(
+        public TaskController(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
-            ICustomerService customerService
+            ITaskService taskService
             ) : base(httpContextAccessor, contextInfoAccessor)
         {
-            this.customerService = customerService;
+            this.taskService = taskService;
         }
 
-        // GET: api/v1/customer?limit={limit}&offset={offset}
+        // GET: api/v1/task?limit={limit}&offset={offset}
         [MonitorAsyncAspect]
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int? limit, [FromQuery] int? offset)
         {
@@ -41,9 +41,7 @@ namespace DriveCentric.RestApi.Controllers
 
             try
             {
-                var claims = User.Claims.ToList();
-
-                return Ok(await customerService.GetAsync(limit, offset));
+                return Ok(await taskService.GetAsync(limit, offset));
             }
             catch (Exception exception)
             {
@@ -51,10 +49,9 @@ namespace DriveCentric.RestApi.Controllers
             }
         }
 
-        // GET: api/v1/customer/id
+        // GET: api/v1/task/5
         [MonitorAsyncAspect]
-        [Authorize]
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "Get")]
         public async Task<IActionResult> Get(int id)
         {
             if (!ModelState.IsValid)
@@ -67,7 +64,7 @@ namespace DriveCentric.RestApi.Controllers
             {
                 var claims = User.Claims.ToList();
 
-                return Ok(await customerService.GetAsync(id));
+                return Ok(await taskService.GetAsync(id));
             }
             catch (Exception exception)
             {
@@ -75,22 +72,23 @@ namespace DriveCentric.RestApi.Controllers
             }
         }
 
-        // POST: api/v1/customer
+        //// POST: api/task
+        //[MonitorAsyncAspect]
         //[HttpPost]
-        //public void Post([FromBody]string value)
+        //public void Post([FromBody] string value)
         //{
         //}
 
-        // PUT: api/v1/customer/id
+        //// PUT: api/task/5
+        //[MonitorAsyncAspect]
         //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody]string value)
+        //public void Put(int id, [FromBody] string value)
         //{
         //}
 
-        // DELETE: api/v1/customer/id
+        // DELETE: api/v1/task/5
         [MonitorAsyncAspect]
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             if (!ModelState.IsValid)
@@ -101,7 +99,7 @@ namespace DriveCentric.RestApi.Controllers
 
             try
             {
-                return Ok(await customerService.DeleteAsync(id));
+                return Ok(await taskService.DeleteAsync(id));
             }
             catch (Exception exception)
             {

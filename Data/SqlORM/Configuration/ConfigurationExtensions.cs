@@ -35,6 +35,7 @@ namespace DriveCentric.Data.SqlORM.Configuration
 
             services.AddSingleton<IDataRepository<ICustomer>, StarDataRepository<ICustomer, Customer>>();
             services.AddSingleton<IDataRepository<IDeal>, StarDataRepository<IDeal, Deal>>();
+            services.AddSingleton<IDataRepository<ITask>, StarDataRepository<ITask, Task>>();
         }
 
         private static void InstantiateDriveServerCollection(IServiceCollection services)

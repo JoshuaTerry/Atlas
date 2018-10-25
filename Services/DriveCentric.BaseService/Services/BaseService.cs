@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DriveCentric.BaseService.Interfaces;
 using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
-using DriveCentric.ServiceLayer.Interfaces;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 
-namespace DriveCentric.ServiceLayer.Services
+namespace DriveCentric.BaseService.Services
 {
     public abstract class BaseService<T> : BaseWithContextInfoAccessor, IBaseService<T>
         where T : IBaseModel
@@ -23,19 +23,19 @@ namespace DriveCentric.ServiceLayer.Services
         }
 
         [MonitorAsyncAspect]
-        public Task<bool> DeleteAsync(int id)
+        public virtual Task<bool> DeleteAsync(int id)
         {
             return businessLogic.DeleteAsync(id);
         }
 
         [MonitorAsyncAspect]
-        public Task<T> GetAsync(int id)
+        public virtual Task<T> GetAsync(int id)
         {
             return businessLogic.GetAsync(id);
         }
 
         [MonitorAsyncAspect]
-        public Task<IEnumerable<T>> GetAsync(
+        public virtual Task<IEnumerable<T>> GetAsync(
             int? limit = null,
             int? offset = null,
             Expression predicate = null)
@@ -44,19 +44,19 @@ namespace DriveCentric.ServiceLayer.Services
         }
 
         [MonitorAsyncAspect]
-        public Task<bool> InsertAsync(T item)
+        public virtual Task<bool> InsertAsync(T item)
         {
             return businessLogic.InsertAsync(item);
         }
 
         [MonitorAsyncAspect]
-        public Task<bool> SaveAsync()
+        public virtual Task<bool> SaveAsync()
         {
             return businessLogic.SaveAsync();
         }
 
         [MonitorAsyncAspect]
-        public Task<bool> UpdateAsync(T item)
+        public virtual Task<bool> UpdateAsync(T item)
         {
             return businessLogic.UpdateAsync(item);
         }

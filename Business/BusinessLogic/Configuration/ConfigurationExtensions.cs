@@ -12,6 +12,7 @@ namespace DriveCentric.BusinessLogic.Configuration
             services.AddSingleton<ICustomerLogic, CustomerLogic>();
             services.AddSingleton<IDealLogic, DealLogic>();
             services.AddSingleton<IDealershipGroupLogic, DealershipGroupLogic>();
+            services.AddSingleton<ITaskLogic, TaskLogic>();
 
             services.AddDataRepository();
             return services;

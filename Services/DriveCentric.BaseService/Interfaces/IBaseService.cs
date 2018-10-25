@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DriveCentric.Model;
 
-namespace DriveCentric.ServiceLayer.Interfaces
+namespace DriveCentric.BaseService.Interfaces
 {
     public interface IBaseService<T> where T : IBaseModel
     {

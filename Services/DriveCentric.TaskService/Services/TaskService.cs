@@ -1,16 +1,15 @@
 ﻿using DriveCentric.BaseService.Services;
 using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
-using DriveCentric.ServiceLayer.Interfaces;
 using DriveCentric.Utilities.Context;
 
-namespace DriveCentric.ServiceLayer.Services
+namespace DriveCentric.Task.Services
 {
-    public class DealershipGroupService : BaseService<IDealershipGroup>, IDealershipGroupService
+    public class TaskService : BaseService<ITask>, ITaskService
     {
-        public DealershipGroupService(
+        public TaskService(
             IContextInfoAccessor contextInfoAccessor,
-            IDealershipGroupLogic businessLogic
+            ITaskLogic businessLogic
             ) : base(contextInfoAccessor, businessLogic)
         { }
     }

@@ -1,4 +1,5 @@
-﻿using DriveCentric.Model;
+﻿using DriveCentric.BaseService.Interfaces;
+using DriveCentric.Model;
 
 namespace DriveCentric.ServiceLayer.Interfaces
 {
