@@ -44,4 +44,6 @@ build_job:
 test_job:
   stage: test
   script:
-    - 'dotnet test'
+    - 'dotnet test .\RestApi.Tests\DriveCentric.RestApi.Tests.csproj'
+    - 'dotnet test .\ServiceLayer.CoreTests\DriveCentric.ServiceLayer.CoreTests.csproj'
+    - 'dotnet test .\Utilities\DriveCentric.Utilities.csproj'
