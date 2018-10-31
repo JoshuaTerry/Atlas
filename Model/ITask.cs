@@ -13,5 +13,6 @@ namespace DriveCentric.Model
         ActionType ActionType { get; set; }
         DateTime? DateDue { get; set; }
         string Notes { get; set; }
+        Guid ExternalId { get; set; }
     }
 }
