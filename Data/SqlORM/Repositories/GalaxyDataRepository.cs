@@ -74,14 +74,22 @@ namespace DriveCentric.Data.SqlORM.Repositories
             }
         }
 
-        public void Insert(T item)
+        [MonitorAsyncAspect]
+        public Task<long> InsertAsync(T item)
         {
-            throw new NotImplementedException();
+            using (IDbConnection db = dbFactory.OpenDbConnection())
+            {
+                return dataAccessor.InsertAsync(db, item);
+            }
         }
 
-        public void Update(T item)
+        [MonitorAsyncAspect]
+        public Task<bool> UpdateAsync(T item)
         {
-            throw new NotImplementedException();
+            using (IDbConnection db = dbFactory.OpenDbConnection())
+            {
+                return dataAccessor.UpdateAsync(db, item);
+            }
         }
 
         public void Save()

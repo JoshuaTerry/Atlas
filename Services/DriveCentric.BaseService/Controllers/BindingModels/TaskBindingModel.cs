@@ -9,12 +9,15 @@ namespace DriveCentric.BaseService.Controllers.BindingModels
 {
     public class TaskBindingModel : ITask
     {
+        public int CustomerId { get; set; }
         [JsonConverter(typeof(CustomerConverter))]
         public ICustomer Customer { get; set; }
 
+        public int CreatedByUserId { get; set; }
         [JsonConverter(typeof(UserConverter))]
         public IUser CreatedByUser { get; set; }
 
+        public int UserId { get; set; }
         [JsonConverter(typeof(UserConverter))]
         public IUser User { get; set; }
 

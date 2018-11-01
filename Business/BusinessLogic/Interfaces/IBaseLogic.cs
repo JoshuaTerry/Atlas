@@ -16,7 +16,7 @@ namespace DriveCentric.BusinessLogic.Interfaces
 
         Task<bool> DeleteAsync(int id);
 
-        Task<bool> InsertAsync(T item);
+        Task<long> InsertAsync(T item);
 
         Task<bool> UpdateAsync(T item);
 

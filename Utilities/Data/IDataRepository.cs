@@ -20,8 +20,8 @@ namespace DriveCentric.Utilities.Data
 
         Task<T> GetByIdAsync(int id);
         Task<bool> DeleteByIdAsync(int id);
-        void Insert(T item);
-        void Update(T item);
+        Task<long> InsertAsync(T item);
+        Task<bool> UpdateAsync(T item);
         void Save();
     }
 }

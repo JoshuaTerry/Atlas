@@ -1,5 +1,8 @@
-﻿namespace DriveCentric.Model.Enums
+﻿using System;
+
+namespace DriveCentric.Model.Enums
 {
+    [Flags]
     public enum ActionType
     {
         Reminder = 0,

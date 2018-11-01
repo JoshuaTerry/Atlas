@@ -18,7 +18,7 @@ using ServiceStack.OrmLite;
 namespace DriveCentric.Data.SqlORM.Repositories
 {
     public class StarDataRepository<T, U> : BaseDataRepository, IDataRepository<T>
-        where T : IBaseModel where U : T
+        where T : IBaseModel where U : T, new()
     {
         private readonly IDriveServerCollection driveServerCollection;
 
@@ -80,9 +80,22 @@ namespace DriveCentric.Data.SqlORM.Repositories
             }
         }
 
-        public void Insert(T item)
+        [MonitorAsyncAspect]
+        public async Task<long> InsertAsync(T item)
         {
-            throw new NotImplementedException();
+            using (IDbConnection db = GetDbFactory().OpenDbConnection())
+            {
+                return await dataAccessor.InsertAsync(db, ConvertToDataModel(item));
+            }
+        }
+
+        [MonitorAsyncAspect]
+        public Task<bool> UpdateAsync(T item)
+        {
+            using (IDbConnection db = GetDbFactory().OpenDbConnection())
+            {
+                return dataAccessor.UpdateAsync(db, ConvertToDataModel(item));
+            }
         }
 
         public void Save()
@@ -90,9 +103,12 @@ namespace DriveCentric.Data.SqlORM.Repositories
             throw new NotImplementedException();
         }
 
-        public void Update(T item)
+        private U ConvertToDataModel(T item)
         {
-            throw new NotImplementedException();
+            U instance = new U();
+            var writableProperties = typeof(T).GetProperties();
+            writableProperties.ToList().ForEach(property => property.SetValue(instance, property.GetValue(item)));
+            return instance;
         }
 
         private OrmLiteConnectionFactory GetDbFactory()
