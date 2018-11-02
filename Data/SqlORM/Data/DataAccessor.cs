@@ -60,7 +60,14 @@ namespace DriveCentric.Data.SqlORM.Data
 
         public async Task<bool> UpdateAsync<T>(IDbConnection connection, T item) where T : IBaseModel
         {
-            return await connection.UpdateAsync(item) > 0L;
+            try
+            {
+                return await connection.UpdateAsync(item) > 0L;
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Error trying to update {typeof(T)}.", exception);
+            }
         }
     }
 }

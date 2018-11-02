@@ -59,7 +59,7 @@ namespace DriveCentric.BusinessLogic.Implementation
         [MonitorAsyncAspect]
         public virtual Task<bool> UpdateAsync(T item)
         {
-            throw new NotImplementedException();
+            return dataRepository.UpdateAsync(item);
         }
     }
 }

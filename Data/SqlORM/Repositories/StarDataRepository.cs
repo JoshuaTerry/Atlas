@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Claims;
-using System.Text;
+using System.Reflection;
 using System.Threading.Tasks;
-using DriveCentric.Data.SqlORM.Model;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Configuration;
 using DriveCentric.Utilities.Context;
 using DriveCentric.Utilities.Data;
-using ServiceStack.Data;
 using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
-    public class StarDataRepository<T, U> : BaseDataRepository, IDataRepository<T>
+    public class StarDataRepository<T, U> : BaseDataRepository<T, U>, IDataRepository<T>
         where T : IBaseModel where U : T, new()
     {
         private readonly IDriveServerCollection driveServerCollection;
@@ -90,25 +87,17 @@ namespace DriveCentric.Data.SqlORM.Repositories
         }
 
         [MonitorAsyncAspect]
-        public Task<bool> UpdateAsync(T item)
+        public async Task<bool> UpdateAsync(T item)
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return dataAccessor.UpdateAsync(db, ConvertToDataModel(item));
+                return await dataAccessor.UpdateAsync(db, ConvertToDataModel(item));
             }
         }
 
         public void Save()
         {
             throw new NotImplementedException();
-        }
-
-        private U ConvertToDataModel(T item)
-        {
-            U instance = new U();
-            var writableProperties = typeof(T).GetProperties();
-            writableProperties.ToList().ForEach(property => property.SetValue(instance, property.GetValue(item)));
-            return instance;
         }
 
         private OrmLiteConnectionFactory GetDbFactory()

@@ -11,8 +11,8 @@ using ServiceStack.Data;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
-    public class GalaxyDataRepository<T, U> : BaseDataRepository, IDataRepository<T>
-        where T : IBaseModel where U : T
+    public class GalaxyDataRepository<T, U> : BaseDataRepository<T, U>, IDataRepository<T>
+        where T : IBaseModel where U : T, new()
     {
         protected readonly IDbConnectionFactory dbFactory;
 
@@ -75,20 +75,20 @@ namespace DriveCentric.Data.SqlORM.Repositories
         }
 
         [MonitorAsyncAspect]
-        public Task<long> InsertAsync(T item)
+        public async Task<long> InsertAsync(T item)
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                return dataAccessor.InsertAsync(db, item);
+                return await dataAccessor.InsertAsync(db, ConvertToDataModel(item));
             }
         }
 
         [MonitorAsyncAspect]
-        public Task<bool> UpdateAsync(T item)
+        public async Task<bool> UpdateAsync(T item)
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                return dataAccessor.UpdateAsync(db, item);
+                return await dataAccessor.UpdateAsync(db, ConvertToDataModel(item));
             }
         }
 
