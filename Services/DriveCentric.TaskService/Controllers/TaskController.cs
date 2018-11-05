@@ -5,7 +5,7 @@ using DriveCentric.BaseService;
 using DriveCentric.BaseService.Controllers;
 using DriveCentric.BaseService.Controllers.BindingModels;
 using DriveCentric.Model;
-using DriveCentric.Task.Services;
+using DriveCentric.TaskService.Services;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
-namespace DriveCentric.Task.Controllers
+namespace DriveCentric.TaskService.Controllers
 {
     [Produces("application/json")]
     [Route("api/v1/task")]
@@ -95,31 +95,6 @@ namespace DriveCentric.Task.Controllers
             }
         }
 
-        // PUT: api/task/5
-        [MonitorAsyncAspect]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] TaskBindingModel value)
-        {
-            if (!ModelState.IsValid)
-            {
-                Log.Warning($"Invalid state updating {GetType().Name}({id}).");
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var existingItem = await taskService.GetAsync(id);
-
-                // update the changes
-
-                return Ok(await taskService.UpdateAsync(existingItem));
-            }
-            catch (Exception exception)
-            {
-                return ExceptionHelper.ProcessError(exception);
-            }
-        }
-
         // PATCH: api/v1/task/5
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<ITask> patch)
@@ -130,11 +105,18 @@ namespace DriveCentric.Task.Controllers
                 return BadRequest(ModelState);
             }
 
-            var task = await taskService.GetAsync(id);
-            patch.ApplyTo(task, ModelState);
+            try
+            {
+                var task = await taskService.GetAsync(id);
+                patch.ApplyTo(task, ModelState);
 
-            return Ok(await taskService.UpdateAsync(task));
-        }
+                return Ok(await taskService.UpdateAsync(task));
+            }
+            catch (Exception exception)
+            {
+                return ExceptionHelper.ProcessError(exception);
+            }
+}
 
         // DELETE: api/v1/task/5
         [MonitorAsyncAspect]

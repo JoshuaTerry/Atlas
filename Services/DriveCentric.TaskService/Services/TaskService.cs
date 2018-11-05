@@ -3,7 +3,7 @@ using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Context;
 
-namespace DriveCentric.Task.Services
+namespace DriveCentric.TaskService.Services
 {
     public class TaskService : BaseService<ITask>, ITaskService
     {
