@@ -60,4 +60,4 @@ publish_job:
 deploy_job:
   stage: deploy
   script:
-    - C:\Tools\Octo\Octo.exe pack -id Atlas-TaskService --version $CI_PIPELINE_IID-$CI_COMMIT_REF_NAME --basePath Services\DriveCentric.TaskService\bin\Release\netcoreapp2.1\publish
+    - C:\Tools\Octo\Octo.exe pack -id Atlas-TaskService --version %CI_PIPELINE_IID%-%CI_COMMIT_REF_NAME% --basePath Services\DriveCentric.TaskService\bin\Release\netcoreapp2.1\publish
