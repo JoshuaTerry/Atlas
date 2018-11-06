@@ -42,6 +42,10 @@ build_job:
   stage: build
   script:
     - dotnet build
+  artifacts:
+    paths:
+      - */bin
+      - */obj
 
 test_job:
   stage: test
@@ -54,10 +58,17 @@ test_job:
 
 publish_job:
   stage: publish
+  dependencies:
+    - build_job
   script:
     - dotnet publish -c release
+  artifacts:
+    - */bin
+    - */obj
 
 deploy_job:
   stage: deploy
+  dependencies:
+    - publish_job
   script:
     - C:\Tools\Octo\Octo.exe pack -id Atlas-TaskService --version %CI_PIPELINE_IID%-%CI_COMMIT_REF_NAME% --basePath Services\DriveCentric.TaskService\bin\Release\netcoreapp2.1\publish
