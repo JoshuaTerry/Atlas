@@ -64,7 +64,7 @@ publish_job:
     - dotnet publish -c release
   artifacts:
     paths:
-      - "*/bin/Release"
+      - "*/bin/Release/netcoreapp2.1/publish"
       - "*/obj"
 
 deploy_job:
