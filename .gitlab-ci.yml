@@ -64,7 +64,7 @@ publish_job:
     - dotnet publish -c release
   artifacts:
     paths:
-      - "*/bin"
+      - "*/bin/Release"
       - "*/obj"
 
 deploy_job:
