@@ -63,8 +63,8 @@ publish_job:
   script:
     - dotnet publish -c release
   artifacts:
-    - */bin
-    - */obj
+    - "*/bin"
+    - "*/obj"
 
 deploy_job:
   stage: deploy
