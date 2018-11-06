@@ -53,8 +53,8 @@ test_job:
     - 'dotnet test .\Data\SqlORM.CoreTests\DriveCentric.Data.SqlORM.CoreTests.csproj'
 
 publish_job:
-  - stage: publish
-  - script:
+  stage: publish
+  script:
     - 'dotnet publish -c release'
 
 deploy_job:
