@@ -44,8 +44,8 @@ build_job:
     - dotnet build
   artifacts:
     paths:
-      - */bin
-      - */obj
+      - "*/bin"
+      - "*/obj"
 
 test_job:
   stage: test
