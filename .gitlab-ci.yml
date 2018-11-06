@@ -44,7 +44,7 @@ build_job:
     - dotnet build
   artifacts:
     paths:
-      - "*/bin"
+      - "**/bin"
 
 test_job:
   stage: test
@@ -63,7 +63,7 @@ publish_job:
     - dotnet publish -c release
   artifacts:
     paths:
-      - "**/bin/Release/netcoreapp2.1/publish"
+      - "**/publish"
 
 deploy_job:
   stage: deploy
