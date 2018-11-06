@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DriveCentric.BusinessLogic.Configuration;
-using DriveCentric.Task.Services;
+﻿using DriveCentric.BusinessLogic.Configuration;
+using DriveCentric.TaskService.Services;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DriveCentric.Task
+namespace DriveCentric.TaskService
 {
     public class Startup
     {
@@ -40,7 +34,7 @@ namespace DriveCentric.Task
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IContextInfoAccessor, ContextInfoAccessor>();
 
-            services.AddSingleton<ITaskService, TaskService>();
+            services.AddSingleton<ITaskService, Services.TaskService>();
 
             services.AddBusinessLogic();
         }

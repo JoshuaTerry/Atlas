@@ -44,7 +44,7 @@ namespace DriveCentric.BaseService.Services
         }
 
         [MonitorAsyncAspect]
-        public virtual Task<bool> InsertAsync(T item)
+        public virtual Task<long> InsertAsync(T item)
         {
             return businessLogic.InsertAsync(item);
         }

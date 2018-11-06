@@ -45,5 +45,29 @@ namespace DriveCentric.Data.SqlORM.Data
         {
             return  connection.Select(connection.From<T>().Where(predicate).Limit(skip: offset, rows: limit));
         }
+
+        public async Task<long> InsertAsync<T>(IDbConnection connection, T item) where T : IBaseModel
+        {
+            try
+            {
+                return await connection.InsertAsync(item, selectIdentity: true);
+            }
+            catch(Exception exception)
+            {
+                throw new Exception($"Error trying to insert {typeof(T)}.", exception);
+            }
+        }
+
+        public async Task<bool> UpdateAsync<T>(IDbConnection connection, T item) where T : IBaseModel
+        {
+            try
+            {
+                return await connection.UpdateAsync(item) > 0L;
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Error trying to update {typeof(T)}.", exception);
+            }
+        }
     }
 }

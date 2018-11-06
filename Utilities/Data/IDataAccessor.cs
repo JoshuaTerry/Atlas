@@ -29,5 +29,9 @@ namespace DriveCentric.Utilities.Data
 
         Task<int> DeleteByIdAsync<T>(int id, IDbConnection connection, string query = null)
             where T : IBaseModel;
+
+        Task<long> InsertAsync<T>(IDbConnection connection, T item) where T : IBaseModel;
+
+        Task<bool> UpdateAsync<T>(IDbConnection connection, T item) where T : IBaseModel;
     }
 }

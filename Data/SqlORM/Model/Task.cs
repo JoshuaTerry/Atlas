@@ -10,6 +10,7 @@ namespace DriveCentric.Data.SqlORM.Model
     {
         [PrimaryKey]
         [Alias("pkTaskID")]
+        [AutoIncrement]
         public int Id { get; set; }
 
         [JsonIgnore]
@@ -121,7 +122,7 @@ namespace DriveCentric.Data.SqlORM.Model
                 InternalDeal = (Deal)value;
             }
         }
-
+                
         public ActionType ActionType { get; set; }
 
         [Alias("GUID")]

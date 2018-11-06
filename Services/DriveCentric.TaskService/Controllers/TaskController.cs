@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DriveCentric.BaseService;
 using DriveCentric.BaseService.Controllers;
+using DriveCentric.BaseService.Controllers.BindingModels;
+using DriveCentric.Model;
+using DriveCentric.TaskService.Services;
+using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using DriveCentric.Task.Services;
-using DriveCentric.Utilities.Aspects;
 using Serilog;
-using DriveCentric.BaseService;
 
-namespace DriveCentric.Task.Controllers
+namespace DriveCentric.TaskService.Controllers
 {
     [Produces("application/json")]
     [Route("api/v1/task")]
@@ -72,19 +74,49 @@ namespace DriveCentric.Task.Controllers
             }
         }
 
-        //// POST: api/task
-        //[MonitorAsyncAspect]
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+        // POST: api/task
+        [MonitorAsyncAspect]
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] TaskBindingModel value)
+        {
+            if (!ModelState.IsValid)
+            {
+                Log.Warning($"Invalid state adding new {GetType().Name}.");
+                return BadRequest(ModelState);
+            }
 
-        //// PUT: api/task/5
-        //[MonitorAsyncAspect]
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+            try
+            {
+                return Ok(await taskService.InsertAsync(value));
+            }
+            catch (Exception exception)
+            {
+                return ExceptionHelper.ProcessError(exception);
+            }
+        }
+
+        // PATCH: api/v1/task/5
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<ITask> patch)
+        {
+            if (!ModelState.IsValid)
+            {
+                Log.Warning($"Invalid state patching {GetType().Name}({id}).");
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var task = await taskService.GetAsync(id);
+                patch.ApplyTo(task, ModelState);
+
+                return Ok(await taskService.UpdateAsync(task));
+            }
+            catch (Exception exception)
+            {
+                return ExceptionHelper.ProcessError(exception);
+            }
+}
 
         // DELETE: api/v1/task/5
         [MonitorAsyncAspect]

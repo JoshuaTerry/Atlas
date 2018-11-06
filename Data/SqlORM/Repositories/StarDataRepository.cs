@@ -3,22 +3,19 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Claims;
-using System.Text;
+using System.Reflection;
 using System.Threading.Tasks;
-using DriveCentric.Data.SqlORM.Model;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Configuration;
 using DriveCentric.Utilities.Context;
 using DriveCentric.Utilities.Data;
-using ServiceStack.Data;
 using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
-    public class StarDataRepository<T, U> : BaseDataRepository, IDataRepository<T>
-        where T : IBaseModel where U : T
+    public class StarDataRepository<T, U> : BaseDataRepository<T, U>, IDataRepository<T>
+        where T : IBaseModel where U : T, new()
     {
         private readonly IDriveServerCollection driveServerCollection;
 
@@ -80,17 +77,25 @@ namespace DriveCentric.Data.SqlORM.Repositories
             }
         }
 
-        public void Insert(T item)
+        [MonitorAsyncAspect]
+        public async Task<long> InsertAsync(T item)
         {
-            throw new NotImplementedException();
+            using (IDbConnection db = GetDbFactory().OpenDbConnection())
+            {
+                return await dataAccessor.InsertAsync(db, ConvertToDataModel(item));
+            }
+        }
+
+        [MonitorAsyncAspect]
+        public async Task<bool> UpdateAsync(T item)
+        {
+            using (IDbConnection db = GetDbFactory().OpenDbConnection())
+            {
+                return await dataAccessor.UpdateAsync(db, ConvertToDataModel(item));
+            }
         }
 
         public void Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(T item)
         {
             throw new NotImplementedException();
         }
