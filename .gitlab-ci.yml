@@ -35,6 +35,8 @@ variables:
 stages:
   - build
   - test
+  - publish
+  - deploy
 
 build_job:
   stage: build
@@ -49,3 +51,13 @@ test_job:
     - 'dotnet test .\Utilities.CoreTests\DriveCentric.Utilities.CoreTests.csproj'
     - 'dotnet test .\Business\BusinessLogic.CoreTests\DriveCentric.BusinessLogic.CoreTests.csproj'
     - 'dotnet test .\Data\SqlORM.CoreTests\DriveCentric.Data.SqlORM.CoreTests.csproj'
+
+publish_job:
+  - stage: publish
+  - script:
+    - 'dotnet publish -c release'
+	
+deploy_job:
+  stage: deploy
+  script:
+  - 'C:\Tools\Octo\Octo.exe pack -id Atlas-TaskService --version $CI_PIPELINE_IID-$CI_COMMIT_REF_NAME --basePath Services\DriveCentric.TaskService\bin\Release\netcoreapp2.1\publish'
