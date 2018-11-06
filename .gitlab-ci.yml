@@ -44,7 +44,8 @@ build_job:
     - dotnet build
   artifacts:
     paths:
-      - "**/bin"
+      - "*/bin"
+      - "*/obj"
 
 test_job:
   stage: test
@@ -63,7 +64,7 @@ publish_job:
     - dotnet publish -c release
   artifacts:
     paths:
-      - "**/publish"
+      - "Services/DriveCentric.TaskService/bin/Release/netcoreapp2.1/publish"
 
 deploy_job:
   stage: deploy
