@@ -12,29 +12,58 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using DriveCentric.BaseService;
+using DriveCentric.Model;
 
 namespace DriveCentric.TaskService.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/task")]
-    public class TaskController : BaseController
+    // [Route("api/v1/task")]
+    public class TaskController : BaseController<ITask>
     {
-        private readonly ITaskService taskService;
+        protected override string FieldsForAll => "Id,Customer,CreatedByUser,User,ActionType,DateDue,Notes";
+        protected override string FieldsForSingle => FieldsForAll;
+        protected override string FieldsForList => FieldsForAll;
+
 
         public TaskController(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
             ITaskService taskService
-            ) : base(httpContextAccessor, contextInfoAccessor)
+            ) : base(httpContextAccessor, contextInfoAccessor, taskService)
         {
-            this.taskService = taskService;
+            
         }
 
         // GET: api/v1/task?limit={limit}&offset={offset}
         [MonitorAsyncAspect]
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int? limit, [FromQuery] int? offset)
+        public async Task<IActionResult> Get([FromQuery] int id, [FromQuery] int? limit = SearchParameters.LimitMax, [FromQuery] int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
         {
+            var userGuid = User.Claims.First(c => c.Type == "custom:UserGuid");
+
+            if (!ModelState.IsValid)
+            {
+                Log.Warning($"Invalid state getting {GetType().Name}.");
+                return BadRequest(ModelState);
+            } 
+
+            try
+            {
+                return Ok(await Service.GetAsync(limit, offset));
+            }
+            catch (Exception exception)
+            {
+                return ExceptionHelper.ProcessError(exception);
+            }
+        }
+
+        [MonitorAsyncAspect]
+        [HttpGet]
+        [Route("api/v1/task/user/{id}")]
+        public async Task<IActionResult> GetByUser([FromQuery] int id, int? limit = SearchParameters.LimitMax,  int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
+        {
+            
             if (!ModelState.IsValid)
             {
                 Log.Warning($"Invalid state getting {GetType().Name}.");
@@ -43,14 +72,14 @@ namespace DriveCentric.TaskService.Controllers
 
             try
             {
-                return Ok(await taskService.GetAsync(limit, offset));
+                //return Ok(await Service.GetAllByExpressionAsync(t => t.UserId == id, new PageableSearch(offset, limit, orderBy), fields));
+                return await GetAll(t => t.UserId == id, limit, offset, orderBy, fields);
             }
             catch (Exception exception)
             {
                 return ExceptionHelper.ProcessError(exception);
             }
         }
-
         // GET: api/v1/task/5
         [MonitorAsyncAspect]
         [HttpGet("{id}", Name = "Get")]
@@ -66,7 +95,7 @@ namespace DriveCentric.TaskService.Controllers
             {
                 var claims = User.Claims.ToList();
 
-                return Ok(await taskService.GetAsync(id));
+                return Ok(await Service.GetAsync(id));
             }
             catch (Exception exception)
             {
@@ -87,7 +116,7 @@ namespace DriveCentric.TaskService.Controllers
 
             try
             {
-                return Ok(await taskService.InsertAsync(value));
+                return Ok(await Service.InsertAsync(value));
             }
             catch (Exception exception)
             {
@@ -107,10 +136,10 @@ namespace DriveCentric.TaskService.Controllers
 
             try
             {
-                var task = await taskService.GetAsync(id);
+                var task = await Service.GetAsync(id);
                 patch.ApplyTo(task, ModelState);
 
-                return Ok(await taskService.UpdateAsync(task));
+                return Ok(await Service.UpdateAsync(task));
             }
             catch (Exception exception)
             {
@@ -131,7 +160,7 @@ namespace DriveCentric.TaskService.Controllers
 
             try
             {
-                return Ok(await taskService.DeleteAsync(id));
+                return Ok(await Service.DeleteAsync(id));
             }
             catch (Exception exception)
             {

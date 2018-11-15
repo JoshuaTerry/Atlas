@@ -44,6 +44,11 @@ namespace DriveCentric.BusinessLogic.Implementation
             return dataRepository.GetAsync(limit, offset, predicate);
         }
 
+        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression predicate, IPageable paging, string[] fields = null)
+        {
+            return await dataRepository.GetAsync(predicate, paging);
+        }
+
         [MonitorAsyncAspect]
         public virtual Task<long> InsertAsync(T item)
         {
