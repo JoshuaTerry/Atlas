@@ -6,7 +6,7 @@ using DriveCentric.Utilities.Context;
 
 namespace DriveCentric.ServiceLayer.Services
 {
-    public class CustomerService : BaseService<ICustomer>, ICustomerService
+    public class CustomerService : BaseService<Customer>, ICustomerService
     {
         public CustomerService(
             IContextInfoAccessor contextInfoAccessor,

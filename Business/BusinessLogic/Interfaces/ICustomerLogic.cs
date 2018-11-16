@@ -2,5 +2,5 @@
 
 namespace DriveCentric.BusinessLogic.Interfaces
 {
-    public interface ICustomerLogic : IBaseLogic<ICustomer> { }
+    public interface ICustomerLogic : IBaseLogic<Customer> { }
 }

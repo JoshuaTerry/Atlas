@@ -1,9 +1,8 @@
-﻿using System;
-using DriveCentric.Model;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
+using System;
 
-namespace DriveCentric.Data.SqlORM.Model
+namespace DriveCentric.Model
 {
     public class Customer : IBaseModel
     {
@@ -19,7 +18,6 @@ namespace DriveCentric.Data.SqlORM.Model
         public string FirstName { get; set; }
 
         [Alias("PrimaryLastName")]
-        public string LastName { get; set; } 
+        public string LastName { get; set; }
     }
 }
-

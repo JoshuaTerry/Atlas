@@ -2,6 +2,6 @@
 {
     public interface IDeal : IBaseModel
     {
-        ICustomer Customer { get; set; }
+        Customer Customer { get; set; }
     }
 }

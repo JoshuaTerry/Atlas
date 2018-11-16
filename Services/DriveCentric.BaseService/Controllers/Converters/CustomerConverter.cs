@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace DriveCentric.BaseService.Controllers.Converters
 {
-    public class CustomerConverter : BaseConverter<ICustomer>
+    public class CustomerConverter : BaseConverter<Customer>
     {
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {

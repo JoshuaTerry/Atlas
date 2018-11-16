@@ -33,7 +33,7 @@ namespace DriveCentric.Data.SqlORM.Configuration
         {
             services.AddSingleton<IDataRepository<IDealershipGroup>, GalaxyDataRepository<IDealershipGroup, DealershipGroup>>();
 
-            services.AddSingleton<IDataRepository<ICustomer>, StarDataRepository<ICustomer, Customer>>();
+            services.AddSingleton<IDataRepository<Customer>, StarDataRepository<Customer, Customer>>();
             services.AddSingleton<IDataRepository<IDeal>, StarDataRepository<IDeal, Deal>>();
             services.AddSingleton<IDataRepository<ITask>, StarDataRepository<ITask, Task>>();
         }

@@ -5,11 +5,11 @@ using DriveCentric.Utilities.Data;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    public class CustomerLogic : BaseLogic<ICustomer>, ICustomerLogic
+    public class CustomerLogic : BaseLogic<Customer>, ICustomerLogic
     {
        public CustomerLogic(
             IContextInfoAccessor contextInfoAccessor,
-            IDataRepository<ICustomer> dataRepository
+            IDataRepository<Customer> dataRepository
             ) : base(contextInfoAccessor, dataRepository)
         { }
     }

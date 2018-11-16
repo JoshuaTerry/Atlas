@@ -24,7 +24,7 @@ namespace DriveCentric.Data.SqlORM.Model
         public int CustomerId { get; set; }
 
         [Ignore]
-        public ICustomer Customer
+        public Customer Customer
         {
             get
             {
