@@ -37,9 +37,9 @@ namespace DriveCentric.Data.SqlORM.Data
 
         public async Task<(long count, IEnumerable<T> data)> GetAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
             where T : IBaseModel
-        { 
-            var count = await connection.ScalarAsync<long>(connection.From<T>().Where(predicate).ToCountStatement());
-
+        {
+            //var count = await connection.ScalarAsync<long>(connection.From<T>().Where(predicate).ToCountStatement());
+            var count = 4;
             if (paging.OrderBy.StartsWith("-"))
                 return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderByDescending(paging.OrderBy.Replace("-", string.Empty))));
             else

@@ -22,7 +22,7 @@ namespace DriveCentric.Model
         {
             Offset = offset;
             Limit = limit;
-            OrderBy = orderBy;
+            OrderBy = string.IsNullOrWhiteSpace(orderBy) ? "Id" : orderBy;
         }
 
         #endregion

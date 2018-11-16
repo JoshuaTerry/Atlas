@@ -38,9 +38,10 @@ namespace DriveCentric.TaskService.Controllers
         // GET: api/v1/task?limit={limit}&offset={offset}
         [MonitorAsyncAspect]
         [HttpGet]
+        [Route("api/v1/task/{id}")]
         public async Task<IActionResult> Get([FromQuery] int id, [FromQuery] int? limit = SearchParameters.LimitMax, [FromQuery] int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
         {
-            var userGuid = User.Claims.First(c => c.Type == "custom:UserGuid");
+            //var userGuid = User.Claims.First(c => c.Type == "custom:UserGuid");
 
             if (!ModelState.IsValid)
             {
@@ -83,7 +84,8 @@ namespace DriveCentric.TaskService.Controllers
         // GET: api/v1/task/5
         [MonitorAsyncAspect]
         [HttpGet("{id}", Name = "Get")]
-        public async Task<IActionResult> Get(int id)
+        [Route("api/v1/task2/{id}")]
+        public async Task<IActionResult> Get([FromQuery] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -126,6 +128,7 @@ namespace DriveCentric.TaskService.Controllers
 
         // PATCH: api/v1/task/5
         [HttpPatch("{id}")]
+        [Route("api/v1/task2/{id}")]
         public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<ITask> patch)
         {
             if (!ModelState.IsValid)

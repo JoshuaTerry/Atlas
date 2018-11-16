@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DriveCentric.Model;
@@ -8,7 +9,7 @@ namespace DriveCentric.BusinessLogic.Interfaces
     public interface IBaseLogic<T> where T : IBaseModel
     {
         Task<T> GetAsync(int id);
-        Task<(long count, IEnumerable<T> data)> GetAsync(Expression predicate, IPageable paging, string[] fields = null);
+        Task<(long count, IEnumerable<T> data)> GetAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null);
         Task<IEnumerable<T>> GetAsync(
             int? limit = null,
             int? offset = null,

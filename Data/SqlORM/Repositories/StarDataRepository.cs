@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
+using System.Linq; 
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -51,11 +51,25 @@ namespace DriveCentric.Data.SqlORM.Repositories
 
 
         [MonitorAsyncAspect]
-        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression predicate, IPageable paging, string[] fields = null)
+        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
-            { 
-                var result = await dataAccessor.GetAsync(db, (Expression<Func<U, bool>>)predicate, paging);
+            {
+                Expression<Func<T, bool>> expression = x => true; 
+                //parameter that will be used in generated expression
+                var param = Expression.Parameter(typeof(U));
+                //visiting body of original expression that gives us body of the new expression
+                var body = new Visitor<U>(param).Visit(expression.Body);
+                //generating lambda expression form body and parameter 
+                //notice that this is what you need to invoke the Method_2
+                Expression<Func<U, bool>> lambda = Expression.Lambda<Func<U, bool>>(body, param);
+                //compilation and execution of generated method just to prove that it works
+                var boolValue = lambda.Compile()(new U());
+
+                //var resultBody = Expression.Convert(predicate.Parameters[0], typeof(U));
+                //var resultExpression = Expression.Lambda<Func<T, bool>>(resultBody, predicate.Parameters);
+
+                var result = await dataAccessor.GetAsync(db, lambda, paging);
                 return (result.count, (IEnumerable<T>)result.data); 
             }
         }

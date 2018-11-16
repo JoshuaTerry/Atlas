@@ -44,7 +44,7 @@ namespace DriveCentric.BusinessLogic.Implementation
             return dataRepository.GetAsync(limit, offset, predicate);
         }
 
-        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression predicate, IPageable paging, string[] fields = null)
+        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
         {
             return await dataRepository.GetAsync(predicate, paging);
         }

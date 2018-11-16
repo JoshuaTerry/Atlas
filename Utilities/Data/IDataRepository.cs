@@ -18,7 +18,7 @@ namespace DriveCentric.Utilities.Data
             int? offset = null,
             Expression predicate = null);
 
-        Task<(long count, IEnumerable<T> data)> GetAsync(Expression predicate, IPageable paging, string[] fields = null);
+        Task<(long count, IEnumerable<T> data)> GetAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null);
         Task<T> GetByIdAsync(int id);
         Task<bool> DeleteByIdAsync(int id);
         Task<long> InsertAsync(T item);
