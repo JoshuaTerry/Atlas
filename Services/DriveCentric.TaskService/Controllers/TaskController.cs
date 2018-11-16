@@ -21,7 +21,8 @@ namespace DriveCentric.TaskService.Controllers
     // [Route("api/v1/task")]
     public class TaskController : BaseController<ITask>
     {
-        protected override string FieldsForAll => "Id,Customer,CreatedByUser,User,ActionType,DateDue,Notes";
+        //protected override string FieldsForAll => "Id,Customer,CreatedByUser,User,ActionType,DateDue,Notes";
+        protected override string FieldsForAll => "Id,Customer.Id,Customer.FirstName,Customer.LastName,User.Id,User.Email,ActionType,DateDue,Notes";
         protected override string FieldsForSingle => FieldsForAll;
         protected override string FieldsForList => FieldsForAll;
 
@@ -74,7 +75,7 @@ namespace DriveCentric.TaskService.Controllers
             try
             {
                 //return Ok(await Service.GetAllByExpressionAsync(t => t.UserId == id, new PageableSearch(offset, limit, orderBy), fields));
-                return await GetAll(t => t.UserId == id, limit, offset, orderBy, fields);
+                return await GetAll(t => t.UserId == id, 2, 0, "User", fields ?? FieldsForList);
             }
             catch (Exception exception)
             {

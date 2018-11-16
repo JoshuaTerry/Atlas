@@ -38,12 +38,21 @@ namespace DriveCentric.Data.SqlORM.Data
         public async Task<(long count, IEnumerable<T> data)> GetAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
             where T : IBaseModel
         {
+            // This isn't working for some reason.  How do we get the count?
             //var count = await connection.ScalarAsync<long>(connection.From<T>().Where(predicate).ToCountStatement());
             var count = 4;
+
+            // Fields works but only if you don't reference properties of complex types e.g. for a Task, Customer.FirstName.  
+            // How do you pass in these fields restrictions for complex types?
+            fields = null;
+            
+            // How do you get Order By to work for properties with Alias's?  For instance ordering on UserID but the alias is fkUserId
             if (paging.OrderBy.StartsWith("-"))
-                return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderByDescending(paging.OrderBy.Replace("-", string.Empty))));
+                return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit)));
+            //return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderByDescending(paging.OrderBy.Replace("-", string.Empty))));
             else
-                return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderBy(paging.OrderBy), fields));
+                return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit), fields));
+            //return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderBy(paging.OrderBy), fields));
         }
 
         public IEnumerable<T> Get<T>(

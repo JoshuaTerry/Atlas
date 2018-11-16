@@ -69,7 +69,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
                 //var resultBody = Expression.Convert(predicate.Parameters[0], typeof(U));
                 //var resultExpression = Expression.Lambda<Func<T, bool>>(resultBody, predicate.Parameters);
 
-                var result = await dataAccessor.GetAsync(db, lambda, paging);
+                var result = await dataAccessor.GetAsync(db, lambda, paging, fields);
                 return (result.count, (IEnumerable<T>)result.data); 
             }
         }

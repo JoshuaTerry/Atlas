@@ -31,6 +31,7 @@ namespace DriveCentric.BaseService.Controllers
             IContextInfoAccessor contextInfoAccessor,
             IBaseService<T> service)
         {
+            dynamicTransmogrifier = new DynamicTransmogrifier();
             contextInfoAccessor.ContextInfo = new ContextInfo(httpContextAccessor);
             ContextInfoAccessor = contextInfoAccessor;
             this.service = service;
