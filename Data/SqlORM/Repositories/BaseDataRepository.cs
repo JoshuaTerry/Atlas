@@ -8,8 +8,8 @@ using ServiceStack.Data;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
-    public abstract class BaseDataRepository<T, U> : BaseWithContextInfoAccessor
-        where T : IBaseModel where U : T, new()
+    public abstract class BaseDataRepository<T> : BaseWithContextInfoAccessor
+        where T : IBaseModel, new()
     {
         protected readonly IDataAccessor dataAccessor;
 
@@ -21,19 +21,19 @@ namespace DriveCentric.Data.SqlORM.Repositories
             this.dataAccessor = dataAccessor;
         }
 
-        protected U ConvertToDataModel(T item)
-        {
-            U instance = new U();
-            GetAllProperties().ForEach(property => property.SetValue(instance, property.GetValue(item)));
-            return instance;
-        }
+        //protected U ConvertToDataModel(T item)
+        //{
+        //    U instance = new U();
+        //    GetAllProperties().ForEach(property => property.SetValue(instance, property.GetValue(item)));
+        //    return instance;
+        //}
 
-        protected static List<PropertyInfo> GetAllProperties()
-        {
-            var writableProperties = typeof(T).GetProperties().ToList();
-            typeof(T).GetInterfaces().ToList()
-                .ForEach(iface => iface.GetProperties().ToList().ForEach(property => writableProperties.Add(property)));
-            return writableProperties;
-        }
+        //protected static List<PropertyInfo> GetAllProperties()
+        //{
+        //    var writableProperties = typeof(T).GetProperties().ToList();
+        //    typeof(T).GetInterfaces().ToList()
+        //        .ForEach(iface => iface.GetProperties().ToList().ForEach(property => writableProperties.Add(property)));
+        //    return writableProperties;
+        //}
     }
 }

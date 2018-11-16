@@ -8,9 +8,9 @@ namespace DriveCentric.Data.SqlORM.Configuration
 {
     public class DriveServerCollection : IDriveServerCollection
     {
-        private readonly Dictionary<int, IDriveServer> servers;
+        private readonly Dictionary<int, DriveServer> servers;
 
-        public DriveServerCollection(IDataRepository<IDriveServer> driveServerRepository)
+        public DriveServerCollection(IDataRepository<DriveServer> driveServerRepository)
         {
             servers = driveServerRepository.Get().ToDictionary(server => server.Id);
         }

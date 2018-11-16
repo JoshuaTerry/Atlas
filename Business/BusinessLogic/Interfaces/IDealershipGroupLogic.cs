@@ -2,5 +2,5 @@
 
 namespace DriveCentric.BusinessLogic.Interfaces
 {
-    public interface IDealershipGroupLogic : IBaseLogic<IDealershipGroup> { }
+    public interface IDealershipGroupLogic : IBaseLogic<DealershipGroup> { }
 }

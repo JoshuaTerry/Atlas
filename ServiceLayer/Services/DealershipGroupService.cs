@@ -6,7 +6,7 @@ using DriveCentric.Utilities.Context;
 
 namespace DriveCentric.ServiceLayer.Services
 {
-    public class DealershipGroupService : BaseService<IDealershipGroup>, IDealershipGroupService
+    public class DealershipGroupService : BaseService<DealershipGroup>, IDealershipGroupService
     {
         public DealershipGroupService(
             IContextInfoAccessor contextInfoAccessor,

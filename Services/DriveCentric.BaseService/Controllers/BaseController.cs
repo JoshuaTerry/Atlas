@@ -31,6 +31,7 @@ namespace DriveCentric.BaseService.Controllers
             IContextInfoAccessor contextInfoAccessor,
             IBaseService<T> service)
         {
+            dynamicTransmogrifier = new DynamicTransmogrifier();
             contextInfoAccessor.ContextInfo = new ContextInfo(httpContextAccessor);
             ContextInfoAccessor = contextInfoAccessor;
             this.service = service;
@@ -89,6 +90,36 @@ namespace DriveCentric.BaseService.Controllers
 
         }
         public virtual IActionResult FinalizeReponse(IDataResponse<IEnumerable<T>> response, string fields = null)
+        {
+            try
+            {
+                if (response.Data == null)
+                {
+                    if (response.ErrorMessages.Count > 0)
+                        return BadRequest(string.Join(",", response.ErrorMessages));
+                    else
+                        return NotFound();
+                }
+                if (!response.IsSuccessful)
+                {
+                    return BadRequest(string.Join(",", response.ErrorMessages));
+                }
+
+                var dynamicResponse = dynamicTransmogrifier.ToDynamicResponse(response, fields);
+                if (!dynamicResponse.IsSuccessful)
+                {
+                    throw new Exception(string.Join(", ", dynamicResponse.ErrorMessages));
+                }
+
+                return Ok(dynamicResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Exception(ex.Message));
+            }
+        }
+
+        public virtual IActionResult FinalizeReponse(IDataResponse<T> response, string fields = null)
         {
             try
             {

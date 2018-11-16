@@ -14,8 +14,8 @@ using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
-    public class StarDataRepository<T, U> : BaseDataRepository<T, U>, IDataRepository<T>
-        where T : IBaseModel where U : T, new()
+    public class StarDataRepository<T> : BaseDataRepository<T>, IDataRepository<T>
+        where T : IBaseModel, new()
     {
         private readonly IDriveServerCollection driveServerCollection;
 
@@ -33,7 +33,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return await dataAccessor.DeleteByIdAsync<U>(id, db) > 0;
+                return await dataAccessor.DeleteByIdAsync<T>(id, db) > 0;
             }
         }
 
@@ -45,7 +45,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return (IEnumerable<T>) await dataAccessor.GetAsync(db, limit, offset, (Expression<Func<U, bool>>)predicate);
+                return (IEnumerable<T>) await dataAccessor.GetAsync(db, limit, offset, (Expression<Func<T, bool>>)predicate);
             }
         }
 
@@ -55,21 +55,22 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                Expression<Func<T, bool>> expression = x => true; 
-                //parameter that will be used in generated expression
-                var param = Expression.Parameter(typeof(U));
-                //visiting body of original expression that gives us body of the new expression
-                var body = new Visitor<U>(param).Visit(expression.Body);
-                //generating lambda expression form body and parameter 
-                //notice that this is what you need to invoke the Method_2
-                Expression<Func<U, bool>> lambda = Expression.Lambda<Func<U, bool>>(body, param);
-                //compilation and execution of generated method just to prove that it works
-                var boolValue = lambda.Compile()(new U());
+                //Expression<Func<T, bool>> expression = x => true; 
+                ////parameter that will be used in generated expression
+                //var param = Expression.Parameter(typeof(U));
+                ////visiting body of original expression that gives us body of the new expression
+                //var body = new Visitor<U>(param).Visit(expression.Body);
+                ////generating lambda expression form body and parameter 
+                ////notice that this is what you need to invoke the Method_2
+                //Expression<Func<U, bool>> lambda = Expression.Lambda<Func<U, bool>>(body, param);
+                ////compilation and execution of generated method just to prove that it works
+                //var boolValue = lambda.Compile()(new U());
 
-                //var resultBody = Expression.Convert(predicate.Parameters[0], typeof(U));
-                //var resultExpression = Expression.Lambda<Func<T, bool>>(resultBody, predicate.Parameters);
+                ////var resultBody = Expression.Convert(predicate.Parameters[0], typeof(U));
+                ////var resultExpression = Expression.Lambda<Func<T, bool>>(resultBody, predicate.Parameters);
 
-                var result = await dataAccessor.GetAsync(db, lambda, paging);
+                //var result = await dataAccessor.GetAsync(db, lambda, paging);
+                var result = await dataAccessor.GetAsync(db, predicate, paging);
                 return (result.count, (IEnumerable<T>)result.data); 
             }
         }
@@ -82,7 +83,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return (IEnumerable<T>)dataAccessor.GetAsync(db, limit, offset, (Expression<Func<U, bool>>)predicate);
+                return (IEnumerable<T>)dataAccessor.GetAsync(db, limit, offset, (Expression<Func<T, bool>>)predicate);
             }
         }
 
@@ -91,7 +92,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                var item = await dataAccessor.GetByIdAsync<U>(id, db);
+                var item = await dataAccessor.GetByIdAsync<T>(id, db);
 
                 if (EqualityComparer<T>.Default.Equals(item, default))
                 {
@@ -107,7 +108,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return await dataAccessor.InsertAsync(db, ConvertToDataModel(item));
+                return await dataAccessor.InsertAsync(db,item);
             }
         }
 
@@ -116,7 +117,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return await dataAccessor.UpdateAsync(db, ConvertToDataModel(item));
+                return await dataAccessor.UpdateAsync(db, item);
             }
         }
 

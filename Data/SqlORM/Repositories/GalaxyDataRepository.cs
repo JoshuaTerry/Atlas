@@ -11,8 +11,8 @@ using ServiceStack.Data;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
-    public class GalaxyDataRepository<T, U> : BaseDataRepository<T, U>, IDataRepository<T>
-        where T : IBaseModel where U : T, new()
+    public class GalaxyDataRepository<T> : BaseDataRepository<T>, IDataRepository<T>
+        where T : IBaseModel, new()
     {
         protected readonly IDbConnectionFactory dbFactory;
 
@@ -30,7 +30,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                return await dataAccessor.DeleteByIdAsync<U>(id, db) > 0;
+                return await dataAccessor.DeleteByIdAsync<T>(id, db) > 0;
             }
         }
 
@@ -39,7 +39,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                var item = await dataAccessor.GetByIdAsync<U>(id, db);
+                var item = await dataAccessor.GetByIdAsync<T>(id, db);
 
                 if (EqualityComparer<T>.Default.Equals(item, default))
                 {
@@ -58,7 +58,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                return (IEnumerable<T>) await dataAccessor.GetAsync(db, limit, offset, (Expression<Func<U, bool>>)predicate);
+                return (IEnumerable<T>) await dataAccessor.GetAsync(db, limit, offset, (Expression<Func<T, bool>>)predicate);
             }
         }
 
@@ -81,7 +81,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                return (IEnumerable<T>)dataAccessor.Get(db, limit, offset, (Expression<Func<U, bool>>)predicate);
+                return (IEnumerable<T>)dataAccessor.Get(db, limit, offset, (Expression<Func<T, bool>>)predicate);
             }
         }
 
@@ -90,7 +90,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                return await dataAccessor.InsertAsync(db, ConvertToDataModel(item));
+                return await dataAccessor.InsertAsync(db, item);
             }
         }
 
@@ -99,7 +99,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                return await dataAccessor.UpdateAsync(db, ConvertToDataModel(item));
+                return await dataAccessor.UpdateAsync(db, item);
             }
         }
 

@@ -5,7 +5,7 @@ using DriveCentric.Utilities.Context;
 
 namespace DriveCentric.TaskService.Services
 {
-    public class TaskService : BaseService<ITask>, ITaskService
+    public class TaskService : BaseService<Task>, ITaskService
     {
         public TaskService(
             IContextInfoAccessor contextInfoAccessor,

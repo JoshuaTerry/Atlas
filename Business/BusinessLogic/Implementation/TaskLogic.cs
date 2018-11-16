@@ -5,11 +5,11 @@ using DriveCentric.Utilities.Data;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    class TaskLogic : BaseLogic<ITask>, ITaskLogic
+    class TaskLogic : BaseLogic<Task>, ITaskLogic
     {
         public TaskLogic(
             IContextInfoAccessor contextInfoAccessor,
-            IDataRepository<ITask> dataRepository
+            IDataRepository<Task> dataRepository
             ) : base(contextInfoAccessor, dataRepository)
         { }
     }

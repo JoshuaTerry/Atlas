@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DriveCentric.BaseService;
 using DriveCentric.BaseService.Controllers;
-using DriveCentric.BaseService.Controllers.BindingModels;
 using DriveCentric.Model;
 using DriveCentric.TaskService.Services;
 using DriveCentric.Utilities.Aspects;
@@ -19,10 +18,10 @@ namespace DriveCentric.TaskService.Controllers
 {
     [Produces("application/json")]
     // [Route("api/v1/task")]
-    public class TaskController : BaseController<ITask>
+    public class TaskController : BaseController<DriveCentric.Model.Task>
     {
         protected override string FieldsForAll => "Id,Customer,CreatedByUser,User,ActionType,DateDue,Notes";
-        protected override string FieldsForSingle => FieldsForAll;
+        protected override string FieldsForSingle => "Id,Customer,Notes,Customer.FirstName";
         protected override string FieldsForList => FieldsForAll;
 
 
@@ -62,7 +61,7 @@ namespace DriveCentric.TaskService.Controllers
         [MonitorAsyncAspect]
         [HttpGet]
         [Route("api/v1/task/user/{id}")]
-        public async Task<IActionResult> GetByUser([FromQuery] int id, int? limit = SearchParameters.LimitMax,  int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
+        public async Task<IActionResult> GetByUser(int id, int? limit = SearchParameters.LimitMax,  int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
         {
             
             if (!ModelState.IsValid)
@@ -83,9 +82,9 @@ namespace DriveCentric.TaskService.Controllers
         }
         // GET: api/v1/task/5
         [MonitorAsyncAspect]
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet]
         [Route("api/v1/task2/{id}")]
-        public async Task<IActionResult> Get([FromQuery] int id)
+        public async Task<IActionResult> Get(int id)
         {
             if (!ModelState.IsValid)
             {
@@ -96,8 +95,11 @@ namespace DriveCentric.TaskService.Controllers
             try
             {
                 var claims = User.Claims.ToList();
-
-                return Ok(await Service.GetAsync(id));
+                var item = await Service.GetAsync(id);
+                var response = new DataResponse<Model.Task>();
+                response.Data = item;
+                return FinalizeReponse(response, FieldsForSingle);
+                //return Ok(await Service.GetAsync(id));
             }
             catch (Exception exception)
             {
@@ -108,7 +110,7 @@ namespace DriveCentric.TaskService.Controllers
         // POST: api/task
         [MonitorAsyncAspect]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] TaskBindingModel value)
+        public async Task<IActionResult> Post([FromBody] Model.Task value)
         {
             if (!ModelState.IsValid)
             {
@@ -129,7 +131,7 @@ namespace DriveCentric.TaskService.Controllers
         // PATCH: api/v1/task/5
         [HttpPatch("{id}")]
         [Route("api/v1/task2/{id}")]
-        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<ITask> patch)
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<DriveCentric.Model.Task> patch)
         {
             if (!ModelState.IsValid)
             {

@@ -2,5 +2,5 @@
 
 namespace DriveCentric.BusinessLogic.Interfaces
 {
-    public interface ITaskLogic : IBaseLogic<ITask> { }
+    public interface ITaskLogic : IBaseLogic<Task> { }
 }
