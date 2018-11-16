@@ -41,7 +41,7 @@ namespace DriveCentric.TaskService
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Atlas API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" });
             });
         }
 
@@ -83,7 +83,7 @@ namespace DriveCentric.TaskService
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/task/v1/swagger.json", "Atlas - Task - V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1");
             });
 
             app.UseHttpsRedirection();
