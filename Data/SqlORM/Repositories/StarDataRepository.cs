@@ -51,7 +51,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
 
 
         [MonitorAsyncAspect]
-        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
+        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null)
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
@@ -69,7 +69,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
                 //var resultBody = Expression.Convert(predicate.Parameters[0], typeof(U));
                 //var resultExpression = Expression.Lambda<Func<T, bool>>(resultBody, predicate.Parameters);
 
-                var result = await dataAccessor.GetAsync(db, lambda, paging, fields);
+                var result = await dataAccessor.GetAsync(db, lambda, paging, referenceFields);
                 return (result.count, (IEnumerable<T>)result.data); 
             }
         }

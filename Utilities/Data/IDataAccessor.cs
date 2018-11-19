@@ -23,7 +23,7 @@ namespace DriveCentric.Utilities.Data
             int? offset = null,
             Expression<Func<T, bool>> predicate = null)
             where T : IBaseModel;
-        Task<(long count, IEnumerable<T> data)> GetAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
+        Task<(long count, IEnumerable<T> data)> GetAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null)
             where T : IBaseModel;
 
         Task<T> GetByIdAsync<T>(int id, IDbConnection connection, string query = null)
