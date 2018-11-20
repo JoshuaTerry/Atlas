@@ -1,8 +1,8 @@
 ﻿using DriveCentric.Data.SqlORM.Data;
 using DriveCentric.Data.SqlORM.Repositories;
 using DriveCentric.Model;
-using DriveCentric.Utilities.Configuration;
-using DriveCentric.Utilities.Data;
+using DriveCentric.Model.Interfaces;
+using DriveCentric.Utilities.Configuration; 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceStack.Data;

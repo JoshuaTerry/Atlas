@@ -5,23 +5,23 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DriveCentric.Model;
-using DriveCentric.Utilities.Data;
+using DriveCentric.Model.Interfaces; 
 using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.SqlORM.Data
 {
     public class DataAccessor : IDataAccessor
     {
-        public Task<T> GetByIdAsync<T>(int id, IDbConnection connection, string query = null)
+        public async Task<T> GetByIdAsync<T>(int id, IDbConnection connection, string query = null)
             where T : IBaseModel
         {
-            return connection.LoadSingleByIdAsync<T>(id);
+            return await connection.LoadSingleByIdAsync<T>(id);
         }
 
-        public Task<int> DeleteByIdAsync<T>(int id, IDbConnection connection, string query = null)
+        public async Task<int> DeleteByIdAsync<T>(int id, IDbConnection connection, string query = null)
             where T : IBaseModel
         {
-            return connection.DeleteByIdAsync<T>(id);
+            return await connection.DeleteByIdAsync<T>(id);
         }
 
         public async Task<IEnumerable<T>> GetAsync<T>(
@@ -41,8 +41,8 @@ namespace DriveCentric.Data.SqlORM.Data
         { 
             var result = await connection.SingleAsync<T>(predicate);
             await connection.LoadReferencesAsync(result, referenceFields);
-            return result;
-            //return await connection.SingleAsync<T>(predicate );   
+
+            return result;  
         }
 
         public async Task<(long count, IEnumerable<T> data)> GetAllAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null)
@@ -79,11 +79,6 @@ namespace DriveCentric.Data.SqlORM.Data
             {
                 throw new Exception($"Error trying to update {typeof(T)}.", exception);
             }
-        }
-
-        public IEnumerable<T> Get<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging) where T : IBaseModel
-        {
-            throw new NotImplementedException();
         } 
     }
 }

@@ -16,7 +16,7 @@ namespace DriveCentric.TaskService.Controllers
         protected override string FieldsForAll => "Id,Customer,CreatedByUser,User,ActionType,DateDue,Notes";
         protected override string FieldsForSingle => "Id,Customer.FirstName";
         protected override string FieldsForList => "Id,Customer.FirstName,Notes";
-        //protected override string[] ReferenceFields => new string[] { "Customer", "User" };
+        protected override string[] ReferenceFields => new string[] { "Customer", "User" };
 
         public TaskController(
             IHttpContextAccessor httpContextAccessor,
@@ -41,17 +41,17 @@ namespace DriveCentric.TaskService.Controllers
              
         [MonitorAsyncAspect]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Model.Task item)
+        public override async Task<IActionResult> Post([FromBody] Model.Task item)
             => await Post(item);
          
         [HttpPatch()]
         [Route("api/v1/task/{id}")]
-        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<DriveCentric.Model.Task> patch)
+        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<DriveCentric.Model.Task> patch)
             => await Patch(id, patch);
          
         [MonitorAsyncAspect]
         [HttpDelete()]
         [Route("api/v1/task/{id}")]
-        public async Task<IActionResult> Delete(int id) => await Delete(id);   
+        public override async Task<IActionResult> Delete(int id) => await Delete(id);   
     }
 }

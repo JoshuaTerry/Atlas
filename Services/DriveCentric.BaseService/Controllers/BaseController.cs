@@ -5,21 +5,16 @@ using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Controllers
 {
     public abstract class BaseController<T> : Controller, IContextAccessible where T : class, IBaseModel
     {
-        private readonly DynamicTransmogrifier dynamicTransmogrifier;
+        private readonly ResponseReducer responseReducer;
         private readonly IBaseService<T> service;
         protected virtual string FieldsForAll => string.Empty;
         protected virtual string FieldsForSingle => string.Empty;
@@ -34,7 +29,7 @@ namespace DriveCentric.BaseService.Controllers
             IContextInfoAccessor contextInfoAccessor,
             IBaseService<T> service)
         {
-            dynamicTransmogrifier = new DynamicTransmogrifier();
+            responseReducer = new ResponseReducer();
             contextInfoAccessor.ContextInfo = new ContextInfo(httpContextAccessor);
             ContextInfoAccessor = contextInfoAccessor;
             this.service = service;
@@ -71,7 +66,7 @@ namespace DriveCentric.BaseService.Controllers
             }
         }
 
-        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<T> patch)
+        public virtual async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<T> patch)
         {
             if (!ModelState.IsValid)
             {
@@ -92,7 +87,7 @@ namespace DriveCentric.BaseService.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public virtual async Task<IActionResult> Delete(int id)
         {
             if (!ModelState.IsValid)
             {
@@ -135,16 +130,14 @@ namespace DriveCentric.BaseService.Controllers
                     else
                         return NotFound();
                 }
-                if (!response.IsSuccessful)
-                {
-                    return BadRequest(string.Join(",", response.ErrorMessages));
-                }
 
-                var dynamicResponse = dynamicTransmogrifier.ToDynamicResponse(response, fields);
+                if (!response.IsSuccessful) 
+                    return BadRequest(string.Join(",", response.ErrorMessages)); 
+
+                var dynamicResponse = responseReducer.ToDynamicResponse(response, fields);
+
                 if (!dynamicResponse.IsSuccessful)
-                {
                     throw new Exception(string.Join(", ", dynamicResponse.ErrorMessages));
-                }
 
                 return Ok(dynamicResponse);
             }

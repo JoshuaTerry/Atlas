@@ -21,6 +21,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Context\BaseWithContextInfoAccessor.cs" />
+    <Compile Remove="Data\IDataAccessor.cs" />
+    <Compile Remove="Data\IDataRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="PostSharp" Version="6.0.28" />
     <PackageReference Include="Serilog" Version="2.7.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
@@ -31,6 +37,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model\DriveCentric.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

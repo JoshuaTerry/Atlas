@@ -9,8 +9,9 @@ using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Configuration;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Utilities.Data;
+using DriveCentric.Model.Interfaces;
 using ServiceStack.OrmLite;
+using ServiceStack.Data;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
@@ -25,77 +26,25 @@ namespace DriveCentric.Data.SqlORM.Repositories
             IDriveServerCollection driveServerCollection
             ) : base(contextInfoAccessor, dataAccessor)
         {
-            this.driveServerCollection = driveServerCollection;
+            this.driveServerCollection = driveServerCollection; 
         }
-
-        [MonitorAsyncAspect]
-        public async Task<bool> DeleteByIdAsync(int id)
+         
+        public override IDbConnectionFactory GetDbFactory()
         {
-            using (IDbConnection db = GetDbFactory().OpenDbConnection())
+            try
             {
-                return await dataAccessor.DeleteByIdAsync<T>(id, db) > 0;
-            }
-        }
+                var driveServerId = 21;
+                //var driveServerId = Convert.ToInt32(ContextInfoAccessor.ContextInfo.User.Claims.Single(c => c.Type == "custom:DriveServerId"));
 
-        [MonitorAsyncAspect]
-        public async  Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, string[] referenceFields = null)
-        {
-            using (IDbConnection db = GetDbFactory().OpenDbConnection())
+                return new OrmLiteConnectionFactory(
+                        driveServerCollection.GetConnectionStringById(driveServerId),
+                        SqlServerDialect.Provider
+                        );
+            }
+            catch (Exception ex)
             {
-                return await dataAccessor.GetSingleAsync(db, predicate, referenceFields);
-            }
-        }
-
-        [MonitorAsyncAspect]
-        public async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
-        {
-            using (IDbConnection db = GetDbFactory().OpenDbConnection())
-            { 
-                return await dataAccessor.GetAllAsync(db, predicate, paging); 
+                throw new Exception("No DriveServerId was found in the token.", ex);
             }
         } 
-         
-        [MonitorAsyncAspect]
-        public async Task<long> InsertAsync(T item)
-        {
-            using (IDbConnection db = GetDbFactory().OpenDbConnection())
-            {
-                return await dataAccessor.InsertAsync(db,item);
-            }
-        }
-
-        [MonitorAsyncAspect]
-        public async Task<bool> UpdateAsync(T item)
-        {
-            using (IDbConnection db = GetDbFactory().OpenDbConnection())
-            { 
-                return await dataAccessor.UpdateAsync(db, item);
-            }
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        private OrmLiteConnectionFactory GetDbFactory()
-        {
-            int driveServerGuid = GetDriveServerGuid();
-            return new OrmLiteConnectionFactory(
-                    driveServerCollection.GetConnectionStringById(driveServerGuid),
-                    SqlServerDialect.Provider
-                    );
-        }
-
-        private static int GetDriveServerGuid()
-        {
-            // This must be changed when we have the claims working.
-            return 21;
-        }
-
-        public IEnumerable<T> Get(Expression<Func<T, bool>> predicate, IPageable paging)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

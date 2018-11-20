@@ -1,7 +1,7 @@
 ﻿using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Utilities.Data;
+using DriveCentric.Model.Interfaces;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {

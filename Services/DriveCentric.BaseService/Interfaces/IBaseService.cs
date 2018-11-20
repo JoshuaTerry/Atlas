@@ -10,12 +10,8 @@ namespace DriveCentric.BaseService.Interfaces
     { 
         Task<IDataResponse<IEnumerable<T>>> GetAllByExpressionAsync(Expression<Func<T, bool>> predicate = null, IPageable paging = null, string[] referenceFields = null);
         Task<IDataResponse<T>> GetSingleByExpressionAsync(Expression<Func<T, bool>> predicate = null, string[] referenceFields = null);
-        Task<bool> DeleteAsync(int id);
-
-        Task<long> InsertAsync(T item);
-
-        Task<bool> UpdateAsync(T item);
-
-        Task<bool> SaveAsync();
+        Task<IDataResponse<bool>> DeleteAsync(int id);
+        Task<IDataResponse<long>> InsertAsync(T item);
+        Task<IDataResponse<bool>> UpdateAsync(T item); 
     }
 }

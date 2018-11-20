@@ -7,19 +7,19 @@ namespace DriveCentric.Data.SqlORM
 {
     public class Visitor<T> : ExpressionVisitor
     {
-        ParameterExpression _parameter;
+        ParameterExpression parameter;
 
         //there must be only one instance of parameter expression for each parameter 
         //there is one so one passed here
         public Visitor(ParameterExpression parameter)
         {
-            _parameter = parameter;
+            this.parameter = parameter;
         }
 
         //this method replaces original parameter with given in constructor
         protected override Expression VisitParameter(ParameterExpression node)
         {
-            return _parameter;
+            return parameter;
         }
 
         //this one is required because PersonData does not implement IPerson and it finds

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace DriveCentric.BaseService
 {
-    public class DynamicTransmogrifier
+    public class ResponseReducer
     {
         private const int MAX_RECURSION_DEPTH = 10;
 
@@ -45,6 +45,7 @@ namespace DriveCentric.BaseService
             {
                 dynamicResponse.Data = response.Data;
             }
+
             return dynamicResponse;
         }
 
@@ -68,9 +69,9 @@ namespace DriveCentric.BaseService
                 return data;
             
             string upperCaseFields = fields?.ToUpper();
-
             List<string> listOfFields = upperCaseFields?.Split(',').ToList() ?? new List<string>();
-            return RecursivelyTransmogrify(data, listOfFields);
+
+            return RecursivelyReduce(data, listOfFields);
         }
 
         internal dynamic ToDynamicObject<T>(T data, string fields = null)
@@ -78,24 +79,23 @@ namespace DriveCentric.BaseService
         {
             fields = string.IsNullOrWhiteSpace(fields) ? null : fields;
 
-            if (fields == null)
-            {
-                return data;
-            }
+            if (fields == null) 
+                return data; 
 
             string upperCaseFields = fields?.ToUpper();
-
             List<string> listOfFields = upperCaseFields?.Split(',').ToList() ?? new List<string>();
-            return RecursivelyTransmogrify(data, listOfFields);
+
+            return RecursivelyReduce(data, listOfFields);
         }
 
-        private dynamic RecursivelyTransmogrify<T>(T data, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
+       
+        private dynamic RecursivelyReduce<T>(T data, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
             where T : IBaseModel
         {
             if (level >= MAX_RECURSION_DEPTH) 
                 return null; 
 
-            dynamic returnObject = new ExpandoObject();
+            dynamic returnObject = new ExpandoObject(); 
             if (visited == null)
             {
                 visited = new List<int> { data.Id };
@@ -110,10 +110,15 @@ namespace DriveCentric.BaseService
             {
                 visited = visited.Union(new int[] { data.Id });
             }
-            Type type = data.GetType();
-            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-            PropertyInfo[] properties = type.GetProperties(flags);
+             
+            PropertyInfo[] properties = data.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            returnObject = ProcessProperties(data, properties, fieldsToInclude, visited, level); 
 
+            return returnObject;
+        }
+        private ExpandoObject ProcessProperties<T>(T data, PropertyInfo[] properties, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
+        {
+            dynamic item = new ExpandoObject();
             // Determine if there are any fields being excluded.
             int excludesCount = fieldsToInclude.Count(p => p.Contains(PathHelper.FieldExcludePrefix));
             bool hasExcludes = (excludesCount > 0);
@@ -132,25 +137,23 @@ namespace DriveCentric.BaseService
                                           || fieldsToInclude.Any(a => a.StartsWith(propertyNameAsAccessor))))
                 {
                     var strippedFieldList = StripFieldList(fieldsToInclude, propertyNameUppercased);
-                    ((IDictionary<string, object>)returnObject)[property.Name] = RecursivelyTransmogrify((fieldValue as IEnumerable<IBaseModel>), strippedFieldList, visited, level + 1);
+                    ((IDictionary<string, object>)item)[property.Name] = RecursivelyReduce((fieldValue as IEnumerable<IBaseModel>), strippedFieldList, visited, level + 1);
                 }
                 else if (fieldValue is IBaseModel && (includeEverything && (!hasExcludes && fieldsToInclude.Contains(propertyNameExclude))
                                           || fieldsToInclude.Any(a => a.StartsWith(propertyNameAsAccessor))))
                 {
                     var strippedFieldList = StripFieldList(fieldsToInclude, propertyNameUppercased);
-                    ((IDictionary<string, object>)returnObject)[property.Name] = RecursivelyTransmogrify((fieldValue as IBaseModel), strippedFieldList, visited, level + 1);
+                    ((IDictionary<string, object>)item)[property.Name] = RecursivelyReduce((fieldValue as IBaseModel), strippedFieldList, visited, level + 1);
                 }
                 else if ((includeEverything && !(hasExcludes && fieldsToInclude.Contains(propertyNameExclude))
-                                          ||
-                                       fieldsToInclude.Contains(propertyNameUppercased)))
+                                          || fieldsToInclude.Contains(propertyNameUppercased)))
                 {
-                    ((IDictionary<string, object>)returnObject)[property.Name] = fieldValue;
+                    ((IDictionary<string, object>)item)[property.Name] = fieldValue;
                 }
             }
 
-            return returnObject;
+            return item;
         }
-
         private List<string> StripFieldList(List<string> fieldsToInclude, string propertyNameUppercased)
         {
             if (fieldsToInclude.Count == 0)
@@ -162,7 +165,7 @@ namespace DriveCentric.BaseService
             return fieldsToInclude.Where(a => a.StartsWith(currentProperty)).Select(a => a.Substring(length)).ToList();
         }
 
-        private dynamic RecursivelyTransmogrify<T>(IEnumerable<T> entities, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
+        private dynamic RecursivelyReduce<T>(IEnumerable<T> entities, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
             where T : IBaseModel
         {
             if (level >= MAX_RECURSION_DEPTH)
@@ -174,7 +177,7 @@ namespace DriveCentric.BaseService
 
             foreach (var item in entities)
             {
-                list.Add(RecursivelyTransmogrify(item, fieldsToInclude, visited, level + 1));
+                list.Add(RecursivelyReduce(item, fieldsToInclude, visited, level + 1));
             }
 
             return list;

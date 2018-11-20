@@ -6,21 +6,22 @@ using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Utilities.Data;
+using DriveCentric.Model.Interfaces;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    public abstract class BaseLogic<T> : BaseWithContextInfoAccessor, IBaseLogic<T>
+    public abstract class BaseLogic<T> : IContextAccessible, IBaseLogic<T>
         where T : IBaseModel
     {
         protected readonly IDataRepository<T> dataRepository;
+        protected readonly IContextInfoAccessor contextInfoAccessor;
 
-        protected BaseLogic(
-            IContextInfoAccessor contextInfoAccessor,
-            IDataRepository<T> dataRepository
-            ) : base(contextInfoAccessor)
+        public IContextInfoAccessor ContextInfoAccessor { get { return contextInfoAccessor; } }
+
+        protected BaseLogic(IContextInfoAccessor contextInfoAccessor, IDataRepository<T> dataRepository)  
         {
             this.dataRepository = dataRepository ?? throw new ArgumentNullException(nameof(dataRepository));
+            this.contextInfoAccessor = contextInfoAccessor;
         }
 
         [MonitorAsyncAspect]
