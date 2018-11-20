@@ -22,8 +22,6 @@
 
   <ItemGroup>
     <Compile Remove="Context\BaseWithContextInfoAccessor.cs" />
-    <Compile Remove="Data\IDataAccessor.cs" />
-    <Compile Remove="Data\IDataRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,10 +35,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model\DriveCentric.Model.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>
