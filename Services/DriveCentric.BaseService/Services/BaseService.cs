@@ -15,10 +15,7 @@ namespace DriveCentric.BaseService.Services
     { 
         protected readonly IBaseLogic<T> businessLogic;
 
-        protected BaseService(
-            IContextInfoAccessor contextInfoAccessor,
-            IBaseLogic<T> businessLogic
-            ) : base(contextInfoAccessor)
+        protected BaseService(IContextInfoAccessor contextInfoAccessor, IBaseLogic<T> businessLogic) : base(contextInfoAccessor)
         {
             this.businessLogic = businessLogic;
         }
@@ -28,19 +25,30 @@ namespace DriveCentric.BaseService.Services
         {
             return businessLogic.DeleteAsync(id);
         }
+          
+        public virtual async Task<IDataResponse<T>> GetSingleByExpressionAsync(Expression<Func<T, bool>> predicate = null, string[] referenceFields = null)
+        { 
+            var response = new DataResponse<T>();
+            try
+            {
+                var result = await businessLogic.GetSingleAsync(predicate, referenceFields);
+                response.TotalResults = 1;
+                response.Data = result;
+            }
+            catch (Exception ex)
+            {
+                response = ProcessDataResponseException<T>(ex);
+            }
+            return response;
+        }
 
         [MonitorAsyncAspect]
-        public virtual Task<T> GetAsync(int id)
-        {
-            return businessLogic.GetAsync(id);
-        }
-        [MonitorAsyncAspect]
-        public virtual async Task<IDataResponse<IEnumerable<T>>> GetAllByExpressionAsync(Expression<Func<T, bool>> predicate, IPageable paging = null, string[] fields = null)
+        public virtual async Task<IDataResponse<IEnumerable<T>>> GetAllByExpressionAsync(Expression<Func<T, bool>> predicate, IPageable paging = null, string[] referenceFields = null)
         {
             var response = new DataResponse<IEnumerable<T>>();
             try
             { 
-                var result = await businessLogic.GetAsync(predicate, paging, fields);
+                var result = await businessLogic.GetAllAsync(predicate, paging, referenceFields);
                 response.TotalResults = result.count;
                 response.Data = result.data;
             }
@@ -50,15 +58,7 @@ namespace DriveCentric.BaseService.Services
             }
             return response;
         }
-        [MonitorAsyncAspect]
-        public virtual Task<IEnumerable<T>> GetAsync(
-            int? limit = null,
-            int? offset = null,
-            Expression predicate = null)
-        {
-            return businessLogic.GetAsync(limit, offset, predicate);
-        }
-
+          
         [MonitorAsyncAspect]
         public virtual Task<long> InsertAsync(T item)
         {
@@ -77,11 +77,8 @@ namespace DriveCentric.BaseService.Services
             return businessLogic.UpdateAsync(item);
         }
 
-        public IDataResponse<T1> GetIDataResponse<T1>(Func<T1> funcToExecute, string fieldList = null, bool shouldAddLinks = false)
-        {
-            return GetDataResponse(funcToExecute, fieldList, shouldAddLinks);
-        }
-        public DataResponse<T1> GetDataResponse<T1>(Func<T1> funcToExecute, string fieldList = null, bool shouldAddLinks = false)
+       
+        public DataResponse<T1> GetDataResponse<T1>(Func<T1> funcToExecute)
         {
             try
             {

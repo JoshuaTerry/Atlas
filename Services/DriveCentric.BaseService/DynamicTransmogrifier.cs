@@ -48,6 +48,7 @@ namespace DriveCentric.BaseService
             return dynamicResponse;
         }
 
+
         internal bool IsSimple(Type type)
         {
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))

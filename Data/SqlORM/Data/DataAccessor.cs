@@ -34,30 +34,29 @@ namespace DriveCentric.Data.SqlORM.Data
         {
             return await connection.SelectAsync(connection.From<T>().Where(predicate).Limit(skip: offset, rows: limit));
         }
+        private string GetModelOrderByField<T>(IDbConnection connection, IPageable paging)
+            => connection.From<T>().ModelDef.AllFieldDefinitionsArray.Where(f => f.Name.TrimStart('-') == paging.OrderBy).Select(f => string.IsNullOrWhiteSpace(f.Alias) ? f.Name : f.Alias).FirstOrDefault();
 
-        public async Task<(long count, IEnumerable<T> data)> GetAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
+        public async Task<T> GetSingleAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, string[] referenceFields = null) where T : IBaseModel
+        { 
+            var result = await connection.SingleAsync<T>(predicate);
+            await connection.LoadReferencesAsync(result, referenceFields);
+            return result;
+            //return await connection.SingleAsync<T>(predicate );   
+        }
+
+        public async Task<(long count, IEnumerable<T> data)> GetAllAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null)
             where T : IBaseModel
         {
-            //var count = await connection.ScalarAsync<long>(connection.From<T>().Where(predicate).ToCountStatement());
-            var count = 4;
-            if (paging.OrderBy.StartsWith("-"))
-                return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderByDescending(paging.OrderBy.Replace("-", string.Empty))));
+            var count = connection.Count<T>(predicate);
+            bool isDescending = paging.OrderBy.StartsWith("-");  
+
+            if (isDescending)
+                return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderByDescending(GetModelOrderByField<T>(connection, paging)), referenceFields));
             else
-                return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit), fields));
-            //return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderBy(paging.OrderBy), fields));
+                return (count, await connection.LoadSelectAsync(connection.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderBy(GetModelOrderByField<T>(connection, paging)), referenceFields));
         }
-
-        public IEnumerable<T> Get<T>(
-            IDbConnection connection,
-            int? limit = null,
-            int? offset = null,
-            Expression<Func<T, bool>> predicate = null
-            )
-            where T : IBaseModel
-        {
-            return  connection.Select(connection.From<T>().Where(predicate).Limit(skip: offset, rows: limit));
-        }
-
+         
         public async Task<long> InsertAsync<T>(IDbConnection connection, T item) where T : IBaseModel
         {
             try
@@ -81,5 +80,10 @@ namespace DriveCentric.Data.SqlORM.Data
                 throw new Exception($"Error trying to update {typeof(T)}.", exception);
             }
         }
+
+        public IEnumerable<T> Get<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging) where T : IBaseModel
+        {
+            throw new NotImplementedException();
+        } 
     }
 }

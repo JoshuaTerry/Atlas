@@ -28,25 +28,14 @@ namespace DriveCentric.BusinessLogic.Implementation
         {
             return dataRepository.DeleteByIdAsync(id);
         }
-
-        [MonitorAsyncAspect]
-        public virtual Task<T> GetAsync(int id)
+          
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, string[] referenceFields = null)
         {
-            return dataRepository.GetByIdAsync(id);
+            return await dataRepository.GetSingleAsync(predicate, referenceFields); 
         }
-
-        [MonitorAsyncAspect]
-        public virtual Task<IEnumerable<T>> GetAsync(
-            int? limit = null,
-            int? offset = null,
-            Expression predicate = null)
+        public async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
         {
-            return dataRepository.GetAsync(limit, offset, predicate);
-        }
-
-        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
-        {
-            return await dataRepository.GetAsync(predicate, paging);
+            return await dataRepository.GetAllAsync(predicate, paging);
         }
 
         [MonitorAsyncAspect]

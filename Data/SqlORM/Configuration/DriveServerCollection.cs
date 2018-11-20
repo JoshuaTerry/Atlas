@@ -12,7 +12,8 @@ namespace DriveCentric.Data.SqlORM.Configuration
 
         public DriveServerCollection(IDataRepository<DriveServer> driveServerRepository)
         {
-            servers = driveServerRepository.Get().ToDictionary(server => server.Id);
+
+            servers = driveServerRepository.GetAllAsync(null, PageableSearch.Default).Result.data.ToDictionary(server => server.Id);
         }
 
         public string GetConnectionStringById(int id)

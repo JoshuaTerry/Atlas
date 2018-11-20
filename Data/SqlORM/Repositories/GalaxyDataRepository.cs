@@ -25,6 +25,11 @@ namespace DriveCentric.Data.SqlORM.Repositories
             this.dbFactory = dbFactory;
         }
 
+
+        public IEnumerable<T> Get(Expression<Func<T, bool>> predicate, IPageable paging)
+        {
+            throw new NotImplementedException();
+        }
         [MonitorAsyncAspect]
         public async Task<bool> DeleteByIdAsync(int id)
         {
@@ -34,57 +39,25 @@ namespace DriveCentric.Data.SqlORM.Repositories
             }
         }
 
-        [MonitorAsyncAspect]
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, string[] referenceFields = null)
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                var item = await dataAccessor.GetByIdAsync<T>(id, db);
-
-                if (EqualityComparer<T>.Default.Equals(item, default))
-                {
-                    throw new KeyNotFoundException();
-                }
-
-                return item;
+                return await dataAccessor.GetSingleAsync(db, predicate); 
             }
         }
 
         [MonitorAsyncAspect]
-        public async Task<IEnumerable<T>> GetAsync(
-            int? limit = null,
-            int? offset = null,
-            Expression predicate = null)
+        public async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
         {
             using (IDbConnection db = dbFactory.OpenDbConnection())
             {
-                return (IEnumerable<T>) await dataAccessor.GetAsync(db, limit, offset, (Expression<Func<T, bool>>)predicate);
-            }
-        }
-
-        [MonitorAsyncAspect]
-        public async Task<(long count, IEnumerable<T> data)> GetAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
-        {
-            using (IDbConnection db = dbFactory.OpenDbConnection())
-            {
-                var foo = await dataAccessor.GetAsync(db, predicate, paging);
+                var foo = await dataAccessor.GetAllAsync(db, predicate, paging);
                 var bar = (foo.count, (IEnumerable<T>)foo.data);
                 return bar;
             }
         }
-
-        [MonitorAspect]
-        public IEnumerable<T> Get(
-            int? limit = null,
-            int? offset = null,
-            Expression predicate = null)
-        {
-            using (IDbConnection db = dbFactory.OpenDbConnection())
-            {
-                return (IEnumerable<T>)dataAccessor.Get(db, limit, offset, (Expression<Func<T, bool>>)predicate);
-            }
-        }
-
+         
         [MonitorAsyncAspect]
         public async Task<long> InsertAsync(T item)
         {
@@ -106,7 +79,6 @@ namespace DriveCentric.Data.SqlORM.Repositories
         public void Save()
         {
             throw new NotImplementedException();
-        }
-         
+        } 
     }
 }
