@@ -22,9 +22,8 @@ namespace DriveCentric.Data.SqlORM.Repositories
 
         public StarDataRepository(
             IContextInfoAccessor contextInfoAccessor,
-            IDataAccessor dataAccessor,
             IDriveServerCollection driveServerCollection
-            ) : base(contextInfoAccessor, dataAccessor)
+            ) : base(contextInfoAccessor)
         {
             this.driveServerCollection = driveServerCollection; 
         }

@@ -19,9 +19,8 @@ namespace DriveCentric.Data.SqlORM.Repositories
 
         public GalaxyDataRepository(
             IContextInfoAccessor contextInfoAccessor,
-            IDbConnectionFactory dbFactory,
-            IDataAccessor dataAccessor
-            ) : base(contextInfoAccessor, dataAccessor)
+            IDbConnectionFactory dbFactory
+            ) : base(contextInfoAccessor)
         {
             this.dbFactory = dbFactory;
         }

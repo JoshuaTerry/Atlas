@@ -1,5 +1,4 @@
-﻿using DriveCentric.Data.SqlORM.Data;
-using DriveCentric.Data.SqlORM.Repositories;
+﻿using DriveCentric.Data.SqlORM.Repositories;
 using DriveCentric.Model;
 using DriveCentric.Model.Interfaces;
 using DriveCentric.Utilities.Configuration; 
@@ -15,11 +14,8 @@ namespace DriveCentric.Data.SqlORM.Configuration
         public static IServiceCollection AddSqlOrmLite(this IServiceCollection services)
         {
             ConfigureConnectionFactory(services);
-
-            services.AddSingleton<IDataAccessor, DataAccessor>();
-
-            services.AddSingleton<IDataRepository<DriveServer>, GalaxyDataRepository<DriveServer>>();
-
+              
+            services.AddSingleton<IDataRepository<DriveServer>, GalaxyDataRepository<DriveServer>>(); 
             services.AddSingleton<IDriveServerCollection, DriveServerCollection>();
             InstantiateDriveServerCollection(services);
 

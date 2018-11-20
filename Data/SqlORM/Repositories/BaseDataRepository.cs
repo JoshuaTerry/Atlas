@@ -3,9 +3,11 @@ using DriveCentric.Model.Interfaces;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using ServiceStack.Data;
+using ServiceStack.OrmLite;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -16,9 +18,8 @@ namespace DriveCentric.Data.SqlORM.Repositories
         protected readonly IDataAccessor dataAccessor;
         public IContextInfoAccessor ContextInfoAccessor { get; }
 
-        protected BaseDataRepository(IContextInfoAccessor contextInfoAccessor, IDataAccessor dataAccessor)  
-        {
-            this.dataAccessor = dataAccessor;
+        protected BaseDataRepository(IContextInfoAccessor contextInfoAccessor)  
+        { 
             this.ContextInfoAccessor = contextInfoAccessor;
         }
 
@@ -26,8 +27,8 @@ namespace DriveCentric.Data.SqlORM.Repositories
         public virtual async Task<bool> DeleteByIdAsync(int id)
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
-            {
-                return await dataAccessor.DeleteByIdAsync<T>(id, db) > 0;
+            { 
+                return await db.DeleteByIdAsync<T>(id) > 0;
             }
         }
 
@@ -36,16 +37,24 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return await dataAccessor.GetSingleAsync(db, predicate, referenceFields);
+                var result = await db.SingleAsync<T>(predicate);
+                await db.LoadReferencesAsync(result, referenceFields);
+                return result;
             }
         }
 
         [MonitorAsyncAspect]
-        public virtual async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
+        public virtual async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null)
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return await dataAccessor.GetAllAsync(db, predicate, paging);
+                var count = db.Count<T>(predicate);
+                bool isDescending = paging.OrderBy.StartsWith("-");
+
+                if (isDescending)
+                    return (count, await db.LoadSelectAsync(db.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderByDescending(GetModelOrderByField(db, paging)), referenceFields));
+                else
+                    return (count, await db.LoadSelectAsync(db.From<T>().Where(predicate).Limit(skip: paging.Offset, rows: paging.Limit).OrderBy(GetModelOrderByField(db, paging)), referenceFields));
             }
         }
 
@@ -54,7 +63,14 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return await dataAccessor.InsertAsync(db, item);
+                try
+                {
+                    return await db.InsertAsync(item, selectIdentity: true);
+                }
+                catch (Exception exception)
+                {
+                    throw new Exception($"Error trying to insert {typeof(T)}.", exception);
+                }
             }
         }
 
@@ -63,10 +79,20 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
             {
-                return await dataAccessor.UpdateAsync(db, item);
+                try
+                {
+                    return await db.UpdateAsync(item) > 0;
+                }
+                catch (Exception exception)
+                {
+                    throw new Exception($"Error trying to update {typeof(T)}.", exception);
+                }
             }
         }
 
         public abstract IDbConnectionFactory GetDbFactory();
+
+        private string GetModelOrderByField(IDbConnection connection, IPageable paging)
+            => connection.From<T>().ModelDef.AllFieldDefinitionsArray.Where(f => f.Name.TrimStart('-') == paging.OrderBy).Select(f => string.IsNullOrWhiteSpace(f.Alias) ? f.Name : f.Alias).FirstOrDefault();
     }
 }
