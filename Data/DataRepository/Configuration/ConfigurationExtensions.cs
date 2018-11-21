@@ -49,6 +49,7 @@ namespace DriveCentric.Data.DataRepository.Configuration
         private static void AddRepositories(IServiceCollection services)
         {
             services.AddSingleton<IDataRepository<DealershipGroup>, GalaxyDataRepository<DealershipGroup>>();
+            services.AddSingleton<IDataRepository<Module>, GalaxyDataRepository<Module>>();
 
             services.AddSingleton<IDataRepository<Customer>, StarDataRepository<Customer>>();
             services.AddSingleton<IDataRepository<Deal>, StarDataRepository<Deal>>();

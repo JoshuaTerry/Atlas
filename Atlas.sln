@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.TaskService", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.BaseService", "Services\DriveCentric.BaseService\DriveCentric.BaseService.csproj", "{70662E69-08D8-45DB-B933-6543D4EA788C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriveCentric.ModuleService", "Services\DriveCentric.StoreService\DriveCentric.ModuleService.csproj", "{8F6B53BB-E64C-4E87-BBBA-37FF62C849F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{70662E69-08D8-45DB-B933-6543D4EA788C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70662E69-08D8-45DB-B933-6543D4EA788C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70662E69-08D8-45DB-B933-6543D4EA788C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F6B53BB-E64C-4E87-BBBA-37FF62C849F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F6B53BB-E64C-4E87-BBBA-37FF62C849F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F6B53BB-E64C-4E87-BBBA-37FF62C849F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F6B53BB-E64C-4E87-BBBA-37FF62C849F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,6 +84,7 @@ Global
 		{AE28848D-5939-4451-8B7D-8885E867F5DC} = {3177FB36-9E26-46AF-9CA4-7F3308D9BF5B}
 		{17B7F37F-49D3-4682-88DA-E5C41074B80F} = {7309CAB3-7CE6-4E8B-A8DF-5AF484917734}
 		{70662E69-08D8-45DB-B933-6543D4EA788C} = {7309CAB3-7CE6-4E8B-A8DF-5AF484917734}
+		{8F6B53BB-E64C-4E87-BBBA-37FF62C849F2} = {7309CAB3-7CE6-4E8B-A8DF-5AF484917734}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A3FE7591-A740-44F4-8D2F-E87940C4465C}
