@@ -1,9 +1,7 @@
-﻿using DriveCentric.Data.SqlORM.Data;
-using DriveCentric.Data.SqlORM.Model;
-using DriveCentric.Data.SqlORM.Repositories;
+﻿using DriveCentric.Data.SqlORM.Repositories;
 using DriveCentric.Model;
-using DriveCentric.Utilities.Configuration;
-using DriveCentric.Utilities.Data;
+using DriveCentric.Model.Interfaces;
+using DriveCentric.Utilities.Configuration; 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceStack.Data;
@@ -16,11 +14,8 @@ namespace DriveCentric.Data.SqlORM.Configuration
         public static IServiceCollection AddSqlOrmLite(this IServiceCollection services)
         {
             ConfigureConnectionFactory(services);
-
-            services.AddSingleton<IDataAccessor, DataAccessor>();
-
-            services.AddSingleton<IDataRepository<IDriveServer>, GalaxyDataRepository<IDriveServer, DriveServer>>();
-
+              
+            services.AddSingleton<IDataRepository<DriveServer>, GalaxyDataRepository<DriveServer>>(); 
             services.AddSingleton<IDriveServerCollection, DriveServerCollection>();
             InstantiateDriveServerCollection(services);
 
@@ -31,11 +26,11 @@ namespace DriveCentric.Data.SqlORM.Configuration
 
         private static void AddRepositories(IServiceCollection services)
         {
-            services.AddSingleton<IDataRepository<IDealershipGroup>, GalaxyDataRepository<IDealershipGroup, DealershipGroup>>();
+            services.AddSingleton<IDataRepository<DealershipGroup>, GalaxyDataRepository<DealershipGroup>>();
 
-            services.AddSingleton<IDataRepository<ICustomer>, StarDataRepository<ICustomer, Customer>>();
-            services.AddSingleton<IDataRepository<IDeal>, StarDataRepository<IDeal, Deal>>();
-            services.AddSingleton<IDataRepository<ITask>, StarDataRepository<ITask, Task>>();
+            services.AddSingleton<IDataRepository<Customer>, StarDataRepository<Customer>>();
+            services.AddSingleton<IDataRepository<Deal>, StarDataRepository<Deal>>();
+            services.AddSingleton<IDataRepository<Task>, StarDataRepository<Task>>();
         }
 
         private static void InstantiateDriveServerCollection(IServiceCollection services)

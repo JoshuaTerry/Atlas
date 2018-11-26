@@ -6,21 +6,22 @@ using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Utilities.Data;
+using DriveCentric.Model.Interfaces;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    public abstract class BaseLogic<T> : BaseWithContextInfoAccessor, IBaseLogic<T>
+    public abstract class BaseLogic<T> : IContextAccessible, IBaseLogic<T>
         where T : IBaseModel
     {
         protected readonly IDataRepository<T> dataRepository;
+        protected readonly IContextInfoAccessor contextInfoAccessor;
 
-        protected BaseLogic(
-            IContextInfoAccessor contextInfoAccessor,
-            IDataRepository<T> dataRepository
-            ) : base(contextInfoAccessor)
+        public IContextInfoAccessor ContextInfoAccessor { get { return contextInfoAccessor; } }
+
+        protected BaseLogic(IContextInfoAccessor contextInfoAccessor, IDataRepository<T> dataRepository)  
         {
             this.dataRepository = dataRepository ?? throw new ArgumentNullException(nameof(dataRepository));
+            this.contextInfoAccessor = contextInfoAccessor;
         }
 
         [MonitorAsyncAspect]
@@ -28,20 +29,14 @@ namespace DriveCentric.BusinessLogic.Implementation
         {
             return dataRepository.DeleteByIdAsync(id);
         }
-
-        [MonitorAsyncAspect]
-        public virtual Task<T> GetAsync(int id)
+          
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, string[] referenceFields = null)
         {
-            return dataRepository.GetByIdAsync(id);
+            return await dataRepository.GetSingleAsync(predicate, referenceFields); 
         }
-
-        [MonitorAsyncAspect]
-        public virtual Task<IEnumerable<T>> GetAsync(
-            int? limit = null,
-            int? offset = null,
-            Expression predicate = null)
+        public async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
         {
-            return dataRepository.GetAsync(limit, offset, predicate);
+            return await dataRepository.GetAllAsync(predicate, paging);
         }
 
         [MonitorAsyncAspect]

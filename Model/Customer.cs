@@ -1,11 +1,10 @@
-﻿using System;
-using DriveCentric.Model;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
+using System;
 
-namespace DriveCentric.Data.SqlORM.Model
+namespace DriveCentric.Model
 {
-    public class Customer : ICustomer
+    public class Customer : IBaseModel
     {
         [PrimaryKey]
         [JsonIgnore]
@@ -20,8 +19,5 @@ namespace DriveCentric.Data.SqlORM.Model
 
         [Alias("PrimaryLastName")]
         public string LastName { get; set; }
-
-
     }
 }
-

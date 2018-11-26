@@ -36,7 +36,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Model\DriveCentric.Model.csproj" />
       <ProjectReference Include="..\..\Utilities\DriveCentric.Utilities.csproj" />
-      <ProjectReference Include="..\SqlORM\DriveCentric.Data.SqlORM.csproj" />
     </ItemGroup>
 
 </Project>

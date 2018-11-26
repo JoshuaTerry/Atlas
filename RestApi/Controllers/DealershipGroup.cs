@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DriveCentric.BaseService.Controllers;
+using DriveCentric.Model;
 using DriveCentric.ServiceLayer.Interfaces;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
@@ -13,17 +14,17 @@ namespace DriveCentric.RestApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/v1/dealershipgroup")]
-    public class DealershipGroup : BaseController
+    public class DealershipGroup : BaseController<IDealershipGroup>
     {
         private readonly IDealershipGroupService dealershipGroupService;
 
         public DealershipGroup(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
-            IDealershipGroupService dealershipGroupService
-            ) : base(httpContextAccessor, contextInfoAccessor)
+            IDealershipGroupService service
+            ) : base(httpContextAccessor, contextInfoAccessor, service)
         {
-            this.dealershipGroupService = dealershipGroupService;
+            this.dealershipGroupService = service;
         }
 
         // GET: api/v1/DealershipGroup

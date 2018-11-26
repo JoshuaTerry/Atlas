@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DriveCentric.Model;
 using ServiceStack.DataAnnotations;
 
-namespace DriveCentric.Data.SqlORM.Model
+namespace DriveCentric.Model
 {
-    public class User : IUser
+    public class User : IBaseModel
     {
         [PrimaryKey]
         [Alias("pkUserID")]

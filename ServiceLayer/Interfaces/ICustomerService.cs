@@ -3,5 +3,5 @@ using DriveCentric.Model;
 
 namespace DriveCentric.ServiceLayer.Interfaces
 {
-    public interface ICustomerService : IBaseService<ICustomer> { }
+    public interface ICustomerService : IBaseService<Customer> { }
 }
