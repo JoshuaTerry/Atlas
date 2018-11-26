@@ -22,7 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AAA44386-1F9A-4D87-B1E2-47BFABEDA1E2}"
 	ProjectSection(SolutionItems) = preProject
 		RuleSet.ruleset = RuleSet.ruleset
-		..\..\..\Desktop\Template Service\TemplateService.zip = ..\..\..\Desktop\Template Service\TemplateService.zip
+		TemplateService.zip = TemplateService.zip
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{7309CAB3-7CE6-4E8B-A8DF-5AF484917734}"
