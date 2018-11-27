@@ -1,16 +1,17 @@
-﻿using DriveCentric.ServiceLayer.Configuration;
+﻿using DriveCentric.BusinessLogic.Configuration;
+using DriveCentric.ModuleService.Services;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Swagger;
 
-namespace DriveCentric.RestApi
+namespace DriveCentric.ModuleService
 {
     public class Startup
     {
@@ -28,16 +29,14 @@ namespace DriveCentric.RestApi
             services.AddSingleton(Configuration);
 
             AddSecurityServices(services);
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IContextInfoAccessor, ContextInfoAccessor>();
-            services.AddServiceLayer();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "Atlas API", Version = "v1" });
-            });
+            services.AddSingleton<IModuleService, Services.ModuleService>();
+
+            services.AddBusinessLogic();
         }
 
         private void AddSecurityServices(IServiceCollection services)
@@ -64,24 +63,19 @@ namespace DriveCentric.RestApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(
-            IApplicationBuilder app,
-            IHostingEnvironment env
-            )
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
+            else
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas V1");
-            });
+                app.UseHsts();
+            }
 
+            app.UseHttpsRedirection();
             app.UseAuthentication();
-
             app.UseMvc();
         }
     }
