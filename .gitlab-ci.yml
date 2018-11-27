@@ -16,11 +16,7 @@ build_job:
 test_job:
   stage: test
   script:
-    - dotnet test .\RestApi.Tests\DriveCentric.RestApi.Tests.csproj
-    - dotnet test .\ServiceLayer.CoreTests\DriveCentric.ServiceLayer.CoreTests.csproj
-    - dotnet test .\Utilities.CoreTests\DriveCentric.Utilities.CoreTests.csproj
-    - dotnet test .\Business\BusinessLogic.CoreTests\DriveCentric.BusinessLogic.CoreTests.csproj
-    - dotnet test .\Data\SqlORM.CoreTests\DriveCentric.Data.SqlORM.CoreTests.csproj
+    
 
 publish_job:
   stage: publish
