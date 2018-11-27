@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DriveCentric.Model;
-using DriveCentric.Model.Interfaces;
-using DriveCentric.Utilities.Configuration; 
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
+using DriveCentric.Utilities.Configuration;
 
 namespace DriveCentric.Data.SqlORM.Configuration
 {
@@ -12,7 +12,6 @@ namespace DriveCentric.Data.SqlORM.Configuration
 
         public DriveServerCollection(IDataRepository<DriveServer> driveServerRepository)
         {
-
             servers = driveServerRepository.GetAllAsync(null, PageableSearch.Default).Result.data.ToDictionary(server => server.Id);
         }
 

@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{3177FB36-9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.Data.DataRepository", "Data\DataRepository\DriveCentric.Data.DataRepository.csproj", "{AE28848D-5939-4451-8B7D-8885E867F5DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.Model", "Model\DriveCentric.Model.csproj", "{CAD645BA-19E1-485A-87BA-2DC1346562B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.Core", "Model\DriveCentric.Core.csproj", "{CAD645BA-19E1-485A-87BA-2DC1346562B0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.Utilities", "Utilities\DriveCentric.Utilities.csproj", "{9FE9874A-C78E-4E11-8806-12F6C578BF7B}"
 EndProject

@@ -1,11 +1,11 @@
 ﻿using DriveCentric.BusinessLogic.Interfaces;
-using DriveCentric.Model;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Model.Interfaces;
+using DriveCentric.Core.Interfaces;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    class ModuleLogic : BaseLogic<Module>, IModuleLogic
+    public class ModuleLogic : BaseLogic<Module>, IModuleLogic
     {
         public ModuleLogic(
             IContextInfoAccessor contextInfoAccessor,

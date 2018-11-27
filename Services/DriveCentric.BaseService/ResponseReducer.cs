@@ -1,10 +1,10 @@
-﻿using DriveCentric.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
 
 namespace DriveCentric.BaseService
 {
@@ -35,11 +35,11 @@ namespace DriveCentric.BaseService
             }
             else if (response.Data is IEnumerable<IBaseModel>)
             {
-                dynamicResponse.Data = ToDynamicList((response.Data as IEnumerable<IBaseModel>), fields);
+                dynamicResponse.Data = ToDynamicList(response.Data as IEnumerable<IBaseModel>, fields);
             }
             else if (response.Data is IBaseModel)
             {
-                dynamicResponse.Data = ToDynamicObject((response.Data as IBaseModel), fields);
+                dynamicResponse.Data = ToDynamicObject(response.Data as IBaseModel, fields);
             }
             else if (IsSimple(response.Data.GetType()))
             {
@@ -48,7 +48,6 @@ namespace DriveCentric.BaseService
 
             return dynamicResponse;
         }
-
 
         internal bool IsSimple(Type type)
         {
@@ -64,10 +63,10 @@ namespace DriveCentric.BaseService
             where T : IBaseModel
         {
             fields = string.IsNullOrWhiteSpace(fields) ? null : fields;
-             
+
             if (fields == null)
                 return data;
-            
+
             string upperCaseFields = fields?.ToUpper();
             List<string> listOfFields = upperCaseFields?.Split(',').ToList() ?? new List<string>();
 
@@ -79,8 +78,8 @@ namespace DriveCentric.BaseService
         {
             fields = string.IsNullOrWhiteSpace(fields) ? null : fields;
 
-            if (fields == null) 
-                return data; 
+            if (fields == null)
+                return data;
 
             string upperCaseFields = fields?.ToUpper();
             List<string> listOfFields = upperCaseFields?.Split(',').ToList() ?? new List<string>();
@@ -88,14 +87,13 @@ namespace DriveCentric.BaseService
             return RecursivelyReduce(data, listOfFields);
         }
 
-       
         private dynamic RecursivelyReduce<T>(T data, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
             where T : IBaseModel
         {
-            if (level >= MAX_RECURSION_DEPTH) 
-                return null; 
+            if (level >= MAX_RECURSION_DEPTH)
+                return null;
 
-            dynamic returnObject = new ExpandoObject(); 
+            dynamic returnObject = new ExpandoObject();
             if (visited == null)
             {
                 visited = new List<int> { data.Id };
@@ -110,12 +108,11 @@ namespace DriveCentric.BaseService
             {
                 visited = visited.Union(new int[] { data.Id });
             }
-             
-            PropertyInfo[] properties = data.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            returnObject = ProcessProperties(data, properties, fieldsToInclude, visited, level); 
 
-            return returnObject;
+            PropertyInfo[] properties = data.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            return ProcessProperties(data, properties, fieldsToInclude, visited, level);
         }
+
         private ExpandoObject ProcessProperties<T>(T data, PropertyInfo[] properties, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
         {
             dynamic item = new ExpandoObject();
@@ -124,7 +121,8 @@ namespace DriveCentric.BaseService
             bool hasExcludes = (excludesCount > 0);
 
             // Include all fields if field list is empty, or field list contains only fields to exclude.
-            bool includeEverything = (fieldsToInclude == null || fieldsToInclude.Count == 0 || excludesCount == fieldsToInclude.Count || fieldsToInclude.Contains(PathHelper.IncludeEverythingField));
+            bool includeEverything =
+                fieldsToInclude == null || fieldsToInclude.Count == 0 || excludesCount == fieldsToInclude.Count || fieldsToInclude.Contains(PathHelper.IncludeEverythingField);
 
             foreach (PropertyInfo property in properties)
             {
@@ -133,20 +131,20 @@ namespace DriveCentric.BaseService
                 string propertyNameExclude = PathHelper.FieldExcludePrefix + propertyNameUppercased;
                 string propertyNameAsAccessor = propertyNameUppercased + ".";
 
-                if (fieldValue is IEnumerable<IBaseModel> && (includeEverything && (!hasExcludes && fieldsToInclude.Contains(propertyNameExclude))
+                if (fieldValue is IEnumerable<IBaseModel> && ((includeEverything && (!hasExcludes && fieldsToInclude.Contains(propertyNameExclude)))
                                           || fieldsToInclude.Any(a => a.StartsWith(propertyNameAsAccessor))))
                 {
                     var strippedFieldList = StripFieldList(fieldsToInclude, propertyNameUppercased);
-                    ((IDictionary<string, object>)item)[property.Name] = RecursivelyReduce((fieldValue as IEnumerable<IBaseModel>), strippedFieldList, visited, level + 1);
+                    ((IDictionary<string, object>)item)[property.Name] = RecursivelyReduce(fieldValue as IEnumerable<IBaseModel>, strippedFieldList, visited, level + 1);
                 }
-                else if (fieldValue is IBaseModel && (includeEverything && (!hasExcludes && fieldsToInclude.Contains(propertyNameExclude))
+                else if (fieldValue is IBaseModel && ((includeEverything && (!hasExcludes && fieldsToInclude.Contains(propertyNameExclude)))
                                           || fieldsToInclude.Any(a => a.StartsWith(propertyNameAsAccessor))))
                 {
                     var strippedFieldList = StripFieldList(fieldsToInclude, propertyNameUppercased);
-                    ((IDictionary<string, object>)item)[property.Name] = RecursivelyReduce((fieldValue as IBaseModel), strippedFieldList, visited, level + 1);
+                    ((IDictionary<string, object>)item)[property.Name] = RecursivelyReduce(fieldValue as IBaseModel, strippedFieldList, visited, level + 1);
                 }
-                else if ((includeEverything && !(hasExcludes && fieldsToInclude.Contains(propertyNameExclude))
-                                          || fieldsToInclude.Contains(propertyNameUppercased)))
+                else if ((includeEverything && !(hasExcludes && fieldsToInclude.Contains(propertyNameExclude)))
+                                          || fieldsToInclude.Contains(propertyNameUppercased))
                 {
                     ((IDictionary<string, object>)item)[property.Name] = fieldValue;
                 }
@@ -154,6 +152,7 @@ namespace DriveCentric.BaseService
 
             return item;
         }
+
         private List<string> StripFieldList(List<string> fieldsToInclude, string propertyNameUppercased)
         {
             if (fieldsToInclude.Count == 0)

@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using DriveCentric.Model;
-using DriveCentric.Utilities.Aspects;
+﻿using DriveCentric.Core.Interfaces;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Model.Interfaces;
 using ServiceStack.Data;
-using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {

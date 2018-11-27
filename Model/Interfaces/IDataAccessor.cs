@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DriveCentric.Model.Interfaces
+namespace DriveCentric.Core.Interfaces
 {
     public interface IDataAccessor
     {

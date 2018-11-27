@@ -1,8 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>DriveCentric.Task</RootNamespace>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\..\RuleSet.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Business\BusinessLogic\DriveCentric.BusinessLogic.csproj" />
+    <ProjectReference Include="..\..\Model\DriveCentric.Core.csproj" />
     <ProjectReference Include="..\DriveCentric.BaseService\DriveCentric.BaseService.csproj" />
   </ItemGroup>
 
