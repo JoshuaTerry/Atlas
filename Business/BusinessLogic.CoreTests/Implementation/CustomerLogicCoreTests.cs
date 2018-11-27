@@ -13,19 +13,19 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
     [TestClass]
     public class CustomerLogicCoreTests
     {
-        private Mock<IDataRepository<ICustomer>> customerDataRepositoryMock;
+        private Mock<IDataRepository<Customer>> customerDataRepositoryMock;
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
         private CustomerLogic businessLogic;
-        private Mock<ICustomer> customerMock;
+        private Mock<Customer> customerMock;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            customerDataRepositoryMock = new Mock<IDataRepository<ICustomer>>();
+            customerDataRepositoryMock = new Mock<IDataRepository<Customer>>();
             contextInfoAccessorMock = new Mock<IContextInfoAccessor>();
 
             businessLogic = new CustomerLogic(contextInfoAccessorMock.Object, customerDataRepositoryMock.Object);
-            customerMock = new Mock<ICustomer>();
+            customerMock = new Mock<Customer>();
         }
 
         [TestMethod]

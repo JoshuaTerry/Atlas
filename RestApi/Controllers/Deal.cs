@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DriveCentric.BaseService.Controllers;
+using DriveCentric.Model;
 using DriveCentric.ServiceLayer.Interfaces;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
@@ -14,17 +15,17 @@ namespace DriveCentric.RestApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/v1/deal")]
-    public class Deal : BaseController
+    public class Deal : BaseController<IDeal>
     {
         private readonly IDealService dealService;
 
         public Deal(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
-            IDealService dealService
-            ) : base(httpContextAccessor, contextInfoAccessor)
+            IDealService service
+            ) : base(httpContextAccessor, contextInfoAccessor, service)
         {
-            this.dealService = dealService;
+            this.dealService = service;
         }
 
         //// GET: api/v1/Deal

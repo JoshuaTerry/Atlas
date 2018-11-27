@@ -16,7 +16,7 @@ namespace DriveCentric.ServiceLayer.CoreTests.Services
         private CustomerService service;
         private Mock<ICustomerLogic> businessLogicMock;
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
-        private Mock<ICustomer> customerMock;
+        private Mock<Customer> customerMock;
 
         [TestInitialize]
         public void TestInitialize()
@@ -24,7 +24,7 @@ namespace DriveCentric.ServiceLayer.CoreTests.Services
             businessLogicMock = new Mock<ICustomerLogic>();
             contextInfoAccessorMock = new Mock<IContextInfoAccessor>();
             service = new CustomerService(contextInfoAccessorMock.Object, businessLogicMock.Object);
-            customerMock = new Mock<ICustomer>();
+            customerMock = new Mock<Customer>();
         }
 
         [TestMethod]

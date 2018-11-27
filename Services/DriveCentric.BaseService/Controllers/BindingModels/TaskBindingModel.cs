@@ -11,7 +11,7 @@ namespace DriveCentric.BaseService.Controllers.BindingModels
     {
         public int CustomerId { get; set; }
         [JsonConverter(typeof(CustomerConverter))]
-        public ICustomer Customer { get; set; }
+        public Customer Customer { get; set; }
 
         public int CreatedByUserId { get; set; }
         [JsonConverter(typeof(UserConverter))]

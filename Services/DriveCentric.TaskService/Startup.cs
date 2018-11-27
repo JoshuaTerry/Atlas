@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace DriveCentric.TaskService
 {
@@ -37,6 +38,11 @@ namespace DriveCentric.TaskService
             services.AddSingleton<ITaskService, Services.TaskService>();
 
             services.AddBusinessLogic();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" });
+            });
         }
 
         private void AddSecurityServices(IServiceCollection services)
@@ -73,6 +79,12 @@ namespace DriveCentric.TaskService
             {
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1");
+            });
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

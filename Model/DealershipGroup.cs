@@ -1,11 +1,10 @@
-﻿using System;
-using DriveCentric.Model;
-using ServiceStack.DataAnnotations;
+﻿using ServiceStack.DataAnnotations;
+using System;
 
-namespace DriveCentric.Data.SqlORM.Model
+namespace DriveCentric.Model
 {
     [Alias("StoreGroup")]
-    public class DealershipGroup : IDealershipGroup
+    public class DealershipGroup : IBaseModel
     {
         [PrimaryKey]
         [Alias("fkGroupID")]
@@ -17,4 +16,4 @@ namespace DriveCentric.Data.SqlORM.Model
         [Alias("Name")]
         public string Name { get; set; }
     }
-}
+} 

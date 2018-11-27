@@ -1,15 +1,15 @@
 ﻿using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Utilities.Data;
+using DriveCentric.Model.Interfaces;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    public class DealLogic : BaseLogic<IDeal>, IDealLogic
+    public class DealLogic : BaseLogic<Deal>, IDealLogic
     {
         public DealLogic(
             IContextInfoAccessor contextInfoAccessor,
-            IDataRepository<IDeal> dataRepository
+            IDataRepository<Deal> dataRepository
             ) : base(contextInfoAccessor, dataRepository)
         { }
     }

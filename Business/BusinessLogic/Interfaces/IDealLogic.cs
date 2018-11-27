@@ -2,5 +2,5 @@
 
 namespace DriveCentric.BusinessLogic.Interfaces
 {
-    public interface IDealLogic : IBaseLogic<IDeal> { }
+    public interface IDealLogic : IBaseLogic<Deal> { }
 }

@@ -21,5 +21,5 @@ namespace DriveCentric.Utilities.Aspects
                 await args.ProceedAsync();
             }
         }
-    }
+    } 
 }

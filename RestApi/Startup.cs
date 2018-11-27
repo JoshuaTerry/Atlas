@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace DriveCentric.RestApi
 {
@@ -32,6 +33,11 @@ namespace DriveCentric.RestApi
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IContextInfoAccessor, ContextInfoAccessor>();
             services.AddServiceLayer();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Atlas API", Version = "v1" });
+            });
         }
 
         private void AddSecurityServices(IServiceCollection services)
@@ -67,6 +73,12 @@ namespace DriveCentric.RestApi
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas V1");
+            });
 
             app.UseAuthentication();
 
