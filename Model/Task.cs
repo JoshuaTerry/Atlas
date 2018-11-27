@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using DriveCentric.Model.Enums;
+using DriveCentric.Model.Interfaces;
 using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
 
 namespace DriveCentric.Model
 {
-    public class Task : IBaseModel
+    public class Task : IBaseModel, IStarEntity
     {
         [PrimaryKey]
         [Alias("pkTaskID")]

@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq; 
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Threading.Tasks;
-using DriveCentric.Model;
-using DriveCentric.Utilities.Aspects;
+﻿using DriveCentric.Model;
+using DriveCentric.Model.Interfaces;
 using DriveCentric.Utilities.Configuration;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Model.Interfaces;
-using ServiceStack.OrmLite;
 using ServiceStack.Data;
+using ServiceStack.OrmLite;
+using System;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
-    public class StarDataRepository<T> : BaseDataRepository<T>, IDataRepository<T>
-        where T : IBaseModel, new()
+    public class StarDataRepository<T> : BaseDataRepository<T> 
+        where T : IBaseModel, IStarEntity, new()
     {
         private readonly IDriveServerCollection driveServerCollection;
 

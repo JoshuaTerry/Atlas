@@ -1,10 +1,11 @@
-﻿using ServiceStack.DataAnnotations;
+﻿using DriveCentric.Model.Interfaces;
+using ServiceStack.DataAnnotations;
 using System;
 
 namespace DriveCentric.Model
 {
     [Alias("StoreGroup")]
-    public class DealershipGroup : IBaseModel
+    public class DealershipGroup : IBaseModel, IStarEntity
     {
         [PrimaryKey]
         [Alias("fkGroupID")]

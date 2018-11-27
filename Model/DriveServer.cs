@@ -1,10 +1,11 @@
 ﻿using System;
+using DriveCentric.Model.Interfaces;
 using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
 
 namespace DriveCentric.Model
 {
-    public class DriveServer : IBaseModel
+    public class DriveServer : IBaseModel, IGalaxyEntity
     {
         [PrimaryKey]
         [JsonIgnore]

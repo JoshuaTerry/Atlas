@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DriveCentric.Model.Interfaces;
 using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
 
 namespace DriveCentric.Model
 {
-    public class Store : IBaseModel
+    public class Store : IBaseModel, IStarEntity
     {
         [PrimaryKey]
         [JsonIgnore]

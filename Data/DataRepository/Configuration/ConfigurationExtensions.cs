@@ -48,12 +48,12 @@ namespace DriveCentric.Data.DataRepository.Configuration
         }
         private static void AddRepositories(IServiceCollection services)
         {
-            services.AddSingleton<IDataRepository<DealershipGroup>, GalaxyDataRepository<DealershipGroup>>();
-            services.AddSingleton<IDataRepository<Module>, GalaxyDataRepository<Module>>();
+            //services.AddSingleton<IDataRepository<DealershipGroup>, GalaxyDataRepository<DealershipGroup>>();
+            //services.AddSingleton<IDataRepository<Module>, GalaxyDataRepository<Module>>();
 
-            services.AddSingleton<IDataRepository<Customer>, StarDataRepository<Customer>>();
-            services.AddSingleton<IDataRepository<Deal>, StarDataRepository<Deal>>();
-            services.AddSingleton<IDataRepository<Task>, StarDataRepository<Task>>();
+            //services.AddSingleton<IDataRepository<Customer>, StarDataRepository<Customer>>();
+            //services.AddSingleton<IDataRepository<Deal>, StarDataRepository<Deal>>();
+            //services.AddSingleton<IDataRepository<Task>, StarDataRepository<Task>>();
         }
 
         private static void InstantiateDriveServerCollection(IServiceCollection services)
