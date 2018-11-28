@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq; 
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Threading.Tasks;
-using DriveCentric.Model;
-using DriveCentric.Utilities.Aspects;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Utilities.Configuration;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Model.Interfaces;
-using ServiceStack.OrmLite;
 using ServiceStack.Data;
+using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
@@ -25,14 +17,14 @@ namespace DriveCentric.Data.SqlORM.Repositories
             IDriveServerCollection driveServerCollection
             ) : base(contextInfoAccessor)
         {
-            this.driveServerCollection = driveServerCollection; 
+            this.driveServerCollection = driveServerCollection;
         }
-         
+
         public override IDbConnectionFactory GetDbFactory()
         {
             try
             {
-                var driveServerId = 21;
+                const int driveServerId = 21;
                 //var driveServerId = Convert.ToInt32(ContextInfoAccessor.ContextInfo.User.Claims.Single(c => c.Type == "custom:DriveServerId"));
 
                 return new OrmLiteConnectionFactory(
@@ -44,6 +36,6 @@ namespace DriveCentric.Data.SqlORM.Repositories
             {
                 throw new Exception("No DriveServerId was found in the token.", ex);
             }
-        } 
+        }
     }
 }

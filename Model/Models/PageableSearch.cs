@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DriveCentric.Core.Interfaces;
 
-namespace DriveCentric.Model
+namespace DriveCentric.Core.Models
 {
     public class PageableSearch : IPageable
     {

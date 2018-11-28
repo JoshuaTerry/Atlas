@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Model;
 using ServiceStack.DataAnnotations;
 
-namespace DriveCentric.Model
+namespace DriveCentric.Core.Models
 {
     public class User : IBaseModel
     {
