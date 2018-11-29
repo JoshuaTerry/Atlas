@@ -12,64 +12,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DriveCentric.Data.SqlORM.Repositories
-{
-    public interface IRepository
-    {
-        SqlExpression<T> GetEntities<T>();
-        Task<IEnumerable<T>> GetAllAsync<T>(IDbConnection connection, SqlExpression<T> expression, string[] referenceFields = null) where T : IBaseModel, new();
-        Task<long> GetCount<T>(IDbConnection connection, SqlExpression<T> expression) where T : IBaseModel, new();
-        Task<long> DeleteByIdAsync<T>(IDbConnection connection, int id) where T : IBaseModel, new();
-        Task<long> DeleteAsync<T>(IDbConnection connection, SqlExpression<T> expression) where T : IBaseModel, new();
-        Task<T> GetSingleAsync<T>(IDbConnection connection, SqlExpression<T> expression, string[] referenceFields = null) where T : IBaseModel, new();
-        Task<long> InsertAsync<T>(IDbConnection connection, T item) where T : IBaseModel, new();
-        Task<long> UpdateAsync<T>(IDbConnection connection, T item) where T : IBaseModel, new();            
-    }
-    public class Repository : IRepository
-    {
-        private readonly IContextInfoAccessor contextInfoAccessor;
-        private readonly IDbConnectionFactory dbConnectionFactory; 
-        public Repository(IContextInfoAccessor contextInfoAccessor, IDbConnectionFactory dbConnectionFactory)
-        {
-            this.contextInfoAccessor = contextInfoAccessor;
-            this.dbConnectionFactory = dbConnectionFactory;
-        }
-        public SqlExpression<T> GetEntities<T>() => dbConnectionFactory.CreateDbConnection().From<T>();
-
-        public async Task<IEnumerable<T>> GetAllAsync<T>(IDbConnection connection, SqlExpression<T> expression, string[] referenceFields = null) where T : IBaseModel, new()
-            => await connection.LoadSelectAsync(expression, referenceFields);
-
-        public async Task<long> GetCount<T>(IDbConnection connection, SqlExpression<T> expression) where T : IBaseModel, new() 
-            => await connection.CountAsync<T>(expression);
-
-        [MonitorAsyncAspect]
-        public async Task<long> DeleteByIdAsync<T>(IDbConnection connection, int id) where T : IBaseModel, new()
-            => await connection.DeleteByIdAsync<T>(id);
-
-        [MonitorAsyncAspect]
-        public async Task<long> DeleteAsync<T>(IDbConnection connection, SqlExpression<T> expression) where T : IBaseModel, new()
-            => await connection.DeleteAsync(expression);  
-
-        [MonitorAsyncAspect]
-        public virtual async Task<T> GetSingleAsync<T>(IDbConnection connection, SqlExpression<T> expression, string[] referenceFields = null) where T : IBaseModel, new()
-        {  
-                var result = await connection.SingleAsync<T>(expression);
-                await connection.LoadReferencesAsync(result, referenceFields);
-                return result; 
-        }
-         
-        [MonitorAsyncAspect]
-        public virtual async Task<long> InsertAsync<T>(IDbConnection connection, T item) where T : IBaseModel, new()
-            => await connection.InsertAsync(item, selectIdentity: true);
-            
-
-        [MonitorAsyncAspect]
-        public virtual async Task<long> UpdateAsync<T>(IDbConnection connection, T item) where T : IBaseModel, new()
-            => await connection.SaveAsync(item) ? 1 : 0;
-           
-        private string GetModelOrderByField<T>(IDbConnection connection, IPageable paging)
-            => connection.From<T>().ModelDef.AllFieldDefinitionsArray.Where(f => f.Name.TrimStart('-') == paging.OrderBy).Select(f => string.IsNullOrWhiteSpace(f.Alias) ? f.Name : f.Alias).FirstOrDefault();
-    }
-
+{ 
     public abstract class BaseDataRepository<T> : IDataRepository<T> where T : IBaseModel, new() 
     {
         protected readonly IDataAccessor dataAccessor;

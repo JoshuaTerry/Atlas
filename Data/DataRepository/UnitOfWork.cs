@@ -12,44 +12,33 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DriveCentric.Data.DataRepository.Repositories;
+using System.Linq.Expressions;
 
 namespace DriveCentric.Data.DataRepository
 {
     public class UnitOfWork : IContextAccessible
     {
         private readonly IDriveServerCollection driveServerCollection;
-        private readonly IContextInfoAccessor contextInfoAccessor;
         private readonly IConfiguration configuration;
-        private readonly Dictionary<string, IDbConnectionFactory> connectionFactories;
-        private readonly Dictionary<string, IRepository> repositories;
-        private readonly Dictionary<IDbConnectionFactory, IRepository> factoryRepositories;
-        private readonly Queue<(string Database, Func<IRepository, IDbConnection, Task<long>> Action)> saveActions = new Queue<(string Database, Func<IRepository, IDbConnection, Task<long>> Action)>();
-        private Dictionary<IDbConnectionFactory, Queue<Func<IRepository, IDbConnection, Task<long>>>> saveActionsByFactory = new Dictionary<IDbConnectionFactory, Queue<Func<IRepository, IDbConnection, Task<long>>>>();
-
+        private readonly Dictionary<string, IDbConnectionFactory> connectionFactories; 
+        private readonly Queue<(string Database, Func<IDbConnection, Task<long>> Action)> saveActions = new Queue<(string Database, Func<IDbConnection, Task<long>> Action)>();
+        private Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>> saveActionsByFactory = new Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>>();
+        private IRepository repository;
 
         public UnitOfWork(IContextInfoAccessor contextInfoAccessor,
                             IConfiguration configuration,
                             IDriveServerCollection driveServerCollection)
         {
-            this.contextInfoAccessor = contextInfoAccessor;
+            this.ContextInfoAccessor = contextInfoAccessor;
             this.configuration = configuration;
             this.driveServerCollection = driveServerCollection;
+            this.repository = new Repository();
             connectionFactories = CreateConnectionFactories();
-            factoryRepositories = new Dictionary<IDbConnectionFactory, IRepository>
-            {
-                { connectionFactories["Galaxy"], new Repository(contextInfoAccessor, connectionFactories["Galaxy"]) },
-                { connectionFactories["Star"], new Repository(contextInfoAccessor, connectionFactories["Star"]) }
-            };
-
-            repositories = new Dictionary<string, IRepository>
-            {
-                { "Galaxy", new Repository(contextInfoAccessor, connectionFactories["Galaxy"]) },
-                { "Star", new Repository(contextInfoAccessor, connectionFactories["Star"]) }
-            };
-
+           
             foreach (var factory in connectionFactories)
             {
-                saveActionsByFactory.Add(factory.Value, new Queue<Func<IRepository, IDbConnection, Task<long>>>());
+                saveActionsByFactory.Add(factory.Value, new Queue<Func<IDbConnection, Task<long>>>());
             } 
         }
 
@@ -84,9 +73,18 @@ namespace DriveCentric.Data.DataRepository
                 throw new Exception("No DriveServerId was found in the token.", ex);
             }
         }
+          
+        public async Task<T> GetEntity<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
+        {
+            using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
+                return await repository.GetSingleAsync<T>(connection, expression, referenceFields);
+        }
 
-        public IRepository GetRepository<T>() where T : IBaseModel
-            => repositories[GetRepositoryType(typeof(T))];
+        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
+        {
+            using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
+                return await repository.GetAllAsync<T>(connection, expression, referenceFields);
+        }
 
         private IDbConnectionFactory GetFactoryByEntityType(Type type)
         {
@@ -97,37 +95,26 @@ namespace DriveCentric.Data.DataRepository
             else
                 throw new Exception("Type requested does not have an assiged connection factory."); 
         }
-
-        private string GetRepositoryType(Type type)
-        {
-            if (typeof(IGalaxyEntity).IsAssignableFrom(type))
-                return "Galaxy";
-            else if (typeof(IStarEntity).IsAssignableFrom(type))
-                return "Star";
-            else
-                throw new Exception("Type requested is not assigned to a Repository.");
-        }
-
+         
         public void Insert<T>(T entity) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IRepository, IDbConnection, Task<long>>(async (repository, connection) =>
+            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) =>
                 {
                     return await repository.InsertAsync(connection, entity);
                 }));  
 
         public void Update<T>(T entity) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IRepository, IDbConnection, Task<long>>(async (repository, connection) =>
+            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) =>
             {
                 return await repository.UpdateAsync(connection, entity);
             }));
 
         public void Delete<T>(int id) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IRepository, IDbConnection, Task<long>>(async (repository, connection) =>
+            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) =>
             {
                 return await repository.DeleteByIdAsync<T>(connection, id);
-            }));
-         
+            }));         
 
-        private async Task<long> ProcessTransaction(IDbConnectionFactory factory, Queue<Func<IRepository, IDbConnection, Task<long>>> saveActions)
+        private async Task<long> ProcessTransaction(IDbConnectionFactory factory, Queue<Func<IDbConnection, Task<long>>> saveActions)
         {
             long result = 0;
 
@@ -139,7 +126,7 @@ namespace DriveCentric.Data.DataRepository
                     {
                         foreach (var saveAction in saveActions)
                         {
-                            result += await saveAction(factoryRepositories[factory], conn);
+                            result += await saveAction(conn);
                         }
 
                         tran.Commit();
@@ -155,7 +142,7 @@ namespace DriveCentric.Data.DataRepository
             return result;
         }
 
-        public async Task<long> SaveChangesWithTransactionForSingleDatabase()
+        public async Task<long> SaveChanges()
         {
             if (saveActions.Select(x => x.Database).Distinct().Count() > 1)
                 throw new Exception("Transactions cannot span multiple databases");
@@ -169,42 +156,7 @@ namespace DriveCentric.Data.DataRepository
 
             return await ProcessTransaction(connectionFactories[database], queue); 
         }
-
-        // Save changes and attempt to handle transactions for multiple databases.
-        public async Task<long> SaveChanges_WithTransactionsFromMultipleSources()
-        {
-            var transactions = new Dictionary<string, IDbTransaction>();
-            long results = 0;
-
-            foreach (var action in saveActions)
-            {
-                try
-                {
-                    // If we haven't created a transaction for this database, create one now.
-                    if (!transactions.ContainsKey(action.Database))
-                    {
-                        // Get the connection, open it, and start a transaction.
-                        var connection = connectionFactories[action.Database].OpenDbConnection();
-                        transactions.Add(action.Database, connection.BeginTransaction());
-                    }
-
-                    // Execute the action passing in the repository for the database and the open connection.
-                    results += await action.Action(repositories[action.Database], transactions[action.Database].Connection);
-                }
-                catch (Exception ex)
-                {
-                    // Rollback and close connections.
-                    transactions.ToList().ForEach(t => { t.Value.Rollback(); t.Value.Connection.Close(); });
-                    throw ex;
-                }
-            }
-
-            // Commit and close connections.
-            transactions.ToList().ForEach(t => { t.Value.Commit(); t.Value.Connection.Close(); });
-
-            return results;
-        }
-
-        public IContextInfoAccessor ContextInfoAccessor { get { return contextInfoAccessor; } }
+         
+        public IContextInfoAccessor ContextInfoAccessor { get; }
     }
 }

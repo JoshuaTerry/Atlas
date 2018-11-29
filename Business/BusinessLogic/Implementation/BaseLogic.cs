@@ -7,9 +7,44 @@ using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using DriveCentric.Model.Interfaces;
+using DriveCentric.Data.SqlORM.Repositories;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
+    
+
+    public class TaskLogic_PoC : LogicBase<Model.Task> 
+    { 
+        public TaskLogic_PoC(IContextInfoAccessor contextInfoAccessor, IRepository repository) : base(contextInfoAccessor, repository)
+        { 
+        }
+
+        protected override Model.Task FormatGet(Model.Task entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override IEnumerable<Model.Task> FormatGet(IEnumerable<Model.Task> entities)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool ValidateAdd(Model.Task entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool ValidateDelete(Model.Task entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool ValidateUpdate(Model.Task entity)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public abstract class BaseLogic<T> : IContextAccessible, IBaseLogic<T>
         where T : IBaseModel
     {
