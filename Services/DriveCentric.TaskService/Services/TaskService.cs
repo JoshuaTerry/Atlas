@@ -1,6 +1,7 @@
 ﻿using DriveCentric.BaseService.Services;
 using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
+using DriveCentric.Model.Interfaces;
 using DriveCentric.Utilities.Context;
 
 namespace DriveCentric.TaskService.Services
@@ -9,8 +10,9 @@ namespace DriveCentric.TaskService.Services
     {
         public TaskService(
             IContextInfoAccessor contextInfoAccessor,
+            IUnitOfWork unitOfWork,
             ITaskLogic businessLogic
-            ) : base(contextInfoAccessor, businessLogic)
+            ) : base(contextInfoAccessor, unitOfWork)
         { }
     }
 }

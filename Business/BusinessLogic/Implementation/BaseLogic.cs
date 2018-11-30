@@ -69,7 +69,7 @@ namespace DriveCentric.BusinessLogic.Implementation
         {
             return await dataRepository.GetSingleAsync(predicate, referenceFields); 
         }
-        public async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] fields = null)
+        public async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null)
         {
             return await dataRepository.GetAllAsync(predicate, paging);
         }

@@ -1,4 +1,6 @@
 ﻿using DriveCentric.BusinessLogic.Configuration;
+using DriveCentric.Data.DataRepository;
+using DriveCentric.Model.Interfaces;
 using DriveCentric.TaskService.Services;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,16 +28,16 @@ namespace DriveCentric.TaskService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(services);
+            //services.AddSingleton(services);
             services.AddSingleton(Configuration);
 
             AddSecurityServices(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IContextInfoAccessor, ContextInfoAccessor>();
-
-            services.AddSingleton<ITaskService, Services.TaskService>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
+            services.AddScoped<ITaskService, Services.TaskService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>(); 
 
             services.AddBusinessLogic();
 

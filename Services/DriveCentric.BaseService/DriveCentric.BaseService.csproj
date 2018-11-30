@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Business\BusinessLogic\DriveCentric.BusinessLogic.csproj" />
+    <ProjectReference Include="..\..\Data\DataRepository\DriveCentric.Data.DataRepository.csproj" />
     <ProjectReference Include="..\..\Utilities\DriveCentric.Utilities.csproj" />
   </ItemGroup>
 

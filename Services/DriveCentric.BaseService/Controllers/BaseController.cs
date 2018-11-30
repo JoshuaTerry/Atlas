@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Controllers
 {
-    public abstract class BaseController<T> : Controller, IContextAccessible where T : class, IBaseModel
+    public abstract class BaseController<T> : Controller, IContextAccessible where T : class, IBaseModel, new()
     {
         private readonly ResponseReducer responseReducer;
         private readonly IBaseService<T> service;

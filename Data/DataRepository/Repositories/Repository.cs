@@ -18,10 +18,15 @@ namespace DriveCentric.Data.DataRepository.Repositories
         public Repository()
         {           
         } 
+        public async Task<IEnumerable<T>> GetAllAsync<T>(IDbConnection connection, Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new() 
+        {
+            bool isDescending = paging.OrderBy.StartsWith("-");
+            var sortFields = GetModelOrderByField<T>(connection, paging);
+            var sqlExpression = connection.From<T>().Where(expression).Limit(skip: paging.Offset, rows: paging.Limit); 
+            sqlExpression = isDescending ? sqlExpression.OrderByDescending(sortFields) : sqlExpression.OrderBy(sortFields);
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>(IDbConnection connection, Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
-            => await connection.LoadSelectAsync(expression, referenceFields);
-
+            return await connection.LoadSelectAsync(sqlExpression, referenceFields); 
+        }
         public async Task<long> GetCount<T>(IDbConnection connection, Expression<Func<T, bool>> expression) where T : IBaseModel, new()
             => await connection.CountAsync<T>(expression);
 

@@ -37,21 +37,21 @@ namespace DriveCentric.TaskService.Controllers
         [HttpGet]
         [Route("api/v1/task/user/{id}")]
         public async Task<IActionResult> GetByUser(int id, int? limit = SearchParameters.LimitMax,  int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
-            => await GetAll(x => x.UserId == id, limit, offset, orderBy, fields);
+            => await base.GetAll(x => x.UserId == id, limit, offset, orderBy, fields);
              
         [MonitorAsyncAspect]
         [HttpPost]
-        public override async Task<IActionResult> Post([FromBody] Model.Task item)
-            => await Post(item);
+        public override async Task<IActionResult> Post([FromBody] Model.Task entity)
+            => await base.Post(entity);
          
         [HttpPatch()]
         [Route("api/v1/task/{id}")]
         public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<DriveCentric.Model.Task> patch)
-            => await Patch(id, patch);
+            => await base.Patch(id, patch);
          
         [MonitorAsyncAspect]
         [HttpDelete()]
         [Route("api/v1/task/{id}")]
-        public override async Task<IActionResult> Delete(int id) => await Delete(id);   
+        public override async Task<IActionResult> Delete(int id) => await base.Delete(id);   
     }
 }

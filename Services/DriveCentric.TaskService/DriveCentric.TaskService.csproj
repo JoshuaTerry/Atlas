@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Business\BusinessLogic\DriveCentric.BusinessLogic.csproj" />
+    <ProjectReference Include="..\..\Model\DriveCentric.Model.csproj" />
     <ProjectReference Include="..\DriveCentric.BaseService\DriveCentric.BaseService.csproj" />
   </ItemGroup>
 

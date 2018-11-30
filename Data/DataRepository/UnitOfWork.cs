@@ -1,4 +1,4 @@
-﻿using DriveCentric.Data.SqlORM.Repositories;
+﻿//using DriveCentric.Data.SqlORM.Repositories;
 using DriveCentric.Model;
 using DriveCentric.Model.Interfaces;
 using DriveCentric.Utilities.Configuration;
@@ -17,7 +17,7 @@ using System.Linq.Expressions;
 
 namespace DriveCentric.Data.DataRepository
 {
-    public class UnitOfWork : IContextAccessible
+    public class UnitOfWork : IUnitOfWork, IContextAccessible
     {
         private readonly IDriveServerCollection driveServerCollection;
         private readonly IConfiguration configuration;
@@ -79,11 +79,15 @@ namespace DriveCentric.Data.DataRepository
             using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
                 return await repository.GetSingleAsync<T>(connection, expression, referenceFields);
         }
-
-        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
+        public async Task<long> GetCount<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
         {
             using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
-                return await repository.GetAllAsync<T>(connection, expression, referenceFields);
+                return await repository.GetCount<T>(connection, expression);
+        }
+        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new() 
+        {
+            using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
+                return await repository.GetAllAsync<T>(connection, expression, paging, referenceFields);
         }
 
         private IDbConnectionFactory GetFactoryByEntityType(Type type)
@@ -158,5 +162,5 @@ namespace DriveCentric.Data.DataRepository
         }
          
         public IContextInfoAccessor ContextInfoAccessor { get; }
-    }
+    } 
 }

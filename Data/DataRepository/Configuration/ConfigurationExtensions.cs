@@ -38,8 +38,8 @@ namespace DriveCentric.Data.DataRepository.Configuration
         {
             ConfigureConnectionFactory(services);
 
-            services.AddSingleton<IDataRepository<DriveServer>, GalaxyDataRepository<DriveServer>>();
-            services.AddSingleton<IDriveServerCollection, DriveServerCollection>();
+            services.AddScoped<IDataRepository<DriveServer>, GalaxyDataRepository<DriveServer>>();
+            services.AddScoped<IDriveServerCollection, DriveServerCollection>();
             InstantiateDriveServerCollection(services);
 
             AddRepositories(services);
@@ -53,7 +53,7 @@ namespace DriveCentric.Data.DataRepository.Configuration
 
             //services.AddSingleton<IDataRepository<Customer>, StarDataRepository<Customer>>();
             //services.AddSingleton<IDataRepository<Deal>, StarDataRepository<Deal>>();
-            //services.AddSingleton<IDataRepository<Task>, StarDataRepository<Task>>();
+            services.AddScoped<IDataRepository<Task>, StarDataRepository<Task>>();
         }
 
         private static void InstantiateDriveServerCollection(IServiceCollection services)
