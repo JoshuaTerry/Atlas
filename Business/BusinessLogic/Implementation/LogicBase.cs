@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using DriveCentric.BusinessLogic.Interfaces;
-using DriveCentric.Model;
-using DriveCentric.Utilities.Aspects;
+﻿using DriveCentric.Core.Interfaces;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Model.Interfaces; 
+using System.Collections.Generic;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {

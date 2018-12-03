@@ -1,7 +1,8 @@
 using System.Threading.Tasks; 
 using DriveCentric.BaseService.Controllers;
-using DriveCentric.Core.Models;
-using DriveCentric.TaskService.Services;
+using DriveCentric.BaseService.Interfaces;
+using DriveCentric.BaseService.Services;
+using DriveCentric.Core.Models; 
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
@@ -21,8 +22,8 @@ namespace DriveCentric.TaskService.Controllers
         public TaskController(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
-            ITaskService taskService
-            ) : base(httpContextAccessor, contextInfoAccessor, taskService) { }
+            IBaseService<DriveCentric.Core.Models.Task> service
+            ) : base(httpContextAccessor, contextInfoAccessor, service) { }
 
         [MonitorAsyncAspect]
         [HttpGet]
@@ -45,12 +46,12 @@ namespace DriveCentric.TaskService.Controllers
         [MonitorAsyncAspect]
         [HttpPost]
         [Route("api/v1/task")]
-        public override async Task<IActionResult> Post([FromBody] Model.Task entity)
+        public override async Task<IActionResult> Post([FromBody] Core.Models.Task entity)
             => await base.Post(entity);
          
         [HttpPatch()]
         [Route("api/v1/task/{id}")]       
-        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<DriveCentric.Model.Task> patch)        
+        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Core.Models.Task> patch)        
             => await base.Patch(id, patch);
          
         [MonitorAsyncAspect]

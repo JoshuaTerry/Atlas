@@ -15,10 +15,5 @@ namespace DriveCentric.TaskService.Services
         {
              
         }
-
-        public bool MergeTasks(Task task1, Task task2)
-        {
-            return true;
-        }
     }
 }

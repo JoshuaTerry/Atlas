@@ -1,5 +1,5 @@
-﻿using DriveCentric.Model;
-using DriveCentric.Model.Interfaces;
+﻿using DriveCentric.Core.Interfaces;
+using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using ServiceStack.Data;

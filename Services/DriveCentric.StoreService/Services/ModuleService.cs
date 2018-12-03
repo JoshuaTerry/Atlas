@@ -1,5 +1,5 @@
 using DriveCentric.BaseService.Services;
-using DriveCentric.BusinessLogic.Interfaces;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 

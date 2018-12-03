@@ -1,35 +1,31 @@
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using DriveCentric.BaseService.Interfaces;
-using DriveCentric.BusinessLogic.Implementation;
-using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Services
 {
-    public abstract class BaseService<T> : IContextAccessible, IBaseService<T> where T : class, IBaseModel, new() 
+    public class BaseService<T> : IContextAccessible, IBaseService<T> where T : class, IBaseModel, new() 
     { 
         protected readonly IContextInfoAccessor contextInfoAccessor;
         protected IUnitOfWork UnitOfWork { get; }
 
         public IContextInfoAccessor ContextInfoAccessor { get { return contextInfoAccessor; } }
 
-        protected BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork)
+        public BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork)
         {
             this.UnitOfWork = unitOfWork; 
             this.contextInfoAccessor = contextInfoAccessor;
         }
 
         [MonitorAsyncAspect]
-
-        [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<T>> GetSingleByExpressionAsync(Expression<Func<T, bool>> expression = null, string[] referenceFields = null)
-        { 
+        {
             return new DataResponse<T> { Data = await UnitOfWork.GetEntity(expression, referenceFields), TotalResults = 1 };
         }
 
@@ -52,6 +48,13 @@ namespace DriveCentric.BaseService.Services
         public virtual async Task<IDataResponse<long>> UpdateAsync(T entity)
         {
             UnitOfWork.Update(entity);
+            return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() };
+        }
+
+        [MonitorAsyncAspect]
+        public virtual async Task<IDataResponse<long>> DeleteAsync(int id)
+        {
+            UnitOfWork.Delete<T>(id);
             return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() };
         }
 
@@ -78,5 +81,6 @@ namespace DriveCentric.BaseService.Services
 
             return response; 
         }
+         
     }
 }

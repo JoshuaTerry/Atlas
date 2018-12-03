@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DriveCentric.Model.Interfaces
+namespace DriveCentric.Core.Interfaces
 {
     public interface IGalaxyEntity
     {

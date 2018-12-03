@@ -1,37 +1,38 @@
-﻿using DriveCentric.BusinessLogic.Interfaces;
+﻿using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Core.Interfaces;
+using System;
+using System.Collections.Generic;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    public class TaskLogic : BaseLogic<Task>, ITaskLogic
+    public class TaskLogic : LogicBase<Task>
     {
         public TaskLogic(IContextInfoAccessor contextInfoAccessor, IRepository repository) : base(contextInfoAccessor, repository)
         {
         }
 
-        protected override Model.Task FormatGet(Model.Task entity)
+        public override Task FormatGet(Task entity)
         {
             throw new NotImplementedException();
         }
 
-        protected override IEnumerable<Model.Task> FormatGet(IEnumerable<Model.Task> entities)
+        public override IEnumerable<Task> FormatGet(IEnumerable<Task> entities)
         {
             throw new NotImplementedException();
         }
 
-        protected override bool ValidateAdd(Model.Task entity)
+        public override bool ValidateAdd(Task entity)
         {
             throw new NotImplementedException();
         }
 
-        public override bool ValidateDelete(Model.Task entity)
+        public override bool ValidateDelete(Task entity)
         {
             throw new NotImplementedException();
         }
 
-        protected override bool ValidateUpdate(Model.Task entity)
+        public override bool ValidateUpdate(Task entity)
         {
             throw new NotImplementedException();
         }
