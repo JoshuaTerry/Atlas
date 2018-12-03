@@ -1,7 +1,5 @@
-﻿using System;
+﻿using DriveCentric.Core.Interfaces;
 using System.Collections.Generic;
-using System.Text;
-using DriveCentric.Core.Interfaces;
 
 namespace DriveCentric.Core.Models
 {
@@ -17,7 +15,9 @@ namespace DriveCentric.Core.Models
     {
         public T Data { get; set; }
 
-        public DataResponse() : base() { }
+        public DataResponse() : base()
+        {
+        }
 
         public DataResponse(T data) : this()
         {

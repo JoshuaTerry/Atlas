@@ -1,5 +1,4 @@
-﻿
-namespace DriveCentric.Utilities.Context
+﻿namespace DriveCentric.Utilities.Context
 {
     public interface IContextAccessible
     {

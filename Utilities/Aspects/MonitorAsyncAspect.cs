@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using DriveCentric.Utilities.Context;
+﻿using DriveCentric.Utilities.Context;
 using PostSharp.Aspects;
 using Serilog;
+using System;
+using System.Threading.Tasks;
 
 namespace DriveCentric.Utilities.Aspects
 {

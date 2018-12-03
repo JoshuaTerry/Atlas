@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using DriveCentric.Core.Models;
-using DriveCentric.Utilities.Context;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using ServiceStack.Data;
-
-namespace DriveCentric.Data.SqlORM.CoreTests.Repositories
+﻿namespace DriveCentric.Data.SqlORM.CoreTests.Repositories
 {
     //[TestClass]
     //public class GalaxyDataRepositoryTests

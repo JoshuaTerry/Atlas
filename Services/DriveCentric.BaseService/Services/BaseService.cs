@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Services
 {
-    public class BaseService<T> : IContextAccessible, IBaseService<T> where T : class, IBaseModel, new() 
-    { 
+    public class BaseService<T> : IContextAccessible, IBaseService<T> where T : class, IBaseModel, new()
+    {
         protected readonly IContextInfoAccessor contextInfoAccessor;
         protected IUnitOfWork UnitOfWork { get; }
 
@@ -19,7 +19,7 @@ namespace DriveCentric.BaseService.Services
 
         public BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork)
         {
-            this.UnitOfWork = unitOfWork; 
+            this.UnitOfWork = unitOfWork;
             this.contextInfoAccessor = contextInfoAccessor;
         }
 
@@ -30,20 +30,21 @@ namespace DriveCentric.BaseService.Services
         }
 
         [MonitorAsyncAspect]
-        public virtual async Task<IDataResponse<IEnumerable<T>>> GetAllByExpressionAsync(Expression<Func<T, bool>> expression, IPageable paging = null, string[] referenceFields = null) 
-        { 
+        public virtual async Task<IDataResponse<IEnumerable<T>>> GetAllByExpressionAsync(Expression<Func<T, bool>> expression, IPageable paging = null, string[] referenceFields = null)
+        {
             var result = await UnitOfWork.GetEntities(expression, paging, referenceFields);
             var count = await UnitOfWork.GetCount<T>(expression);
 
-            return new DataResponse<IEnumerable<T>> { Data = result, TotalResults = count }; 
+            return new DataResponse<IEnumerable<T>> { Data = result, TotalResults = count };
         }
 
         [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<long>> InsertAsync(T entity)
         {
-            UnitOfWork.Insert(entity); 
-            return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() }; 
+            UnitOfWork.Insert(entity);
+            return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() };
         }
+
         [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<long>> UpdateAsync(T entity)
         {
@@ -65,7 +66,7 @@ namespace DriveCentric.BaseService.Services
                 IsSuccessful = false
             };
             response.ErrorMessages.Add(ex.Message);
-            response.VerboseErrorMessages.Add(ex.ToString()); 
+            response.VerboseErrorMessages.Add(ex.ToString());
 
             return response;
         }
@@ -77,10 +78,9 @@ namespace DriveCentric.BaseService.Services
                 IsSuccessful = false
             };
             response.ErrorMessages.Add(ex.Message);
-            response.VerboseErrorMessages.Add(ex.ToString()); 
+            response.VerboseErrorMessages.Add(ex.ToString());
 
-            return response; 
+            return response;
         }
-         
     }
 }

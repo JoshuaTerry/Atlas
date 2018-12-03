@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DriveCentric.Core.Interfaces;
+﻿using DriveCentric.Core.Interfaces;
 
 namespace DriveCentric.Core.Models
 {
@@ -9,8 +6,6 @@ namespace DriveCentric.Core.Models
     {
         public static PageableSearch Default => new PageableSearch(SearchParameters.OffsetDefault, SearchParameters.LimitDefault, null);
         public static PageableSearch Max => new PageableSearch(SearchParameters.OffsetDefault, SearchParameters.LimitMax, null);
-
-        #region IPageable
         public int? Offset { get; set; }
         public int? Limit { get; set; }
         public string OrderBy { get; set; }
@@ -25,7 +20,5 @@ namespace DriveCentric.Core.Models
             Limit = limit;
             OrderBy = string.IsNullOrWhiteSpace(orderBy) ? "Id" : orderBy;
         }
-
-        #endregion
     }
 }

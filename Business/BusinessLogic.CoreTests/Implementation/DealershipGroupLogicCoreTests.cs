@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Tasks = System.Threading.Tasks;
-using DriveCentric.BusinessLogic.Implementation;
-using DriveCentric.Core.Interfaces;
-using DriveCentric.Core.Models;
-using DriveCentric.Utilities.Context;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using System.Linq.Expressions;
-
-namespace DriveCentric.BusinessLogic.CoreTests.Implementation
+﻿namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 {
     //[TestClass]
     //public class DealershipGroupLogicCoreTests
@@ -33,7 +22,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
     //    [TestMethod]
     //    public void GetDealershipGroup_ValidId_ReturnsDealershipGroup()
     //    {
-    //        dealershipGroupDataRepositoryMock.Setup(mock => 
+    //        dealershipGroupDataRepositoryMock.Setup(mock =>
     //            mock.GetSingleAsync(It.IsAny<Expression<Func<Core.Models.DealershipGroup, bool>>>(), It.IsAny<string[]>()));
 
     //        var returnedDealershipGroup = businessLogic.GetSingleAsync(x => x.Id == 1, null);
@@ -78,4 +67,3 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
     //    }
     //}
 }
-

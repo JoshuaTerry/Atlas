@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using DriveCentric.BusinessLogic.Implementation;
-using DriveCentric.Core.Interfaces;
-using DriveCentric.Core.Models;
-using DriveCentric.Utilities.Context;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Tasks = System.Threading.Tasks;
-
-namespace DriveCentric.BusinessLogic.CoreTests.Implementation
+﻿namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 {
     //[TestClass]
     //public class CustomerLogicCoreTests
@@ -46,7 +35,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
     //    [ExpectedException(typeof(KeyNotFoundException))]
     //    public async Tasks.Task GetCustomer_KeyNotFound_Throws()
     //    {
-    //        customerDataRepositoryMock.Setup(mock => 
+    //        customerDataRepositoryMock.Setup(mock =>
     //            mock.GetSingleAsync(It.IsAny<Expression<Func<Core.Models.Customer, bool>>>(), It.IsAny<string[]>()))
     //            .Throws<KeyNotFoundException>();
 
@@ -81,4 +70,3 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
     //    }
     //}
 }
-

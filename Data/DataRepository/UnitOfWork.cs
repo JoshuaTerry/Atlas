@@ -1,5 +1,5 @@
-﻿using DriveCentric.Model;
-using DriveCentric.Utilities.Configuration;
+﻿using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 using Microsoft.Extensions.Configuration;
 using ServiceStack.Data;
@@ -8,22 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DriveCentric.Data.DataRepository.Repositories;
 using System.Linq.Expressions;
-using DriveCentric.Core.Interfaces;
-using DriveCentric.Core.Models;
+using System.Threading.Tasks;
 
 namespace DriveCentric.Data.DataRepository
 {
     public class UnitOfWork : IUnitOfWork, IContextAccessible
-    {
+    { 
         private Dictionary<int, DriveServer> servers;
         private readonly IConfiguration configuration;
-        private readonly Dictionary<string, IDbConnectionFactory> connectionFactories;
-        private Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>> saveActionsByFactory = new Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>>();
-        private IRepository repository;
+        private readonly Dictionary<string, IDbConnectionFactory> connectionFactories; 
+        private readonly Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>> saveActionsByFactory = new Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>>();
+        private readonly IRepository repository;
 
         public UnitOfWork(IContextInfoAccessor contextInfoAccessor,
                             IConfiguration configuration,
@@ -34,7 +30,7 @@ namespace DriveCentric.Data.DataRepository
             this.repository = repository;
             connectionFactories = new Dictionary<string, IDbConnectionFactory>();
             CreateConnectionFactories();
-
+           
             foreach (var factory in connectionFactories)
             {
                 saveActionsByFactory.Add(factory.Value, new Queue<Func<IDbConnection, Task<long>>>());
@@ -56,10 +52,10 @@ namespace DriveCentric.Data.DataRepository
         }
 
         private void CreateConnectionFactories()
-        {
+        { 
             AddGalaxyFactory(connectionFactories);
             this.servers = GetEntities<DriveServer>(null, PageableSearch.Default).Result.ToDictionary(server => server.Id);
-            AddStarFactory(connectionFactories);
+            AddStarFactory(connectionFactories);             
         }
 
         private void AddGalaxyFactory(Dictionary<string, IDbConnectionFactory> connectionFactories)
@@ -100,7 +96,7 @@ namespace DriveCentric.Data.DataRepository
                 return await repository.GetCount<T>(connection, expression);
         }
 
-        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new()
+        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new() 
         {
             using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
                 return await repository.GetAllAsync<T>(connection, expression, paging, referenceFields);
@@ -111,28 +107,19 @@ namespace DriveCentric.Data.DataRepository
             if (typeof(IGalaxyEntity).IsAssignableFrom(type))
                 return connectionFactories["Galaxy"];
             else if (typeof(IStarEntity).IsAssignableFrom(type))
-                return connectionFactories["Star"];
+                return connectionFactories["Star"];  
             else
-                throw new Exception("Type requested does not have an assiged connection factory.");
+                throw new Exception("Type requested does not have an assiged connection factory."); 
         }
 
         public void Insert<T>(T entity) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) =>
-                {
-                    return await repository.InsertAsync(connection, entity);
-                }));
+            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) => await repository.InsertAsync(connection, entity)));
 
         public void Update<T>(T entity) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) =>
-            {
-                return await repository.UpdateAsync(connection, entity);
-            }));
+            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) => await repository.UpdateAsync(connection, entity)));
 
         public void Delete<T>(int id) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) =>
-            {
-                return await repository.DeleteByIdAsync<T>(connection, id);
-            }));         
+            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) => await repository.DeleteByIdAsync<T>(connection, id)));
 
         private async Task<long> ProcessTransaction(IDbConnectionFactory factory, Queue<Func<IDbConnection, Task<long>>> saveActions)
         {

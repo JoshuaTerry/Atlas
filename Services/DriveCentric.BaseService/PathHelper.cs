@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace DriveCentric.BaseService
 {
     public static class PathHelper
     {
-
         public const string FieldExcludePrefix = "^";
         public const string IncludeEverythingField = "*";
 
@@ -24,8 +22,7 @@ namespace DriveCentric.BaseService
             var member = property.Body as MemberExpression;
             if (member == null)
             {
-                var unary = property.Body as UnaryExpression;
-                if (unary != null)
+                if (property.Body is UnaryExpression unary)
                 {
                     member = unary.Operand as MemberExpression;
                 }
@@ -49,8 +46,8 @@ namespace DriveCentric.BaseService
         /// <typeparam name="T">Entity type</typeparam>
         public class FieldListBuilder<T>
         {
-            private List<string> fields;
-            private string pathPrefix;
+            private readonly List<string> fields;
+            private readonly string pathPrefix;
 
             public FieldListBuilder()
             {
@@ -96,7 +93,6 @@ namespace DriveCentric.BaseService
                 return this;
             }
 
-
             /// <summary>
             /// Exclude a path from the field list being built.
             /// </summary>
@@ -136,7 +132,5 @@ namespace DriveCentric.BaseService
                 return builder.ToString();
             }
         }
-
-
     }
 }

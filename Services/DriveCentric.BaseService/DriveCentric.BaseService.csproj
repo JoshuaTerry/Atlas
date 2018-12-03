@@ -9,9 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\BindingModels\CustomerBindingModel.cs" />
-    <Compile Remove="Controllers\BindingModels\TaskBindingModel.cs" />
-    <Compile Remove="Controllers\BindingModels\UserBindingModel.cs" />
     <Compile Remove="CriteriaQuery.cs" />
     <Compile Remove="LinqQuery.cs" />
   </ItemGroup>
@@ -30,10 +27,6 @@
     <ProjectReference Include="..\..\Business\BusinessLogic\DriveCentric.BusinessLogic.csproj" />
     <ProjectReference Include="..\..\Model\DriveCentric.Core.csproj" />
     <ProjectReference Include="..\..\Utilities\DriveCentric.Utilities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\BindingModels\" />
   </ItemGroup>
 
 </Project>
