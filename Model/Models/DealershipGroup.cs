@@ -5,7 +5,7 @@ using System;
 namespace DriveCentric.Core.Models
 {
     [Alias("StoreGroup")]
-    public class DealershipGroup : IBaseModel
+    public class DealershipGroup : IBaseModel, IStarEntity
     {
         [PrimaryKey]
         [Alias("fkGroupID")]

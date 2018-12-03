@@ -1,5 +1,5 @@
-﻿using DriveCentric.BaseService.Services;
-using DriveCentric.BusinessLogic.Interfaces;
+using DriveCentric.BaseService.Services;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 
@@ -9,8 +9,8 @@ namespace DriveCentric.ModuleService.Services
     {
         public ModuleService(
             IContextInfoAccessor contextInfoAccessor,
-            IModuleLogic businessLogic
-            ) : base(contextInfoAccessor, businessLogic)
+            IUnitOfWork unitOfWork
+            ) : base(contextInfoAccessor, unitOfWork)
         { }
     }
 }

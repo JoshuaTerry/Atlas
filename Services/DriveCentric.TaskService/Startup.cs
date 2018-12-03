@@ -1,10 +1,12 @@
-﻿using DriveCentric.BusinessLogic.Configuration;
-using DriveCentric.TaskService.Services;
+using DriveCentric.BaseService.Interfaces;
+using DriveCentric.BaseService.Services;
+using DriveCentric.BusinessLogic.Configuration;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Data.DataRepository;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,9 +35,9 @@ namespace DriveCentric.TaskService
 
             services.AddHttpContextAccessor();
             services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
-
-            services.AddScoped<ITaskService, Services.TaskService>();
-
+            //services.AddScoped<ITaskService, Services.TaskService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IBaseService<DriveCentric.Core.Models.Task>, BaseService<DriveCentric.Core.Models.Task>>();
             services.AddBusinessLogic();
 
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" }));

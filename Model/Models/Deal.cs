@@ -5,7 +5,7 @@ using System;
 
 namespace DriveCentric.Core.Models
 {
-    public class Deal : IBaseModel
+    public class Deal : IBaseModel, IStarEntity
     {
         [PrimaryKey]
         [JsonIgnore]

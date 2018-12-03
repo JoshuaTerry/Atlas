@@ -14,7 +14,7 @@ using Serilog;
 
 namespace DriveCentric.BaseService.Controllers
 {
-    public abstract class BaseController<T> : Controller, IContextAccessible where T : class, IBaseModel
+    public abstract class BaseController<T> : Controller, IContextAccessible where T : class, IBaseModel, new()
     {
         private readonly ResponseReducer responseReducer;
         protected virtual string FieldsForAll => string.Empty;
@@ -38,10 +38,23 @@ namespace DriveCentric.BaseService.Controllers
 
         public virtual async Task<IActionResult> GetAll(Expression<Func<T, bool>> predicate = null, int? limit = SearchParameters.LimitMax, int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
         {
-            var search = new PageableSearch(offset, limit, orderBy);
-            var result = await Service.GetAllByExpressionAsync(predicate, search, ReferenceFields);
+            if (!ModelState.IsValid)
+            {
+                Log.Warning($"Invalid state adding new {GetType().Name}.");
+                return BadRequest(ModelState);
+            }
 
-            return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForList : fields));
+            try
+            {
+                var search = new PageableSearch(offset, limit, orderBy);
+                var result = await Service.GetAllByExpressionAsync(predicate, search, ReferenceFields);
+
+                return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForList : fields));
+            }
+            catch (Exception exception)
+            {
+                return ExceptionHelper.ProcessError(exception);
+            }
         }
 
         public virtual async Task<IActionResult> GetSingle(Expression<Func<T, bool>> predicate = null, string fields = null)
@@ -138,7 +151,7 @@ namespace DriveCentric.BaseService.Controllers
 
             return fields.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
         }
-
+           
         public virtual IActionResult FinalizeReponse<U>(IDataResponse<U> response, string fields = null)
         {
             try
@@ -151,8 +164,8 @@ namespace DriveCentric.BaseService.Controllers
                         return NotFound();
                 }
 
-                if (!response.IsSuccessful)
-                    return BadRequest(string.Join(",", response.ErrorMessages));
+                if (!response.IsSuccessful) 
+                    return BadRequest(string.Join(",", response.ErrorMessages)); 
 
                 var dynamicResponse = responseReducer.ToDynamicResponse(response, fields);
 
@@ -166,5 +179,5 @@ namespace DriveCentric.BaseService.Controllers
                 return BadRequest(new Exception(ex.Message));
             }
         }
-    }
+    } 
 }

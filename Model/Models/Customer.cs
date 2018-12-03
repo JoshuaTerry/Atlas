@@ -1,11 +1,11 @@
-﻿using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Interfaces;
 using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
 using System;
 
 namespace DriveCentric.Core.Models
 {
-    public class Customer : IBaseModel
+    public class Customer : IBaseModel, IStarEntity
     {
         [PrimaryKey]
         [JsonIgnore]

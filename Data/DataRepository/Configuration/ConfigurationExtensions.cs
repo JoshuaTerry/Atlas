@@ -1,13 +1,11 @@
-﻿using System;
-using DriveCentric.Core.Interfaces;
-using DriveCentric.Core.Models;
-using DriveCentric.Data.SqlORM.Configuration;
-using DriveCentric.Data.SqlORM.Repositories;
+﻿using DriveCentric.Core.Interfaces;
+using DriveCentric.Data.DataRepository.Repositories;
 using DriveCentric.Utilities.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
+using System;
 
 namespace DriveCentric.Data.DataRepository.Configuration
 {
@@ -38,24 +36,13 @@ namespace DriveCentric.Data.DataRepository.Configuration
         public static IServiceCollection AddSqlOrmLite(this IServiceCollection services)
         {
             ConfigureConnectionFactory(services);
-
-            services.AddScoped<IDataRepository<DriveServer>, GalaxyDataRepository<DriveServer>>();
-            services.AddScoped<IDriveServerCollection, DriveServerCollection>();
+             
+            //services.AddScoped<IDriveServerCollection, DriveServerCollection>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRepository, Repository>();
             InstantiateDriveServerCollection(services);
 
-            AddRepositories(services);
-
             return services;
-        }
-
-        private static void AddRepositories(IServiceCollection services)
-        {
-            services.AddScoped<IDataRepository<DealershipGroup>, GalaxyDataRepository<DealershipGroup>>();
-            services.AddScoped<IDataRepository<Module>, GalaxyDataRepository<Module>>();
-
-            services.AddScoped<IDataRepository<Customer>, StarDataRepository<Customer>>();
-            services.AddScoped<IDataRepository<Deal>, StarDataRepository<Deal>>();
-            services.AddScoped<IDataRepository<Task>, StarDataRepository<Task>>();
         }
 
         private static void InstantiateDriveServerCollection(IServiceCollection services)
@@ -78,5 +65,5 @@ namespace DriveCentric.Data.DataRepository.Configuration
                     )
                 );
         }
-    }
+    } 
 }

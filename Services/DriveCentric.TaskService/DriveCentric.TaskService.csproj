@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>DriveCentric.Task</RootNamespace>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <CodeAnalysisRuleSet>..\..\RuleSet.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -17,7 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\ITaskService.cs" />
+    <Compile Remove="Services\TaskService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
