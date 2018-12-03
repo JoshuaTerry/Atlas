@@ -7,7 +7,7 @@ namespace DriveCentric.Utilities.Aspects
 {
     [Serializable]
     public class MonitorAspect : MethodInterceptionAspect
-    {   
+    {
         public override void OnInvoke(MethodInterceptionArgs args)
         {
             var instance = args.Instance as IContextAccessible;

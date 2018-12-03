@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DriveCentric.BaseService.Context;
@@ -45,8 +46,26 @@ namespace DriveCentric.BaseService.Controllers
 
         public virtual async Task<IActionResult> GetSingle(Expression<Func<T, bool>> predicate = null, string fields = null)
         {
-            var result = await Service.GetSingleByExpressionAsync(predicate, ReferenceFields);
-            return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForSingle : fields));
+            if (!ModelState.IsValid)
+            {
+                Log.Warning($"Invalid state adding new {GetType().Name}.");
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = await Service.GetSingleByExpressionAsync(predicate, ReferenceFields);
+                if (result.TotalResults < 1)
+                {
+                    return NotFound(result);
+                }
+
+                return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForSingle : fields));
+            }
+            catch (Exception exception)
+            {
+                return ExceptionHelper.ProcessError(exception);
+            }
         }
 
         public virtual async Task<IActionResult> Post(T entity)

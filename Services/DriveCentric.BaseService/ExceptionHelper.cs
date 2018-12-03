@@ -8,17 +8,17 @@ namespace DriveCentric.BaseService
     {
         public static ObjectResult ProcessError(Exception exception)
         {
-            if (exception.GetType() == typeof(KeyNotFoundException))
-            {
-                return new NotFoundObjectResult(new
-                {
-                    error = new
-                    {
-                        code = exception.HResult,
-                        message = exception.Message
-                    }
-                });
-            }
+            //if (exception.GetType() == typeof(KeyNotFoundException))
+            //{
+            //    return new NotFoundObjectResult(new
+            //    {
+            //        error = new
+            //        {
+            //            code = exception.HResult,
+            //            message = exception.Message
+            //        }
+            //    });
+            //}
 
             return new ObjectResult(
                 new
