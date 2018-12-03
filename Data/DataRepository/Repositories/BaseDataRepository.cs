@@ -1,15 +1,14 @@
-﻿using DriveCentric.Model;
-using DriveCentric.Model.Interfaces;
-using DriveCentric.Utilities.Aspects;
-using DriveCentric.Utilities.Context;
-using ServiceStack.Data;
-using ServiceStack.OrmLite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Utilities.Aspects;
+using DriveCentric.Utilities.Context;
+using ServiceStack.Data;
+using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 { 
@@ -18,8 +17,8 @@ namespace DriveCentric.Data.SqlORM.Repositories
         protected readonly IDataAccessor dataAccessor;
         public IContextInfoAccessor ContextInfoAccessor { get; }
 
-        protected BaseDataRepository(IContextInfoAccessor contextInfoAccessor)  
-        { 
+        protected BaseDataRepository(IContextInfoAccessor contextInfoAccessor)
+        {
             this.ContextInfoAccessor = contextInfoAccessor;
         }
 
@@ -27,7 +26,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         public virtual async Task<bool> DeleteByIdAsync(int id)
         {
             using (IDbConnection db = GetDbFactory().OpenDbConnection())
-            {   
+            {
                 return await db.DeleteByIdAsync<T>(id) > 0;
             }
         }

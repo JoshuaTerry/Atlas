@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DriveCentric.BusinessLogic.Interfaces;
-using DriveCentric.Model;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Model.Interfaces; 
+using DriveCentric.Core.Interfaces;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {  
@@ -18,7 +18,7 @@ namespace DriveCentric.BusinessLogic.Implementation
 
         public IContextInfoAccessor ContextInfoAccessor { get { return contextInfoAccessor; } }
 
-        protected BaseLogic(IContextInfoAccessor contextInfoAccessor, IDataRepository<T> dataRepository)  
+        protected BaseLogic(IContextInfoAccessor contextInfoAccessor, IDataRepository<T> dataRepository)
         {
             this.dataRepository = dataRepository ?? throw new ArgumentNullException(nameof(dataRepository));
             this.contextInfoAccessor = contextInfoAccessor;
@@ -29,11 +29,12 @@ namespace DriveCentric.BusinessLogic.Implementation
         {
             return dataRepository.DeleteByIdAsync(id);
         }
-          
+
         public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, string[] referenceFields = null)
         {
-            return await dataRepository.GetSingleAsync(predicate, referenceFields); 
+            return await dataRepository.GetSingleAsync(predicate, referenceFields);
         }
+
         public async Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null)
         {
             return await dataRepository.GetAllAsync(predicate, paging);

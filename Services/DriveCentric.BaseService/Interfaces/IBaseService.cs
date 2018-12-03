@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Model;
 
 namespace DriveCentric.BaseService.Interfaces

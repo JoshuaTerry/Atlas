@@ -5,12 +5,13 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DriveCentric.Model.Interfaces
+namespace DriveCentric.Core.Interfaces
 {
     public interface IDataAccessor
     {
         Task<(long count, IEnumerable<T> data)> GetAllAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null)
             where T : IBaseModel;
+
         Task<T> GetSingleAsync<T>(IDbConnection connection, Expression<Func<T, bool>> predicate, string[] referenceFields = null)
             where T : IBaseModel;
 

@@ -1,13 +1,11 @@
 ﻿using DriveCentric.BusinessLogic.Interfaces;
-using DriveCentric.Model;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Model.Interfaces;
-using System;
-using System.Collections.Generic;
+using DriveCentric.Core.Interfaces;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    public class TaskLogic : LogicBase<Model.Task>
+    public class TaskLogic : BaseLogic<Task>, ITaskLogic
     {
         public TaskLogic(IContextInfoAccessor contextInfoAccessor, IRepository repository) : base(contextInfoAccessor, repository)
         {

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using DriveCentric.BaseService.Controllers;
+using DriveCentric.Core.Models;
 using DriveCentric.Model;
 using DriveCentric.ModuleService.Services;
 using DriveCentric.Utilities.Aspects;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DriveCentric.ModuleService.Controllers
 {
     [Produces("application/json")]
-    public class ModuleController : BaseController<DriveCentric.Model.Module>
+    public class ModuleController : BaseController<Module>
     {
         protected override string FieldsForAll => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
         protected override string FieldsForSingle => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
@@ -26,7 +27,6 @@ namespace DriveCentric.ModuleService.Controllers
         {
         }
 
-
         [MonitorAsyncAspect]
         [HttpGet]
         [Route("api/v1/module/{id}")]
@@ -40,12 +40,12 @@ namespace DriveCentric.ModuleService.Controllers
 
         [MonitorAsyncAspect]
         [HttpPost]
-        public override async Task<IActionResult> Post([FromBody] Model.Module item)
-            => await Post(item);
+        public override async Task<IActionResult> Post([FromBody] Module entity)
+            => await Post(entity);
 
         [HttpPatch()]
         [Route("api/v1/module/{id}")]
-        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<DriveCentric.Model.Module> patch)
+        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Module> patch)
             => await Patch(id, patch);
 
         [MonitorAsyncAspect]

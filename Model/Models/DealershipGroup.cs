@@ -1,8 +1,8 @@
-﻿using DriveCentric.Model.Interfaces;
+﻿using DriveCentric.Core.Interfaces;
 using ServiceStack.DataAnnotations;
 using System;
 
-namespace DriveCentric.Model
+namespace DriveCentric.Core.Models
 {
     [Alias("StoreGroup")]
     public class DealershipGroup : IBaseModel, IStarEntity

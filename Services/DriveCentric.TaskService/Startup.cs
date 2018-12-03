@@ -1,4 +1,4 @@
-﻿using DriveCentric.BusinessLogic.Configuration;
+using DriveCentric.BusinessLogic.Configuration;
 using DriveCentric.Data.DataRepository;
 using DriveCentric.Model.Interfaces;
 using DriveCentric.TaskService.Services;
@@ -27,7 +27,7 @@ namespace DriveCentric.TaskService
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        { 
+        {
             services.AddSingleton(Configuration);
 
             AddSecurityServices(services);
@@ -40,10 +40,7 @@ namespace DriveCentric.TaskService
 
             services.AddBusinessLogic();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" });
-            });
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" }));
         }
 
         private void AddSecurityServices(IServiceCollection services)
@@ -82,10 +79,7 @@ namespace DriveCentric.TaskService
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1");
-            });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1"));
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

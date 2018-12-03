@@ -1,5 +1,5 @@
 ﻿using DriveCentric.BaseService.Interfaces;
-using DriveCentric.Model;
+using DriveCentric.Core.Models;
 
 namespace DriveCentric.ModuleService.Services
 {

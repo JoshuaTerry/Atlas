@@ -1,9 +1,9 @@
-﻿using DriveCentric.Model.Interfaces;
+﻿using DriveCentric.Core.Interfaces;
 using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
 using System;
 
-namespace DriveCentric.Model
+namespace DriveCentric.Core.Models
 {
     public class Deal : IBaseModel, IStarEntity
     {

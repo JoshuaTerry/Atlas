@@ -1,26 +1,27 @@
-﻿using DriveCentric.BaseService.Context;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using DriveCentric.BaseService.Context;
 using DriveCentric.BaseService.Interfaces;
-using DriveCentric.Model;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Controllers
 {
     public abstract class BaseController<T> : Controller, IContextAccessible where T : class, IBaseModel, new()
     {
         private readonly ResponseReducer responseReducer;
-        private readonly IBaseService<T> service;
         protected virtual string FieldsForAll => string.Empty;
         protected virtual string FieldsForSingle => string.Empty;
         protected virtual string FieldsForList => string.Empty;
         protected virtual string[] ReferenceFields => new string[] { };
-        protected IBaseService<T> Service => service;
+        protected IBaseService<T> Service { get; }
 
         public IContextInfoAccessor ContextInfoAccessor { get; }
 
@@ -32,9 +33,26 @@ namespace DriveCentric.BaseService.Controllers
             responseReducer = new ResponseReducer();
             contextInfoAccessor.ContextInfo = new ContextInfo(httpContextAccessor);
             ContextInfoAccessor = contextInfoAccessor;
-            this.service = service;
+            this.Service = service;
         }
+
         public virtual async Task<IActionResult> GetAll(Expression<Func<T, bool>> predicate = null, int? limit = SearchParameters.LimitMax, int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
+        { 
+            if (!ModelState.IsValid)
+            {
+                Log.Warning($"Invalid state adding new {GetType().Name}.");
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+            var search = new PageableSearch(offset, limit, orderBy); 
+            var result = await Service.GetAllByExpressionAsync(predicate, search, ReferenceFields);
+
+            return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForList : fields));
+        }
+
+        public virtual async Task<IActionResult> GetSingle(Expression<Func<T, bool>> predicate = null, string fields = null)
         {
             if (!ModelState.IsValid)
             {
@@ -44,21 +62,18 @@ namespace DriveCentric.BaseService.Controllers
 
             try
             {
-                var search = new PageableSearch(offset, limit, orderBy);
-                var result = await Service.GetAllByExpressionAsync(predicate, search, ReferenceFields);
+                var result = await Service.GetSingleByExpressionAsync(predicate, ReferenceFields);
+                if (result.TotalResults < 1)
+                {
+                    return NotFound(result);
+                }
 
-                return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForList : fields));
+                return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForSingle : fields));
             }
             catch (Exception exception)
             {
                 return ExceptionHelper.ProcessError(exception);
             }
-        }
-
-        public virtual async Task<IActionResult> GetSingle(Expression<Func<T, bool>> predicate = null, string fields = null)
-        { 
-            var result = await Service.GetSingleByExpressionAsync(predicate, ReferenceFields); 
-            return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForSingle : fields));
         }
 
         public virtual async Task<IActionResult> Post(T entity)

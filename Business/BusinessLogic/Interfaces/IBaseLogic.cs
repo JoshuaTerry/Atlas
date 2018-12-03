@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using DriveCentric.Model;
+using DriveCentric.Core.Interfaces;
 
 namespace DriveCentric.BusinessLogic.Interfaces
 {
     public interface IBaseLogic<T> where T : IBaseModel
-    { 
+    {
         Task<(long count, IEnumerable<T> data)> GetAllAsync(Expression<Func<T, bool>> predicate, IPageable paging, string[] referenceFields = null);
 
         Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, string[] referenceFields = null);

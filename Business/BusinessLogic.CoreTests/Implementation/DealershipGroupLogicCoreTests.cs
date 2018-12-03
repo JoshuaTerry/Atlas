@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Tasks = System.Threading.Tasks;
 using DriveCentric.BusinessLogic.Implementation;
-using DriveCentric.Model;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Utilities.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System.Linq.Expressions;
 
 namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 {
@@ -14,41 +15,43 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
     public class DealershipGroupLogicCoreTests
     {
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
-        private Mock<IDataRepository<IDealershipGroup>> dealershipGroupDataRepositoryMock;
+        private Mock<IDataRepository<DealershipGroup>> dealershipGroupDataRepositoryMock;
         private DealershipGroupLogic businessLogic;
-        private Mock<IDealershipGroup> dealershipGroupMock;
+        private Mock<DealershipGroup> dealershipGroupMock;
 
         [TestInitialize]
         public void TestInitialize()
         {
             contextInfoAccessorMock = new Mock<IContextInfoAccessor>();
-            dealershipGroupDataRepositoryMock = new Mock<IDataRepository<IDealershipGroup>>();
+            dealershipGroupDataRepositoryMock = new Mock<IDataRepository<DealershipGroup>>();
 
             businessLogic =
                 new DealershipGroupLogic(contextInfoAccessorMock.Object, dealershipGroupDataRepositoryMock.Object);
-            dealershipGroupMock = new Mock<IDealershipGroup>();
+            dealershipGroupMock = new Mock<DealershipGroup>();
         }
 
         [TestMethod]
         public void GetDealershipGroup_ValidId_ReturnsDealershipGroup()
         {
-            dealershipGroupDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(dealershipGroupMock.Object);
+            dealershipGroupDataRepositoryMock.Setup(mock => 
+                mock.GetSingleAsync(It.IsAny<Expression<Func<Core.Models.DealershipGroup, bool>>>(), It.IsAny<string[]>()));
 
-            var returnedDealershipGroup = businessLogic.GetAsync(1);
+            var returnedDealershipGroup = businessLogic.GetSingleAsync(x => x.Id == 1, null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(KeyNotFoundException))]
-        public async Task GetDealershipGroup_KeyNotFound_Throws()
+        public async Tasks.Task GetDealershipGroup_KeyNotFound_Throws()
         {
-            dealershipGroupDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>()))
+            dealershipGroupDataRepositoryMock.Setup(mock =>
+                mock.GetSingleAsync(It.IsAny<Expression<Func<Core.Models.DealershipGroup, bool>>>(), It.IsAny<string[]>()))
                 .Throws<KeyNotFoundException>();
 
-            var returnedDealershipGroup = await businessLogic.GetAsync(1);
+            var returnedDealershipGroup = await businessLogic.GetSingleAsync(x => x.Id == 1, null);
         }
 
         [TestMethod]
-        public async Task Delete_ValidId_ReturnsTrue()
+        public async Tasks.Task Delete_ValidId_ReturnsTrue()
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(true);
@@ -57,7 +60,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
         }
 
         [TestMethod]
-        public async Task Delete_IdNotExists_ReturnsFalse()
+        public async Tasks.Task Delete_IdNotExists_ReturnsFalse()
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(false);
@@ -67,7 +70,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 
         [TestMethod]
         [ExpectedException(typeof(NullReferenceException))]
-        public async Task Delete_NullReferenceException_Throws()
+        public async Tasks.Task Delete_NullReferenceException_Throws()
         {
             dealershipGroupDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .Throws(new NullReferenceException("Test NRE"));

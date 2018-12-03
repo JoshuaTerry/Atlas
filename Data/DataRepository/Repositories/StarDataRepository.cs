@@ -1,10 +1,16 @@
-﻿using DriveCentric.Model;
-using DriveCentric.Model.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq; 
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Threading.Tasks;
+using DriveCentric.Model;
+using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Configuration;
 using DriveCentric.Utilities.Context;
-using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using System;
+using ServiceStack.Data;
 
 namespace DriveCentric.Data.SqlORM.Repositories
 {
@@ -25,7 +31,7 @@ namespace DriveCentric.Data.SqlORM.Repositories
         {
             try
             {
-                var driveServerId = 21;
+                const int driveServerId = 21;
                 //var driveServerId = Convert.ToInt32(ContextInfoAccessor.ContextInfo.User.Claims.Single(c => c.Type == "custom:DriveServerId"));
 
                 return new OrmLiteConnectionFactory(

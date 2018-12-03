@@ -9,7 +9,12 @@ namespace DriveCentric.BusinessLogic.Configuration
     {
         public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
         {
-             
+            services.AddScoped<ICustomerLogic, CustomerLogic>();
+            services.AddScoped<IDealLogic, DealLogic>();
+            services.AddScoped<IDealershipGroupLogic, DealershipGroupLogic>();
+            services.AddScoped<ITaskLogic, TaskLogic>();
+            services.AddScoped<IModuleLogic, ModuleLogic>();
+
             services.AddDataRepository();
             return services;
         }

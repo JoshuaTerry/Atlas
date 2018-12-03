@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DriveCentric.BaseService.Interfaces;
 using DriveCentric.BusinessLogic.Implementation;
 using DriveCentric.BusinessLogic.Interfaces;
-using DriveCentric.Model;
-using DriveCentric.Model.Interfaces;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 
@@ -26,11 +26,6 @@ namespace DriveCentric.BaseService.Services
         }
 
         [MonitorAsyncAspect]
-        public virtual async Task<IDataResponse<long>> DeleteAsync(int id)
-        { 
-            UnitOfWork.Delete<T>(id); 
-            return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() };
-        }
 
         [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<T>> GetSingleByExpressionAsync(Expression<Func<T, bool>> expression = null, string[] referenceFields = null)
@@ -40,7 +35,7 @@ namespace DriveCentric.BaseService.Services
 
         [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<IEnumerable<T>>> GetAllByExpressionAsync(Expression<Func<T, bool>> expression, IPageable paging = null, string[] referenceFields = null) 
-        {
+        { 
             var result = await UnitOfWork.GetEntities(expression, paging, referenceFields);
             var count = await UnitOfWork.GetCount<T>(expression);
 
@@ -62,8 +57,10 @@ namespace DriveCentric.BaseService.Services
 
         public IDataResponse<T> ProcessIDataResponseException(Exception ex)
         {
-            var response = new DataResponse<T>();
-            response.IsSuccessful = false;
+            var response = new DataResponse<T>
+            {
+                IsSuccessful = false
+            };
             response.ErrorMessages.Add(ex.Message);
             response.VerboseErrorMessages.Add(ex.ToString()); 
 
@@ -72,8 +69,10 @@ namespace DriveCentric.BaseService.Services
 
         public DataResponse<T1> ProcessDataResponseException<T1>(Exception ex)
         {
-            var response = new DataResponse<T1>();
-            response.IsSuccessful = false;
+            var response = new DataResponse<T1>
+            {
+                IsSuccessful = false
+            };
             response.ErrorMessages.Add(ex.Message);
             response.VerboseErrorMessages.Add(ex.ToString()); 
 

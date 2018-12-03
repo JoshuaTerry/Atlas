@@ -1,4 +1,4 @@
-﻿using DriveCentric.Model;
+﻿using DriveCentric.Core.Models;
 
 namespace DriveCentric.BusinessLogic.Interfaces
 {

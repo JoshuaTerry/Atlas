@@ -1,8 +1,8 @@
 ﻿using System;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
 using DriveCentric.Data.SqlORM.Configuration;
-//using DriveCentric.Data.SqlORM.Repositories;
-using DriveCentric.Model;
-using DriveCentric.Model.Interfaces;
+using DriveCentric.Data.SqlORM.Repositories;
 using DriveCentric.Utilities.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,10 +39,19 @@ namespace DriveCentric.Data.DataRepository.Configuration
         {
             ConfigureConnectionFactory(services);
 
+            services.AddScoped<IDataRepository<DriveServer>, GalaxyDataRepository<DriveServer>>();
             services.AddScoped<IDriveServerCollection, DriveServerCollection>();
             InstantiateDriveServerCollection(services);
 
             return services;
+        }
+
+            services.AddScoped<IDataRepository<DealershipGroup>, GalaxyDataRepository<DealershipGroup>>();
+            services.AddScoped<IDataRepository<Module>, GalaxyDataRepository<Module>>();
+
+            services.AddScoped<IDataRepository<Customer>, StarDataRepository<Customer>>();
+            services.AddScoped<IDataRepository<Deal>, StarDataRepository<Deal>>();
+            services.AddScoped<IDataRepository<Task>, StarDataRepository<Task>>();
         }
 
         private static void InstantiateDriveServerCollection(IServiceCollection services)

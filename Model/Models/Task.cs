@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Model.Enums;
 using DriveCentric.Model.Interfaces;
 using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
 
-namespace DriveCentric.Model
+namespace DriveCentric.Core.Models
 {
     public class Task : IBaseModel, IStarEntity
     {
@@ -22,7 +23,7 @@ namespace DriveCentric.Model
 
         [Alias("fkUserID")]
         public int UserId { get; set; }
-         
+
         [JsonIgnore]
         [Alias("Store")]
         [Reference]
@@ -30,7 +31,7 @@ namespace DriveCentric.Model
 
         [Alias("fkStoreID")]
         public int StoreId { get; set; }
-         
+
         [JsonIgnore]
         [Alias("Customer")]
         [Reference]
@@ -38,7 +39,7 @@ namespace DriveCentric.Model
 
         [Alias("fkCustomerID")]
         public int CustomerId { get; set; }
-         
+
         [JsonIgnore]
         [Alias("User")]
         [Reference]
@@ -46,7 +47,7 @@ namespace DriveCentric.Model
 
         [Alias("fkCreatedByUserID")]
         public int CreatedByUserId { get; set; }
-         
+
         [Alias("Description")]
         public string Notes { get; set; }
 
@@ -59,7 +60,7 @@ namespace DriveCentric.Model
 
         [Alias("fkDealID")]
         public int DealId { get; set; }
-         
+
         public ActionType ActionType { get; set; }
 
         [Alias("GUID")]

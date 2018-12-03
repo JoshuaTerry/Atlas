@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DriveCentric.Model
+namespace DriveCentric.Core.Interfaces
 {
     public interface IBaseModel
     {

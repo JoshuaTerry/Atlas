@@ -1,7 +1,6 @@
-﻿using DriveCentric.BaseService.Services;
+using DriveCentric.BaseService.Services;
 using DriveCentric.BusinessLogic.Interfaces;
-using DriveCentric.Model;
-using DriveCentric.Model.Interfaces;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 
 namespace DriveCentric.ModuleService.Services
