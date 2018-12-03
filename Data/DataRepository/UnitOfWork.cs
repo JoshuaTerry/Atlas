@@ -125,7 +125,7 @@ namespace DriveCentric.Data.DataRepository
 
             using (var conn = factory.OpenDbConnection())
             {
-                using (var tran = conn.BeginTransaction())
+                using (var tran = conn.OpenTransaction())
                 {
                     try
                     {
@@ -149,17 +149,9 @@ namespace DriveCentric.Data.DataRepository
 
         public async Task<long> SaveChanges()
         {
-            if (saveActions.Select(x => x.Database).Distinct().Count() > 1)
-                throw new Exception("Transactions cannot span multiple databases");
+            var actionsByFactory = saveActionsByFactory.Where(x => x.Value.Count >= 1).First();
 
-            var database = saveActions.Select(x => x.Database).FirstOrDefault();
-
-            if (string.IsNullOrEmpty(database) || !connectionFactories.ContainsKey(database))
-                throw new Exception("No Database is specified for the requested actions.");
-
-            var queue = saveActionsByFactory[connectionFactories[database]];
-
-            return await ProcessTransaction(connectionFactories[database], queue);
+            return await ProcessTransaction(actionsByFactory.Key, actionsByFactory.Value);
         }
 
         public IContextInfoAccessor ContextInfoAccessor { get; }
