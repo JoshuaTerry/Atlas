@@ -6,7 +6,6 @@ using DriveCentric.BaseService.Interfaces;
 using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
-using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 

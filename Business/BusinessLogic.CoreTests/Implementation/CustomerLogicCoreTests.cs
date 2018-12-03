@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 using DriveCentric.BusinessLogic.Implementation;
-using DriveCentric.Model;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Utilities.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Tasks = System.Threading.Tasks;
 
 namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 {
@@ -28,29 +29,32 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
             customerMock = new Mock<Customer>();
         }
 
+        //Expression<Func<T, bool>> predicate, string[] referenceFields = null
         [TestMethod]
-        public async Task GetCustomer_ValidId_ReturnsCustomer()
+        public async Tasks.Task GetCustomer_ValidId_ReturnsCustomer()
         {
-            customerDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>()))
+            customerDataRepositoryMock.Setup(mock =>
+                mock.GetSingleAsync(It.IsAny<Expression<Func<Core.Models.Customer, bool>>>(), It.IsAny<string[]>()))
                 .ReturnsAsync(customerMock.Object);
 
-            var returnedCustomer = await businessLogic.GetAsync(1);
+            var returnedCustomer = await businessLogic.GetSingleAsync(x => x.Id == 1, null);
 
             Assert.AreEqual(customerMock.Object, returnedCustomer);
         }
 
         [TestMethod]
         [ExpectedException(typeof(KeyNotFoundException))]
-        public async Task GetCustomer_KeyNotFound_Throws()
+        public async Tasks.Task GetCustomer_KeyNotFound_Throws()
         {
-            customerDataRepositoryMock.Setup(mock => mock.GetByIdAsync(It.IsAny<int>()))
+            customerDataRepositoryMock.Setup(mock => 
+                mock.GetSingleAsync(It.IsAny<Expression<Func<Core.Models.Customer, bool>>>(), It.IsAny<string[]>()))
                 .Throws<KeyNotFoundException>();
 
-            var returnedCustomer = await businessLogic.GetAsync(1);
+            var returnedCustomer = await businessLogic.GetSingleAsync(x => x.Id == 1, null);
         }
 
         [TestMethod]
-        public async Task Delete_ValidId_ReturnsTrue()
+        public async Tasks.Task Delete_ValidId_ReturnsTrue()
         {
             customerDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(true);
@@ -59,7 +63,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
         }
 
         [TestMethod]
-        public async Task Delete_IdNotExists_ReturnsFalse()
+        public async Tasks.Task Delete_IdNotExists_ReturnsFalse()
         {
             customerDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(false);
@@ -69,7 +73,7 @@ namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 
         [TestMethod]
         [ExpectedException(typeof(NullReferenceException))]
-        public async Task Delete_NullReferenceException_Throws()
+        public async Tasks.Task Delete_NullReferenceException_Throws()
         {
             customerDataRepositoryMock.Setup(mock => mock.DeleteByIdAsync(It.IsAny<int>()))
                 .Throws(new NullReferenceException("Test NRE"));

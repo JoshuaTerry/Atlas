@@ -26,23 +26,19 @@ namespace DriveCentric.TaskService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(services);
             services.AddSingleton(Configuration);
 
             AddSecurityServices(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IContextInfoAccessor, ContextInfoAccessor>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
 
-            services.AddSingleton<ITaskService, Services.TaskService>();
+            services.AddScoped<ITaskService, Services.TaskService>();
 
             services.AddBusinessLogic();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" });
-            });
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" }));
         }
 
         private void AddSecurityServices(IServiceCollection services)
@@ -81,10 +77,7 @@ namespace DriveCentric.TaskService
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1");
-            });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1"));
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

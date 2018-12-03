@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Model\DriveCentric.Model.csproj" />
+    <ProjectReference Include="..\..\Model\DriveCentric.Core.csproj" />
     <ProjectReference Include="..\..\Utilities\DriveCentric.Utilities.csproj" />
     <ProjectReference Include="..\BusinessLogic\DriveCentric.BusinessLogic.csproj" />
   </ItemGroup>

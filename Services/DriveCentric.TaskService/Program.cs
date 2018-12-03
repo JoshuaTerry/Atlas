@@ -29,7 +29,7 @@ namespace DriveCentric.TaskService
             finally
             {
                 Log.CloseAndFlush();
-            }            
+            }
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

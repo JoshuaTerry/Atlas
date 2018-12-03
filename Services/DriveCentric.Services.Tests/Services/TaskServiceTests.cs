@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using DriveCentric.BusinessLogic.Interfaces;
@@ -17,7 +18,7 @@ namespace DriveCentric.Services.Tests.Services
         private TaskService.Services.TaskService service;
         private Mock<ITaskLogic> businessLogicMock;
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
-        private Mock<ITask> taskMock;
+        private Mock<Core.Models.Task> taskMock;
 
         [TestInitialize]
         public void TestInitialize()
@@ -25,27 +26,30 @@ namespace DriveCentric.Services.Tests.Services
             businessLogicMock = new Mock<ITaskLogic>();
             contextInfoAccessorMock = new Mock<IContextInfoAccessor>();
             service = new TaskService.Services.TaskService(contextInfoAccessorMock.Object, businessLogicMock.Object);
-            taskMock = new Mock<ITask>();
+            taskMock = new Mock<Core.Models.Task>();
         }
 
         [TestMethod]
         public async Task GetTask_ValidTask_ReturnsTask()
         {
-            businessLogicMock.Setup(mock => mock.GetAsync(It.IsAny<int>()))
+            businessLogicMock.Setup(mock =>
+                mock.GetSingleAsync(It.IsAny<Expression<Func<Core.Models.Task, bool>>>(), It.IsAny<string[]>()))
                 .ReturnsAsync(taskMock.Object);
 
-            var returnedTask = await service.GetAsync(1);
+            var response = await service.GetSingleByExpressionAsync(x => x.Id == 1, null);
 
-            Assert.AreEqual(taskMock.Object, returnedTask);
+            Assert.AreEqual(taskMock.Object, response.Data);
         }
 
         [TestMethod]
         [ExpectedException(typeof(KeyNotFoundException))]
         public async Task GetTask_KeyNotFound_Throws()
         {
-            businessLogicMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).Throws<KeyNotFoundException>();
+            businessLogicMock.Setup(mock =>
+                mock.GetSingleAsync(It.IsAny<Expression<Func<Core.Models.Task, bool>>>(), It.IsAny<string[]>()))
+                .Throws<KeyNotFoundException>();
 
-            var returnedTask = await service.GetAsync(1);
+            var response = await service.GetSingleByExpressionAsync(x => x.Id == 1, null);
         }
 
         [TestMethod]
@@ -53,8 +57,8 @@ namespace DriveCentric.Services.Tests.Services
         {
             businessLogicMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .ReturnsAsync(true);
-            var wasDeleted = await service.DeleteAsync(1);
-            Assert.IsTrue(wasDeleted);
+            var response = await service.DeleteAsync(1);
+            Assert.IsTrue(response.Data);
         }
 
         [TestMethod]
@@ -62,8 +66,8 @@ namespace DriveCentric.Services.Tests.Services
         {
             businessLogicMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .ReturnsAsync(false);
-            var wasDeleted = await service.DeleteAsync(1);
-            Assert.IsFalse(wasDeleted);
+            var response = await service.DeleteAsync(1);
+            Assert.IsFalse(response.Data);
         }
 
         [TestMethod]
@@ -72,49 +76,49 @@ namespace DriveCentric.Services.Tests.Services
         {
             businessLogicMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
                 .Throws(new NullReferenceException("Test NRE"));
-            var wasDeleted = await service.DeleteAsync(1);
+            var response = await service.DeleteAsync(1);
         }
 
         [TestMethod]
         public async Task InsertTask_ValidTask_ReturnsTaskId()
         {
-            businessLogicMock.Setup(mock => mock.InsertAsync(It.IsAny<ITask>()))
+            businessLogicMock.Setup(mock => mock.InsertAsync(It.IsAny<Core.Models.Task>()))
                 .ReturnsAsync(1234L);
 
-            var returnedTaskId = await service.InsertAsync(taskMock.Object);
+            var response = await service.InsertAsync(taskMock.Object);
 
-            Assert.AreEqual(1234L, returnedTaskId);
+            Assert.AreEqual(1234L, response.Data);
         }
 
         [TestMethod]
         [ExpectedException(typeof(NullReferenceException))]
         public async Task InsertTask_NullReferenceException_Throws()
         {
-            businessLogicMock.Setup(mock => mock.InsertAsync(It.IsAny<ITask>()))
+            businessLogicMock.Setup(mock => mock.InsertAsync(It.IsAny<Core.Models.Task>()))
                 .Throws(new NullReferenceException("Test NRE"));
 
-            var returnedTaskId = await service.InsertAsync(taskMock.Object);
+            var response = await service.InsertAsync(taskMock.Object);
         }
 
         [TestMethod]
         public async Task UpdateTask_ValidTask_ReturnsTrue()
         {
-            businessLogicMock.Setup(mock => mock.UpdateAsync(It.IsAny<ITask>()))
+            businessLogicMock.Setup(mock => mock.UpdateAsync(It.IsAny<Core.Models.Task>()))
                 .ReturnsAsync(true);
 
-            var returnedTask = await service.UpdateAsync(taskMock.Object);
+            var response = await service.UpdateAsync(taskMock.Object);
 
-            Assert.IsTrue(returnedTask);
+            Assert.IsTrue(response.Data);
         }
 
         [TestMethod]
         [ExpectedException(typeof(NullReferenceException))]
         public async Task UpdateTask_NullReferenceException_Throws()
         {
-            businessLogicMock.Setup(mock => mock.UpdateAsync(It.IsAny<ITask>()))
+            businessLogicMock.Setup(mock => mock.UpdateAsync(It.IsAny<Core.Models.Task>()))
                 .Throws(new NullReferenceException("Test NRE"));
 
-            var returnedTask = await service.UpdateAsync(taskMock.Object);
+            var response = await service.UpdateAsync(taskMock.Object);
         }
     }
 }

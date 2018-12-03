@@ -45,16 +45,16 @@ namespace DriveCentric.TaskService.Controllers
         [MonitorAsyncAspect]
         [HttpPost]
         public override async Task<IActionResult> Post([FromBody] Core.Models.Task entity)
-            => await Post(entity);
+            => await base.Post(entity);
 
         [HttpPatch()]
         [Route("api/v1/task/{id}")]
         public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Core.Models.Task> patch)
-            => await Patch(id, patch);
+            => await base.Patch(id, patch);
 
         [MonitorAsyncAspect]
         [HttpDelete()]
         [Route("api/v1/task/{id}")]
-        public override async Task<IActionResult> Delete(int id) => await Delete(id);
+        public override async Task<IActionResult> Delete(int id) => await base.Delete(id);
     }
 }

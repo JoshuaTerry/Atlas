@@ -8,7 +8,7 @@ namespace DriveCentric.Utilities.Aspects
 {
     [Serializable]
     public class MonitorAsyncAspect : MethodInterceptionAspect
-    {        
+    {
         public override async Task OnInvokeAsync(MethodInterceptionArgs args)
         {
             var instance = args.Instance as IContextAccessible;
@@ -21,5 +21,5 @@ namespace DriveCentric.Utilities.Aspects
                 await args.ProceedAsync();
             }
         }
-    } 
+    }
 }

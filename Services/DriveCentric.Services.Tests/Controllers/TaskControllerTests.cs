@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using DriveCentric.BaseService.Controllers.BindingModels;
-using DriveCentric.Model;
+using System.Linq.Expressions;
+using Tasks = System.Threading.Tasks;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
 using DriveCentric.Services.Tests.Helpers;
 using DriveCentric.TaskService.Controllers;
 using DriveCentric.TaskService.Services;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using DriveCentric.Model.Enums;
 
 namespace DriveCentric.Services.Tests.Controllers
 {
@@ -22,7 +24,7 @@ namespace DriveCentric.Services.Tests.Controllers
         private Mock<ITaskService> taskServiceMock;
         private Mock<IHttpContextAccessor> httpContextAccessorMock;
         private Mock<IContextInfoAccessor> contextInfoAccessorMock;
-        private Mock<ITask> taskMock;
+        private Task testTask;
 
         [TestInitialize]
         public void TestInitialize()
@@ -35,38 +37,54 @@ namespace DriveCentric.Services.Tests.Controllers
                 contextInfoAccessorMock.Object,
                 taskServiceMock.Object)
             { ControllerContext = ControllerContextHelper.CreateControllerContext() };
-            taskMock = new Mock<ITask>();
+            testTask = new Task { Id = 1, ActionType = ActionType.Reminder };
         }
 
         [TestMethod]
-        public async Task Get_ValidTask_ReturnsOk()
+        public async Tasks.Task Get_ValidTask_ReturnsOk()
         {
-            taskServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>()))
-                .ReturnsAsync(taskMock.Object);
+            taskServiceMock.Setup(mock =>
+                mock.GetSingleByExpressionAsync(It.IsAny<Expression<Func<Task, bool>>>(), It.IsAny<string[]>()))
+                .ReturnsAsync(new DataResponse<Task> {  Data = testTask, TotalResults = 1, IsSuccessful = true });
             var result = await controller.Get(1);
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         }
 
         [TestMethod]
-        public async Task Get_KeyNotFound_ReturnsNotFound()
+        public async Tasks.Task Get_EntityNotFound_ReturnsNotFound()
         {
-            taskServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).Throws<KeyNotFoundException>();
+            taskServiceMock.Setup(mock =>
+                mock.GetSingleByExpressionAsync(It.IsAny<Expression<Func<Task, bool>>>(), It.IsAny<string[]>()))
+                .ReturnsAsync(new DataResponse<Task> { Data = null, TotalResults = 0, IsSuccessful = true });
             var result = await controller.Get(1);
 
             Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
         }
 
         [TestMethod]
-        public async Task Get_Exception_ReturnsObjectResult()
+        public async Tasks.Task Get_KeyNotFound_ReturnsObjectResult()
         {
-            taskServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).Throws<Exception>();
+            taskServiceMock.Setup(mock =>
+                mock.GetSingleByExpressionAsync(It.IsAny<Expression<Func<Task, bool>>>(), It.IsAny<string[]>()))
+                .Throws<KeyNotFoundException>();
             var result = await controller.Get(1);
 
             Assert.IsInstanceOfType(result, typeof(ObjectResult));
         }
 
         [TestMethod]
-        public async Task Get_InvalidModelState_ReturnsBadRequestObjectResult()
+        public async Tasks.Task Get_Exception_ReturnsObjectResult()
+        {
+            taskServiceMock.Setup(mock =>
+                mock.GetSingleByExpressionAsync(It.IsAny<Expression<Func<Task, bool>>>(), It.IsAny<string[]>()))
+                .Throws<Exception>();
+            var result = await controller.Get(1);
+
+            Assert.IsInstanceOfType(result, typeof(ObjectResult));
+        }
+
+        [TestMethod]
+        public async Tasks.Task Get_InvalidModelState_ReturnsBadRequestObjectResult()
         {
             controller.ModelState.AddModelError("test", "Testing invalid Model State.");
             var result = await controller.Get(1);
@@ -74,35 +92,38 @@ namespace DriveCentric.Services.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task Delete_ValidTask_ReturnsOk()
+        public async Tasks.Task Delete_ValidTask_ReturnsOk()
         {
-            taskServiceMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
-                .ReturnsAsync(true);
+            taskServiceMock.Setup(mock =>
+                mock.DeleteAsync(It.IsAny<int>()))
+                .ReturnsAsync(new DataResponse<bool> { Data = true });
             var result = await controller.Delete(1);
 
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
 
             var okResult = result as OkObjectResult;
-            Assert.IsTrue((bool)okResult.Value);
+            Assert.IsTrue(((IDataResponse<bool>)okResult.Value).Data);
         }
 
         [TestMethod]
-        public async Task Delete_TaskNotExists_ReturnsOk()
+        public async Tasks.Task Delete_TaskNotExists_ReturnsOk()
         {
-            taskServiceMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
-                .ReturnsAsync(false);
+            taskServiceMock.Setup(mock =>
+                mock.DeleteAsync(It.IsAny<int>()))
+                .ReturnsAsync(new DataResponse<bool> { Data = false });
             var result = await controller.Delete(1);
 
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
 
             var okResult = result as OkObjectResult;
-            Assert.IsFalse((bool)okResult.Value);
+            Assert.IsFalse(((IDataResponse<bool>)okResult.Value).Data);
         }
 
         [TestMethod]
-        public async Task Delete_NullReferenceException_Returns()
+        public async Tasks.Task Delete_NullReferenceException_Returns()
         {
-            taskServiceMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>()))
+            taskServiceMock.Setup(mock =>
+                mock.DeleteAsync(It.IsAny<int>()))
                 .Throws<NullReferenceException>();
             var result = await controller.Delete(1);
 
@@ -110,7 +131,7 @@ namespace DriveCentric.Services.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task Delete_InvalidModelState_ReturnsBadRequestObjectResult()
+        public async Tasks.Task Delete_InvalidModelState_ReturnsBadRequestObjectResult()
         {
             controller.ModelState.AddModelError("test", "Testing invalid Model State.");
             var result = await controller.Delete(1);
@@ -118,63 +139,69 @@ namespace DriveCentric.Services.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task Post_ValidTask_ReturnsOk()
+        public async Tasks.Task Post_ValidTask_ReturnsOk()
         {
-            taskServiceMock.Setup(mock => mock.InsertAsync(It.IsAny<ITask>()))
-                .ReturnsAsync(1234L);
-            var result = await controller.Post(new TaskBindingModel { ActionType = 0 });
+            taskServiceMock.Setup(mock =>
+                mock.InsertAsync(It.IsAny<Task>()))
+                .ReturnsAsync(new DataResponse<long> { Data = 1234L });
+            var result = await controller.Post(new Task { ActionType = 0 });
             var okResult = result as OkObjectResult;
-            Assert.AreEqual(1234L, okResult.Value);
+            Assert.AreEqual(1234L, ((IDataResponse<long>)okResult.Value).Data);
         }
 
         [TestMethod]
-        public async Task Post_InvalidModelState_ReturnsBadRequestObjectResult()
+        public async Tasks.Task Post_InvalidModelState_ReturnsBadRequestObjectResult()
         {
             controller.ModelState.AddModelError("test", "Testing invalid Model State.");
-            taskServiceMock.Setup(mock => mock.InsertAsync(It.IsAny<ITask>()))
-                .ReturnsAsync(1234L);
-            var result = await controller.Post(new TaskBindingModel { ActionType = 0 });
+            taskServiceMock.Setup(mock =>
+                mock.InsertAsync(It.IsAny<Task>()))
+                .ReturnsAsync(new DataResponse<long> { Data = 1234L });
+            var result = await controller.Post(new Task { ActionType = 0 });
 
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
         }
 
         [TestMethod]
-        public async Task Post_Exception_ReturnsObjectResult()
+        public async Tasks.Task Post_Exception_ReturnsObjectResult()
         {
-            taskServiceMock.Setup(mock => mock.InsertAsync(It.IsAny<ITask>())).Throws<Exception>();
-            var result = await controller.Post(new TaskBindingModel { ActionType = 0 });
+            taskServiceMock.Setup(mock =>
+                mock.InsertAsync(It.IsAny<Task>()))
+                .Throws<Exception>();
+            var result = await controller.Post(new Task { ActionType = 0 });
 
             Assert.IsInstanceOfType(result, typeof(ObjectResult));
         }
 
         [TestMethod]
-        public async Task Patch_ValidTask_CallsUpdateWithNewIdOnce()
+        public async Tasks.Task Patch_ValidTask_CallsUpdateWithNewIdOnce()
         {
-            taskMock.SetupProperty(task => task.UserId, 10);
-            taskServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>()))
-                .ReturnsAsync(taskMock.Object);
-            taskServiceMock.Setup(mock => mock.UpdateAsync(It.IsAny<ITask>()))
-                .ReturnsAsync(true);
+            taskServiceMock.Setup(mock =>
+                mock.GetSingleByExpressionAsync(It.IsAny<Expression<Func<Task, bool>>>(), It.IsAny<string[]>()))
+                .ReturnsAsync(new DataResponse<Task> { Data = testTask });
+            taskServiceMock.Setup(mock =>
+                mock.UpdateAsync(It.IsAny<Task>()))
+                .ReturnsAsync(new DataResponse<bool> { Data = true });
 
-            JsonPatchDocument<ITask> patch = new JsonPatchDocument<ITask>();
+            JsonPatchDocument<Task> patch = new JsonPatchDocument<Task>();
             patch.Replace(task => task.UserId, 15);
 
             var result = await controller.Patch(1, patch);
 
-            taskServiceMock.Verify(mock => mock.UpdateAsync(It.Is<ITask>(task => task.UserId == 15)), Times.Once());
+            taskServiceMock.Verify(mock => mock.UpdateAsync(It.Is<Task>(task => task.UserId == 15)), Times.Once());
         }
 
         [TestMethod]
-        public async Task Patch_InvalidModelState_ReturnsBadRequestObjectResult()
+        public async Tasks.Task Patch_InvalidModelState_ReturnsBadRequestObjectResult()
         {
             controller.ModelState.AddModelError("test", "Testing invalid Model State.");
 
-            taskMock.SetupProperty(task => task.UserId, 10);
-            taskServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>()))
-                .ReturnsAsync(taskMock.Object);
-            taskServiceMock.Setup(mock => mock.UpdateAsync(It.IsAny<ITask>()))
-                .ReturnsAsync(true);
-            JsonPatchDocument<ITask> patch = new JsonPatchDocument<ITask>();
+            taskServiceMock.Setup(mock =>
+                mock.GetSingleByExpressionAsync(It.IsAny<Expression<Func<Task, bool>>>(), It.IsAny<string[]>()))
+                .ReturnsAsync(new DataResponse<Task> { Data = testTask });
+            taskServiceMock.Setup(mock =>
+                mock.UpdateAsync(It.IsAny<Task>()))
+                .ReturnsAsync(new DataResponse<bool> { Data = true });
+            JsonPatchDocument<Task> patch = new JsonPatchDocument<Task>();
             patch.Replace(task => task.UserId, 15);
             var result = await controller.Patch(1, patch);
 
@@ -182,14 +209,15 @@ namespace DriveCentric.Services.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task Patch_Exception_ReturnsObjectResult()
+        public async Tasks.Task Patch_Exception_ReturnsObjectResult()
         {
-            taskMock.SetupProperty(task => task.UserId, 10);
-            taskServiceMock.Setup(mock => mock.GetAsync(It.IsAny<int>()))
-                .ReturnsAsync(taskMock.Object);
-            taskServiceMock.Setup(mock => mock.UpdateAsync(It.IsAny<ITask>()))
-                .Throws<Exception>();
-            JsonPatchDocument<ITask> patch = new JsonPatchDocument<ITask>();
+            taskServiceMock.Setup(mock =>
+                mock.GetSingleByExpressionAsync(It.IsAny<Expression<Func<Task, bool>>>(), It.IsAny<string[]>()))
+                .ReturnsAsync(new DataResponse<Task> { Data = testTask });
+            taskServiceMock.Setup(mock =>
+                mock.UpdateAsync(It.IsAny<Task>()))
+                .ReturnsAsync(new DataResponse<bool> { Data = true });
+            JsonPatchDocument<Task> patch = new JsonPatchDocument<Task>();
             patch.Replace(task => task.UserId, 15);
             var result = await controller.Patch(1, patch);
 
