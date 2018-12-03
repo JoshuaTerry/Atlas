@@ -6,8 +6,7 @@ using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
-using DriveCentric.Model.Interfaces;
-using DriveCentric.Data.SqlORM.Repositories;
+using DriveCentric.Model.Interfaces; 
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
@@ -21,10 +20,10 @@ namespace DriveCentric.BusinessLogic.Implementation
             Repository = repository;
         }
 
-        protected abstract bool ValidateAdd(T entity);
-        protected abstract bool ValidateUpdate(T entity);
-        protected abstract bool ValidateDelete(T entity);
-        protected abstract T FormatGet(T entity);
-        protected abstract IEnumerable<T> FormatGet(IEnumerable<T> entities);
+        public abstract bool ValidateAdd(T entity);
+        public abstract bool ValidateUpdate(T entity);
+        public abstract bool ValidateDelete(T entity);
+        public abstract T FormatGet(T entity);
+        public abstract IEnumerable<T> FormatGet(IEnumerable<T> entities);
     }
 }

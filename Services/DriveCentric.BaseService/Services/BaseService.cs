@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DriveCentric.BaseService.Interfaces;
+using DriveCentric.BusinessLogic.Implementation;
 using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Model;
 using DriveCentric.Model.Interfaces;
@@ -18,7 +19,7 @@ namespace DriveCentric.BaseService.Services
 
         public IContextInfoAccessor ContextInfoAccessor { get { return contextInfoAccessor; } }
 
-        protected BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork)  
+        protected BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork)
         {
             this.UnitOfWork = unitOfWork; 
             this.contextInfoAccessor = contextInfoAccessor;
@@ -26,8 +27,8 @@ namespace DriveCentric.BaseService.Services
 
         [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<long>> DeleteAsync(int id)
-        {
-            UnitOfWork.Delete<T>(id);
+        { 
+            UnitOfWork.Delete<T>(id); 
             return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() };
         }
 

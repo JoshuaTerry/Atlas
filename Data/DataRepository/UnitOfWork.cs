@@ -1,5 +1,4 @@
-﻿//using DriveCentric.Data.SqlORM.Repositories;
-using DriveCentric.Model;
+﻿using DriveCentric.Model;
 using DriveCentric.Model.Interfaces;
 using DriveCentric.Utilities.Configuration;
 using DriveCentric.Utilities.Context;
@@ -28,12 +27,13 @@ namespace DriveCentric.Data.DataRepository
 
         public UnitOfWork(IContextInfoAccessor contextInfoAccessor,
                             IConfiguration configuration,
+                            IRepository repository,
                             IDriveServerCollection driveServerCollection)
         {
             this.ContextInfoAccessor = contextInfoAccessor;
             this.configuration = configuration;
             this.driveServerCollection = driveServerCollection;
-            this.repository = new Repository();
+            this.repository = repository;
             connectionFactories = CreateConnectionFactories();
            
             foreach (var factory in connectionFactories)

@@ -13,6 +13,13 @@ namespace DriveCentric.TaskService.Services
             IUnitOfWork unitOfWork,
             ITaskLogic businessLogic
             ) : base(contextInfoAccessor, unitOfWork)
-        { }
+        {
+             
+        }
+
+        public bool MergeTasks(Task task1, Task task2)
+        {
+            return true;
+        }
     }
 }

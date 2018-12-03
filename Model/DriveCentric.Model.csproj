@@ -21,6 +21,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\IDataAccessor.cs" />
+    <Compile Remove="Interfaces\IDataRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="ServiceStack.OrmLite.SqlServer" Version="5.4.0" />
   </ItemGroup>

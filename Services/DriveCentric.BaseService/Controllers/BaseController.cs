@@ -35,11 +35,24 @@ namespace DriveCentric.BaseService.Controllers
             this.service = service;
         }
         public virtual async Task<IActionResult> GetAll(Expression<Func<T, bool>> predicate = null, int? limit = SearchParameters.LimitMax, int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
-        { 
-            var search = new PageableSearch(offset, limit, orderBy); 
-            var result = await Service.GetAllByExpressionAsync(predicate, search, ReferenceFields);
+        {
+            if (!ModelState.IsValid)
+            {
+                Log.Warning($"Invalid state adding new {GetType().Name}.");
+                return BadRequest(ModelState);
+            }
 
-            return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForList : fields));
+            try
+            {
+                var search = new PageableSearch(offset, limit, orderBy);
+                var result = await Service.GetAllByExpressionAsync(predicate, search, ReferenceFields);
+
+                return Ok(FinalizeReponse(result, string.IsNullOrWhiteSpace(fields) ? FieldsForList : fields));
+            }
+            catch (Exception exception)
+            {
+                return ExceptionHelper.ProcessError(exception);
+            }
         }
 
         public virtual async Task<IActionResult> GetSingle(Expression<Func<T, bool>> predicate = null, string fields = null)

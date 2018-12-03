@@ -19,7 +19,7 @@ namespace DriveCentric.BaseService
          * To exclude a field from a referenced entity: "ChildRegion.^ParentRegion"
          * To force all fields to be included:  "*,ChildRegion.Code"
          */
-        public IDataResponse ToDynamicResponse<T>(IDataResponse<T> response, string fields = null)
+        internal IDataResponse ToDynamicResponse<T>(IDataResponse<T> response, string fields = null)
         {
             var dynamicResponse = new DataResponse<dynamic>
             {
@@ -48,8 +48,6 @@ namespace DriveCentric.BaseService
 
             return dynamicResponse;
         }
-
-
         internal bool IsSimple(Type type)
         {
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -59,7 +57,6 @@ namespace DriveCentric.BaseService
             }
             return type.IsPrimitive || type.IsEnum || type == typeof(string) || type == typeof(decimal);
         }
-
         internal dynamic ToDynamicList<T>(IEnumerable<T> data, string fields = null)
             where T : IBaseModel
         {
@@ -73,7 +70,6 @@ namespace DriveCentric.BaseService
 
             return RecursivelyReduce(data, listOfFields);
         }
-
         internal dynamic ToDynamicObject<T>(T data, string fields = null)
             where T : IBaseModel
         {
@@ -86,9 +82,7 @@ namespace DriveCentric.BaseService
             List<string> listOfFields = upperCaseFields?.Split(',').ToList() ?? new List<string>();
 
             return RecursivelyReduce(data, listOfFields);
-        }
-
-       
+        }       
         private dynamic RecursivelyReduce<T>(T data, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
             where T : IBaseModel
         {
@@ -164,7 +158,6 @@ namespace DriveCentric.BaseService
             int length = currentProperty.Length;
             return fieldsToInclude.Where(a => a.StartsWith(currentProperty)).Select(a => a.Substring(length)).ToList();
         }
-
         private dynamic RecursivelyReduce<T>(IEnumerable<T> entities, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
             where T : IBaseModel
         {

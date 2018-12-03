@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 namespace DriveCentric.Data.DataRepository.Repositories
 {
     public class Repository : IRepository
-    {       
-        public Repository()
-        {           
-        } 
-        public async Task<IEnumerable<T>> GetAllAsync<T>(IDbConnection connection, Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new() 
+    {
+        public async Task<IEnumerable<T>> GetAllAsync<T>(IDbConnection connection, 
+                                                            Expression<Func<T, bool>> expression, 
+                                                            IPageable paging, 
+                                                            string[] referenceFields = null) where T : class, IBaseModel, new() 
         {
             bool isDescending = paging.OrderBy.StartsWith("-");
             var sortFields = GetModelOrderByField<T>(connection, paging);

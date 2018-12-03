@@ -1,6 +1,6 @@
 ﻿using System;
 using DriveCentric.Data.SqlORM.Configuration;
-using DriveCentric.Data.SqlORM.Repositories;
+//using DriveCentric.Data.SqlORM.Repositories;
 using DriveCentric.Model;
 using DriveCentric.Model.Interfaces;
 using DriveCentric.Utilities.Configuration;
@@ -34,26 +34,15 @@ namespace DriveCentric.Data.DataRepository.Configuration
                 services.AddSqlOrmLite();
             }
         }
+
         public static IServiceCollection AddSqlOrmLite(this IServiceCollection services)
         {
             ConfigureConnectionFactory(services);
 
-            services.AddScoped<IDataRepository<DriveServer>, GalaxyDataRepository<DriveServer>>();
             services.AddScoped<IDriveServerCollection, DriveServerCollection>();
             InstantiateDriveServerCollection(services);
 
-            AddRepositories(services);
-
             return services;
-        }
-        private static void AddRepositories(IServiceCollection services)
-        {
-            //services.AddSingleton<IDataRepository<DealershipGroup>, GalaxyDataRepository<DealershipGroup>>();
-            //services.AddSingleton<IDataRepository<Module>, GalaxyDataRepository<Module>>();
-
-            //services.AddSingleton<IDataRepository<Customer>, StarDataRepository<Customer>>();
-            //services.AddSingleton<IDataRepository<Deal>, StarDataRepository<Deal>>();
-            services.AddScoped<IDataRepository<Task>, StarDataRepository<Task>>();
         }
 
         private static void InstantiateDriveServerCollection(IServiceCollection services)

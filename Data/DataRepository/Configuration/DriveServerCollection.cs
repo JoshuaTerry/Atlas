@@ -9,11 +9,12 @@ namespace DriveCentric.Data.SqlORM.Configuration
     public class DriveServerCollection : IDriveServerCollection
     {
         private readonly Dictionary<int, DriveServer> servers;
+        private readonly IUnitOfWork unitOfWork;
 
-        public DriveServerCollection(IDataRepository<DriveServer> driveServerRepository)
+        public DriveServerCollection(IUnitOfWork uow)
         {
-
-            servers = driveServerRepository.GetAllAsync(null, PageableSearch.Default).Result.data.ToDictionary(server => server.Id);
+            this.unitOfWork = uow;
+            servers = unitOfWork.GetEntities<DriveServer>(null, PageableSearch.Default).Result.ToDictionary(server => server.Id);
         }
 
         public string GetConnectionStringById(int id)
