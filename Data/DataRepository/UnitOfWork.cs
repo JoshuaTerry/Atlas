@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 namespace DriveCentric.Data.DataRepository
 {
     public class UnitOfWork : IUnitOfWork, IContextAccessible
-    { 
+    {
         private Dictionary<int, DriveServer> servers;
         private readonly IConfiguration configuration;
-        private readonly Dictionary<string, IDbConnectionFactory> connectionFactories; 
+        private readonly Dictionary<string, IDbConnectionFactory> connectionFactories;
         private readonly Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>> saveActionsByFactory = new Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>>();
         private readonly IRepository repository;
 
@@ -30,7 +30,7 @@ namespace DriveCentric.Data.DataRepository
             this.repository = repository;
             connectionFactories = new Dictionary<string, IDbConnectionFactory>();
             CreateConnectionFactories();
-           
+
             foreach (var factory in connectionFactories)
             {
                 saveActionsByFactory.Add(factory.Value, new Queue<Func<IDbConnection, Task<long>>>());
@@ -52,10 +52,10 @@ namespace DriveCentric.Data.DataRepository
         }
 
         private void CreateConnectionFactories()
-        { 
+        {
             AddGalaxyFactory(connectionFactories);
             this.servers = GetEntities<DriveServer>(null, PageableSearch.Default).Result.ToDictionary(server => server.Id);
-            AddStarFactory(connectionFactories);             
+            AddStarFactory(connectionFactories);
         }
 
         private void AddGalaxyFactory(Dictionary<string, IDbConnectionFactory> connectionFactories)
@@ -96,7 +96,7 @@ namespace DriveCentric.Data.DataRepository
                 return await repository.GetCount<T>(connection, expression);
         }
 
-        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new() 
+        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new()
         {
             using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
                 return await repository.GetAllAsync<T>(connection, expression, paging, referenceFields);
@@ -107,9 +107,9 @@ namespace DriveCentric.Data.DataRepository
             if (typeof(IGalaxyEntity).IsAssignableFrom(type))
                 return connectionFactories["Galaxy"];
             else if (typeof(IStarEntity).IsAssignableFrom(type))
-                return connectionFactories["Star"];  
+                return connectionFactories["Star"];
             else
-                throw new Exception("Type requested does not have an assiged connection factory."); 
+                throw new Exception("Type requested does not have an assiged connection factory.");
         }
 
         public void Insert<T>(T entity) where T : IBaseModel, new()
