@@ -21,6 +21,6 @@ namespace DriveCentric.Core.Models
         public Customer Customer { get; set; }
 
         [Alias("fkCustomerID")]
-        public int CustomerId { get; set; } 
+        public int CustomerId { get; set; }
     }
 }

@@ -17,4 +17,4 @@ namespace DriveCentric.Core.Models
         [Alias("Name")]
         public string Name { get; set; }
     }
-} 
+}

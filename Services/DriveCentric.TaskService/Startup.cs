@@ -35,7 +35,6 @@ namespace DriveCentric.TaskService
 
             services.AddHttpContextAccessor();
             services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
-            //services.AddScoped<ITaskService, Services.TaskService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBaseService<DriveCentric.Core.Models.Task>, BaseService<DriveCentric.Core.Models.Task>>();
             services.AddBusinessLogic();

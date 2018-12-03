@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DriveCentric.Services.Tests.Helpers
 {
@@ -14,7 +14,7 @@ namespace DriveCentric.Services.Tests.Helpers
                     new Claim("custom:UserGuid", "AED370F8-EAED-4997-BB86-786F0890E511")
                 }));
 
-            return new ControllerContext() { HttpContext =  new DefaultHttpContext() { User = user } };
+            return new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
         }
-     }
+    }
 }

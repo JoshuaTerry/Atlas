@@ -1,7 +1,7 @@
-﻿using System;
-using DriveCentric.Utilities.Context;
+﻿using DriveCentric.Utilities.Context;
 using PostSharp.Aspects;
 using Serilog;
+using System;
 
 namespace DriveCentric.Utilities.Aspects
 {

@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
-using DriveCentric.Core.Interfaces;
-using DriveCentric.Core.Models;
- 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-
-namespace DriveCentric.Data.SqlORM.CoreTests.Configuration
+﻿namespace DriveCentric.Data.SqlORM.CoreTests.Configuration
 {
     //[TestClass]
     //public class DriveServerCollectionTests

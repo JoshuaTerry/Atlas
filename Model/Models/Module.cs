@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DriveCentric.Core.Interfaces;
+﻿using DriveCentric.Core.Interfaces;
 using DriveCentric.Model.Enums;
-using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
+using System;
 
 namespace DriveCentric.Core.Models
 {

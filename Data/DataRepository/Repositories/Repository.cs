@@ -1,8 +1,5 @@
 ﻿using DriveCentric.Core.Interfaces;
-using DriveCentric.Model;
 using DriveCentric.Utilities.Aspects;
-using DriveCentric.Utilities.Context;
-using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using System;
 using System.Collections.Generic;
@@ -15,18 +12,19 @@ namespace DriveCentric.Data.DataRepository.Repositories
 {
     public class Repository : IRepository
     {
-        public async Task<IEnumerable<T>> GetAllAsync<T>(IDbConnection connection, 
-                                                            Expression<Func<T, bool>> expression, 
-                                                            IPageable paging, 
-                                                            string[] referenceFields = null) where T : class, IBaseModel, new() 
+        public async Task<IEnumerable<T>> GetAllAsync<T>(IDbConnection connection,
+                                                            Expression<Func<T, bool>> expression,
+                                                            IPageable paging,
+                                                            string[] referenceFields = null) where T : class, IBaseModel, new()
         {
             bool isDescending = paging.OrderBy.StartsWith("-");
             var sortFields = GetModelOrderByField<T>(connection, paging);
-            var sqlExpression = connection.From<T>().Where(expression).Limit(skip: paging.Offset, rows: paging.Limit); 
+            var sqlExpression = connection.From<T>().Where(expression).Limit(skip: paging.Offset, rows: paging.Limit);
             sqlExpression = isDescending ? sqlExpression.OrderByDescending(sortFields) : sqlExpression.OrderBy(sortFields);
 
-            return await connection.LoadSelectAsync(sqlExpression, referenceFields); 
+            return await connection.LoadSelectAsync(sqlExpression, referenceFields);
         }
+
         public async Task<long> GetCount<T>(IDbConnection connection, Expression<Func<T, bool>> expression) where T : IBaseModel, new()
             => await connection.CountAsync<T>(expression);
 
