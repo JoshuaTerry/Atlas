@@ -31,7 +31,7 @@ namespace DriveCentric.ModuleService
             AddSecurityServices(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //services.Add(HttpContextAccessor);
             services.AddSingleton<IContextInfoAccessor, ContextInfoAccessor>();
 
             services.AddSingleton<IModuleService, Services.ModuleService>();

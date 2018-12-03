@@ -1,58 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using DriveCentric.BaseService.Interfaces;
-using DriveCentric.BusinessLogic.Interfaces;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Services
 {
-    public abstract class BaseService<T> : IContextAccessible, IBaseService<T>
-        where T : IBaseModel
-    {
-        protected readonly IBaseLogic<T> businessLogic;
+    public class BaseService<T> : IContextAccessible, IBaseService<T> where T : class, IBaseModel, new() 
+    { 
         protected readonly IContextInfoAccessor contextInfoAccessor;
+        protected IUnitOfWork UnitOfWork { get; }
 
         public IContextInfoAccessor ContextInfoAccessor { get { return contextInfoAccessor; } }
 
-        protected BaseService(IContextInfoAccessor contextInfoAccessor, IBaseLogic<T> businessLogic)
+        public BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork)
         {
-            this.businessLogic = businessLogic;
+            this.UnitOfWork = unitOfWork; 
             this.contextInfoAccessor = contextInfoAccessor;
         }
 
         [MonitorAsyncAspect]
-        public virtual async Task<IDataResponse<bool>> DeleteAsync(int id)
-            => new DataResponse<bool> { Data = await businessLogic.DeleteAsync(id) };
-
-        [MonitorAsyncAspect]
-        public virtual async Task<IDataResponse<T>> GetSingleByExpressionAsync(
-            Expression<Func<T, bool>> predicate = null,
-            string[] referenceFields = null)
-            => new DataResponse<T> { Data = await businessLogic.GetSingleAsync(predicate, referenceFields), TotalResults = 1 };
-
-        [MonitorAsyncAspect]
-        public virtual async Task<IDataResponse<IEnumerable<T>>> GetAllByExpressionAsync(
-            Expression<Func<T, bool>> predicate,
-            IPageable paging = null,
-            string[] referenceFields = null)
+        public virtual async Task<IDataResponse<T>> GetSingleByExpressionAsync(Expression<Func<T, bool>> expression = null, string[] referenceFields = null)
         {
-            var (count, data) = await businessLogic.GetAllAsync(predicate, paging, referenceFields);
-
-            return new DataResponse<IEnumerable<T>> { Data = data, TotalResults = count };
+            return new DataResponse<T> { Data = await UnitOfWork.GetEntity(expression, referenceFields), TotalResults = 1 };
         }
 
         [MonitorAsyncAspect]
-        public virtual async Task<IDataResponse<long>> InsertAsync(T item)
-            => new DataResponse<long> { Data = await businessLogic.InsertAsync(item) };
+        public virtual async Task<IDataResponse<IEnumerable<T>>> GetAllByExpressionAsync(Expression<Func<T, bool>> expression, IPageable paging = null, string[] referenceFields = null) 
+        { 
+            var result = await UnitOfWork.GetEntities(expression, paging, referenceFields);
+            var count = await UnitOfWork.GetCount<T>(expression);
+
+            return new DataResponse<IEnumerable<T>> { Data = result, TotalResults = count }; 
+        }
 
         [MonitorAsyncAspect]
-        public virtual async Task<IDataResponse<bool>> UpdateAsync(T item)
-            => new DataResponse<bool> { Data = await businessLogic.UpdateAsync(item) };
+        public virtual async Task<IDataResponse<long>> InsertAsync(T entity)
+        {
+            UnitOfWork.Insert(entity); 
+            return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() }; 
+        }
+        [MonitorAsyncAspect]
+        public virtual async Task<IDataResponse<long>> UpdateAsync(T entity)
+        {
+            UnitOfWork.Update(entity);
+            return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() };
+        }
+
+        [MonitorAsyncAspect]
+        public virtual async Task<IDataResponse<long>> DeleteAsync(int id)
+        {
+            UnitOfWork.Delete<T>(id);
+            return new DataResponse<long> { Data = await UnitOfWork.SaveChanges() };
+        }
 
         public IDataResponse<T> ProcessIDataResponseException(Exception ex)
         {
@@ -61,7 +65,7 @@ namespace DriveCentric.BaseService.Services
                 IsSuccessful = false
             };
             response.ErrorMessages.Add(ex.Message);
-            response.VerboseErrorMessages.Add(ex.ToString());
+            response.VerboseErrorMessages.Add(ex.ToString()); 
 
             return response;
         }
@@ -73,9 +77,10 @@ namespace DriveCentric.BaseService.Services
                 IsSuccessful = false
             };
             response.ErrorMessages.Add(ex.Message);
-            response.VerboseErrorMessages.Add(ex.ToString());
+            response.VerboseErrorMessages.Add(ex.ToString()); 
 
-            return response;
+            return response; 
         }
+         
     }
 }

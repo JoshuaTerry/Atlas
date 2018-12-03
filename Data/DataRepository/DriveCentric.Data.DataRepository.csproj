@@ -22,6 +22,12 @@
     <CodeAnalysisRuleSet>..\..\RuleSet.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Repositories\BaseDataRepository.cs" />
+    <Compile Remove="Repositories\GalaxyDataRepository.cs" />
+    <Compile Remove="Repositories\StarDataRepository.cs" />
+  </ItemGroup>
+
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.1" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />

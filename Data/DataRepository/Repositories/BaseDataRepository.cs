@@ -11,8 +11,8 @@ using ServiceStack.Data;
 using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.SqlORM.Repositories
-{
-    public abstract class BaseDataRepository<T> where T : IBaseModel, new()
+{ 
+    public abstract class BaseDataRepository<T> : IDataRepository<T> where T : IBaseModel, new() 
     {
         protected readonly IDataAccessor dataAccessor;
         public IContextInfoAccessor ContextInfoAccessor { get; }

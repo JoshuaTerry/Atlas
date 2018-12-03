@@ -3,5 +3,8 @@ using DriveCentric.Core.Models;
 
 namespace DriveCentric.TaskService.Services
 {
-    public interface ITaskService : IBaseService<Task> { }
+    public interface ITaskService : IBaseService<Task>
+    {
+       
+    }
 }
