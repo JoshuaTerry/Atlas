@@ -1,13 +1,12 @@
-﻿using System.Threading.Tasks;
-using DriveCentric.BaseService.Controllers;
+﻿using DriveCentric.BaseService.Controllers;
 using DriveCentric.Core.Models;
-using DriveCentric.Model;
 using DriveCentric.ModuleService.Services;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace DriveCentric.ModuleService.Controllers
 {
@@ -17,7 +16,7 @@ namespace DriveCentric.ModuleService.Controllers
         protected override string FieldsForAll => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
         protected override string FieldsForSingle => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
         protected override string FieldsForList => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
-        protected override string[] ReferenceFields => new string[] {  };
+        protected override string[] ReferenceFields => new string[] { };
 
         public ModuleController(
             IHttpContextAccessor httpContextAccessor,

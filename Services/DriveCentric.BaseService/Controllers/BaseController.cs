@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using DriveCentric.BaseService.Context;
+﻿using DriveCentric.BaseService.Context;
 using DriveCentric.BaseService.Interfaces;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
@@ -11,6 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Controllers
 {
@@ -151,7 +150,7 @@ namespace DriveCentric.BaseService.Controllers
 
             return fields.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
         }
-           
+
         public virtual IActionResult FinalizeReponse<U>(IDataResponse<U> response, string fields = null)
         {
             try
@@ -164,8 +163,8 @@ namespace DriveCentric.BaseService.Controllers
                         return NotFound();
                 }
 
-                if (!response.IsSuccessful) 
-                    return BadRequest(string.Join(",", response.ErrorMessages)); 
+                if (!response.IsSuccessful)
+                    return BadRequest(string.Join(",", response.ErrorMessages));
 
                 var dynamicResponse = responseReducer.ToDynamicResponse(response, fields);
 
@@ -179,5 +178,5 @@ namespace DriveCentric.BaseService.Controllers
                 return BadRequest(new Exception(ex.Message));
             }
         }
-    } 
+    }
 }

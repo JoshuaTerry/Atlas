@@ -1,6 +1,5 @@
 ﻿using DriveCentric.Core.Interfaces;
 using DriveCentric.Data.DataRepository.Repositories;
-using DriveCentric.Utilities.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceStack.Data;
@@ -36,8 +35,7 @@ namespace DriveCentric.Data.DataRepository.Configuration
         public static IServiceCollection AddSqlOrmLite(this IServiceCollection services)
         {
             ConfigureConnectionFactory(services);
-             
-            //services.AddScoped<IDriveServerCollection, DriveServerCollection>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRepository, Repository>();
             InstantiateDriveServerCollection(services);
@@ -48,7 +46,6 @@ namespace DriveCentric.Data.DataRepository.Configuration
         private static void InstantiateDriveServerCollection(IServiceCollection services)
         {
             var serviceProvider = services.BuildServiceProvider();
-            var driveServerCollection = serviceProvider.GetService<IDriveServerCollection>();
         }
 
         private static void ConfigureConnectionFactory(IServiceCollection services)
@@ -65,5 +62,5 @@ namespace DriveCentric.Data.DataRepository.Configuration
                     )
                 );
         }
-    } 
+    }
 }

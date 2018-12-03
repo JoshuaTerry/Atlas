@@ -1,10 +1,10 @@
-﻿using System;
+﻿using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using DriveCentric.Core.Interfaces;
-using DriveCentric.Core.Models;
 
 namespace DriveCentric.BaseService
 {
@@ -13,12 +13,13 @@ namespace DriveCentric.BaseService
         private const int MAX_RECURSION_DEPTH = 10;
 
         /* Fields is a comma delimited list of property names or paths (e.g. State.County) that should be included in the response.
-         * Fields can be excluded:  This can be useful to exclude properties like Region.ParentRegion or Region.ChildRegions (because they are recursive.) 
-         * To exclude a field, prefix it with "^": "^ParentRegion,^ChildRegions". 
+         * Fields can be excluded:  This can be useful to exclude properties like Region.ParentRegion or Region.ChildRegions (because they are recursive.)
+         * To exclude a field, prefix it with "^": "^ParentRegion,^ChildRegions".
          * If a field list is nothing but excludes, all other fields will be included.
          * To exclude a field from a referenced entity: "ChildRegion.^ParentRegion"
          * To force all fields to be included:  "*,ChildRegion.Code"
          */
+
         internal IDataResponse ToDynamicResponse<T>(IDataResponse<T> response, string fields = null)
         {
             var dynamicResponse = new DataResponse<dynamic>
@@ -58,26 +59,28 @@ namespace DriveCentric.BaseService
             }
             return type.IsPrimitive || type.IsEnum || type == typeof(string) || type == typeof(decimal);
         }
+
         internal dynamic ToDynamicList<T>(IEnumerable<T> data, string fields = null)
             where T : IBaseModel
         {
             fields = string.IsNullOrWhiteSpace(fields) ? null : fields;
-             
+
             if (fields == null)
                 return data;
-            
+
             string upperCaseFields = fields?.ToUpper();
             List<string> listOfFields = upperCaseFields?.Split(',').ToList() ?? new List<string>();
 
             return RecursivelyReduce(data, listOfFields);
         }
+
         internal dynamic ToDynamicObject<T>(T data, string fields = null)
             where T : IBaseModel
         {
             fields = string.IsNullOrWhiteSpace(fields) ? null : fields;
 
-            if (fields == null) 
-                return data; 
+            if (fields == null)
+                return data;
 
             string upperCaseFields = fields?.ToUpper();
             List<string> listOfFields = upperCaseFields?.Split(',').ToList() ?? new List<string>();
@@ -88,10 +91,10 @@ namespace DriveCentric.BaseService
         private dynamic RecursivelyReduce<T>(T data, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
             where T : IBaseModel
         {
-            if (level >= MAX_RECURSION_DEPTH) 
-                return null; 
+            if (level >= MAX_RECURSION_DEPTH)
+                return null;
 
-            dynamic returnObject = new ExpandoObject(); 
+            dynamic returnObject = new ExpandoObject();
             if (visited == null)
             {
                 visited = new List<int> { data.Id };
@@ -106,7 +109,7 @@ namespace DriveCentric.BaseService
             {
                 visited = visited.Union(new int[] { data.Id });
             }
-             
+
             PropertyInfo[] properties = data.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             return ProcessProperties(data, properties, fieldsToInclude, visited, level);
         }
@@ -161,6 +164,7 @@ namespace DriveCentric.BaseService
             int length = currentProperty.Length;
             return fieldsToInclude.Where(a => a.StartsWith(currentProperty)).Select(a => a.Substring(length)).ToList();
         }
+
         private dynamic RecursivelyReduce<T>(IEnumerable<T> entities, List<string> fieldsToInclude = null, IEnumerable<int> visited = null, int level = 0)
             where T : IBaseModel
         {

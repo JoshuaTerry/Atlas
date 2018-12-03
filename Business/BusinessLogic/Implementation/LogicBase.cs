@@ -8,6 +8,7 @@ namespace DriveCentric.BusinessLogic.Implementation
     {
         public IContextInfoAccessor ContextInfoAccessor { get; }
         private IRepository Repository { get; }
+
         public LogicBase(IContextInfoAccessor contextInfoAccessor, IRepository repository)
         {
             ContextInfoAccessor = contextInfoAccessor;
@@ -15,9 +16,13 @@ namespace DriveCentric.BusinessLogic.Implementation
         }
 
         public abstract bool ValidateAdd(T entity);
+
         public abstract bool ValidateUpdate(T entity);
+
         public abstract bool ValidateDelete(T entity);
+
         public abstract T FormatGet(T entity);
+
         public abstract IEnumerable<T> FormatGet(IEnumerable<T> entities);
     }
 }

@@ -2,6 +2,6 @@
 {
     public class ContextInfoAccessor : IContextInfoAccessor
     {
-        public IContextInfo ContextInfo { get; set; } 
+        public IContextInfo ContextInfo { get; set; }
     }
 }
