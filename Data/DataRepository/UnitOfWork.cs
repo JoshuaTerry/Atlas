@@ -1,4 +1,4 @@
-﻿using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 using Microsoft.Extensions.Configuration;
@@ -15,10 +15,9 @@ namespace DriveCentric.Data.DataRepository
 {
     public class UnitOfWork : IUnitOfWork, IContextAccessible
     {
-        private readonly IConfiguration configuration;
         private Dictionary<int, DriveServer> servers;
+        private readonly IConfiguration configuration;
         private readonly Dictionary<string, IDbConnectionFactory> connectionFactories;
-        private readonly Queue<(string Database, Func<IDbConnection, Task<long>> Action)> saveActions = new Queue<(string Database, Func<IDbConnection, Task<long>> Action)>();
         private readonly Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>> saveActionsByFactory = new Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>>();
         private readonly IRepository repository;
 
@@ -66,6 +65,9 @@ namespace DriveCentric.Data.DataRepository
         {
             try
             {
+                if (!connectionFactories.ContainsKey("Galaxy"))
+                    throw new Exception("No Galaxy Connection available to load Star Connection Data from.");
+
                 if (connectionFactories.ContainsKey("Star"))
                     connectionFactories.Remove("Star");
 
