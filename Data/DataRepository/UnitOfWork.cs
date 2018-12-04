@@ -1,4 +1,4 @@
-﻿using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 using Microsoft.Extensions.Configuration;
@@ -151,7 +151,7 @@ namespace DriveCentric.Data.DataRepository
 
         public async Task<long> SaveChanges()
         {
-            var actionsByFactory = saveActionsByFactory.First(x => x.Value.Count > 0);
+            var actionsByFactory = saveActionsByFactory.Where(x => x.Value.Count >= 1).First();
 
             return await ProcessTransaction(actionsByFactory.Key, actionsByFactory.Value);
         }
