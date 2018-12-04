@@ -1,13 +1,10 @@
 ﻿using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
+using DriveCentric.Data.DataRepository.Repositories;
 using DriveCentric.Utilities.Context;
 using Microsoft.Extensions.Configuration;
-using ServiceStack.Data;
-using ServiceStack.OrmLite;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -15,147 +12,63 @@ namespace DriveCentric.Data.DataRepository
 {
     public class UnitOfWork : IUnitOfWork, IContextAccessible
     {
-        private Dictionary<int, DriveServer> servers;
         private readonly IConfiguration configuration;
-        private readonly Dictionary<string, IDbConnectionFactory> connectionFactories;
-        private readonly Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>> saveActionsByFactory = new Dictionary<IDbConnectionFactory, Queue<Func<IDbConnection, Task<long>>>>();
-        private readonly IRepository repository;
+        private Dictionary<string, IRepository> repositories;
+        private Queue<Func<Task<long>>> actions;
 
-        public UnitOfWork(IContextInfoAccessor contextInfoAccessor,
-                            IConfiguration configuration,
-                            IRepository repository)
+        public UnitOfWork(IContextInfoAccessor contextInfoAccessor, IConfiguration configuration)
         {
             this.ContextInfoAccessor = contextInfoAccessor;
             this.configuration = configuration;
-            this.repository = repository;
-            connectionFactories = new Dictionary<string, IDbConnectionFactory>();
-            CreateConnectionFactories();
+            actions = new Queue<Func<Task<long>>>();
 
-            foreach (var factory in connectionFactories)
-            {
-                saveActionsByFactory.Add(factory.Value, new Queue<Func<IDbConnection, Task<long>>>());
-            }
+            repositories = new Dictionary<string, IRepository>();
+            repositories.Add("Galaxy", new SqlRepository(configuration.GetSection("SqlDBInfo:ConnectionString").Value));
+            repositories.Add("Star", new SqlRepository(GetStarConnectionString()));
         }
 
-        private string GetConnectionStringById(int id)
-        {
-            var server = servers.FirstOrDefault(item => item.Key == id).Value;
+        //var driveServerId = Convert.ToInt32(ContextInfoAccessor.ContextInfo.User.Claims.Single(c => c.Type == "custom:DriveServerId"));
+        private string GetStarConnectionString()
+            => repositories["Galaxy"].GetSingle<DriveServer>(x => x.Id == 21).ConnectionString;
 
-            if (server != null)
-            {
-                return server.ConnectionString;
-            }
-            else
-            {
-                throw new KeyNotFoundException();
-            }
-        }
+        public IContextInfoAccessor ContextInfoAccessor { get; }
 
-        private void CreateConnectionFactories()
-        {
-            AddGalaxyFactory(connectionFactories);
-            this.servers = GetEntities<DriveServer>(null, PageableSearch.Default).Result.ToDictionary(server => server.Id);
-            AddStarFactory(connectionFactories);
-        }
-
-        private void AddGalaxyFactory(Dictionary<string, IDbConnectionFactory> connectionFactories)
-            => connectionFactories.Add("Galaxy", new OrmLiteConnectionFactory(configuration.GetSection("SqlDBInfo:ConnectionString").Value, SqlServerDialect.Provider));
-
-        private void AddStarFactory(Dictionary<string, IDbConnectionFactory> connectionFactories)
-        {
-            try
-            {
-                if (!connectionFactories.ContainsKey("Galaxy"))
-                    throw new Exception("No Galaxy Connection available to load Star Connection Data from.");
-
-                if (connectionFactories.ContainsKey("Star"))
-                    connectionFactories.Remove("Star");
-
-                var driveServerId = 21;
-                //var driveServerId = Convert.ToInt32(ContextInfoAccessor.ContextInfo.User.Claims.Single(c => c.Type == "custom:DriveServerId"));
-                connectionFactories.Add("Star", new OrmLiteConnectionFactory(
-                        GetConnectionStringById(driveServerId),
-                        SqlServerDialect.Provider
-                        ));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("No DriveServerId was found in the token.", ex);
-            }
-        }
-
-        public async Task<T> GetEntity<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
-        {
-            using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
-                return await repository.GetSingleAsync<T>(connection, expression, referenceFields);
-        }
-
-        public async Task<long> GetCount<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
-        {
-            using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
-                return await repository.GetCount<T>(connection, expression);
-        }
-
-        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new()
-        {
-            using (var connection = GetFactoryByEntityType(typeof(T)).OpenDbConnection())
-                return await repository.GetAllAsync<T>(connection, expression, paging, referenceFields);
-        }
-
-        private IDbConnectionFactory GetFactoryByEntityType(Type type)
+        private IRepository GetRepoByEntityType(Type type)
         {
             if (typeof(IGalaxyEntity).IsAssignableFrom(type))
-                return connectionFactories["Galaxy"];
+                return repositories["Galaxy"];
             else if (typeof(IStarEntity).IsAssignableFrom(type))
-                return connectionFactories["Star"];
+                return repositories["Star"];
             else
-                throw new Exception("Type requested does not have an assiged connection factory.");
+                throw new Exception("Type requested does not have an assiged Repository.");
         }
+
+        public Task<long> GetCount<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
+            => GetRepoByEntityType(typeof(T)).GetCount<T>(expression);
+
+        public async Task<T> GetEntity<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
+            => await GetRepoByEntityType(typeof(T)).GetSingleAsync<T>(expression, referenceFields);
+
+        public async Task<IEnumerable<T>> GetEntities<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields) where T : class, IBaseModel, new()
+            => await GetRepoByEntityType(typeof(T)).GetAllAsync<T>(expression, paging, referenceFields);
 
         public void Insert<T>(T entity) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) => await repository.InsertAsync(connection, entity)));
+            => actions.Enqueue(new Func<Task<long>>(async () => await GetRepoByEntityType(typeof(T)).InsertAsync(entity)));
 
         public void Update<T>(T entity) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) => await repository.UpdateAsync(connection, entity)));
+        => actions.Enqueue(new Func<Task<long>>(async () => await GetRepoByEntityType(typeof(T)).UpdateAsync(entity)));
 
         public void Delete<T>(int id) where T : IBaseModel, new()
-            => saveActionsByFactory[GetFactoryByEntityType(typeof(T))].Enqueue(new Func<IDbConnection, Task<long>>(async (connection) => await repository.DeleteByIdAsync<T>(connection, id)));
-
-        private async Task<long> ProcessTransaction(IDbConnectionFactory factory, Queue<Func<IDbConnection, Task<long>>> saveActions)
-        {
-            long result = 0;
-
-            using (var conn = factory.OpenDbConnection())
-            {
-                using (var tran = conn.OpenTransaction())
-                {
-                    try
-                    {
-                        foreach (var saveAction in saveActions)
-                        {
-                            result += await saveAction(conn);
-                        }
-
-                        tran.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        tran.Rollback();
-                        throw new Exception("Transaction Failed", ex);
-                    }
-                }
-            }
-
-            return result;
-        }
+            => actions.Enqueue(new Func<Task<long>>(async () => await GetRepoByEntityType(typeof(T)).DeleteByIdAsync<T>(id)));
 
         public async Task<long> SaveChanges()
         {
-            var actionsByFactory = saveActionsByFactory.First(x => x.Value.Count > 0);
+            long result = 0;
 
-            return await ProcessTransaction(actionsByFactory.Key, actionsByFactory.Value);
+            foreach (var action in actions)
+                result += await action();
+
+            return result;
         }
-
-        public IContextInfoAccessor ContextInfoAccessor { get; }
     }
 }
