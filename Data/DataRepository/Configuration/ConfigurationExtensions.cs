@@ -1,5 +1,4 @@
 ﻿using DriveCentric.Core.Interfaces;
-using DriveCentric.Data.DataRepository.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceStack.Data;
@@ -37,7 +36,6 @@ namespace DriveCentric.Data.DataRepository.Configuration
             ConfigureConnectionFactory(services);
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IRepository, Repository>();
             InstantiateDriveServerCollection(services);
 
             return services;
