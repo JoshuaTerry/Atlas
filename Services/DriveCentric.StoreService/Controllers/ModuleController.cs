@@ -40,12 +40,12 @@ namespace DriveCentric.ModuleService.Controllers
         [MonitorAsyncAspect]
         [HttpPost]
         [Route("api/v1/module")]
-        public override async Task<IActionResult> Post(Module entity)
+        public override async Task<IActionResult> Post([FromBody] Module entity)
             => await base.Post(entity);
 
         [HttpPatch()]
         [Route("api/v1/module/{id}")]
-        public override async Task<IActionResult> Patch(int id, JsonPatchDocument<Module> patch)
+        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Module> patch)
             => await base.Patch(id, patch);
 
         [MonitorAsyncAspect]
