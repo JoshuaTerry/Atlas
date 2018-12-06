@@ -1,5 +1,8 @@
-﻿namespace DriveCentric.Model.Enums
+﻿using ServiceStack.DataAnnotations;
+
+namespace DriveCentric.Model.Enums
 {
+    [EnumAsInt]
     public enum StoreCategory
     {
         All = 0,

@@ -5,7 +5,7 @@ using System;
 
 namespace DriveCentric.Core.Models
 {
-    public class Module : IBaseModel
+    public class Module : IBaseModel, IGalaxyEntity
     {
         [PrimaryKey]
         [AutoIncrement]

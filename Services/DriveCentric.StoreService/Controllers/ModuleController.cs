@@ -1,6 +1,6 @@
 ﻿using DriveCentric.BaseService.Controllers;
+using DriveCentric.BaseService.Interfaces;
 using DriveCentric.Core.Models;
-using DriveCentric.ModuleService.Services;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
@@ -21,8 +21,8 @@ namespace DriveCentric.ModuleService.Controllers
         public ModuleController(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
-            IModuleService moduleService
-            ) : base(httpContextAccessor, contextInfoAccessor, moduleService)
+            IBaseService<Module> service
+            ) : base(httpContextAccessor, contextInfoAccessor, service)
         {
         }
 
@@ -39,17 +39,18 @@ namespace DriveCentric.ModuleService.Controllers
 
         [MonitorAsyncAspect]
         [HttpPost]
-        public override async Task<IActionResult> Post([FromBody] Module entity)
-            => await Post(entity);
+        [Route("api/v1/module")]
+        public override async Task<IActionResult> Post(Module entity)
+            => await base.Post(entity);
 
         [HttpPatch()]
         [Route("api/v1/module/{id}")]
-        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Module> patch)
-            => await Patch(id, patch);
+        public override async Task<IActionResult> Patch(int id, JsonPatchDocument<Module> patch)
+            => await base.Patch(id, patch);
 
         [MonitorAsyncAspect]
         [HttpDelete()]
         [Route("api/v1/module/{id}")]
-        public override async Task<IActionResult> Delete(int id) => await Delete(id);
+        public override async Task<IActionResult> Delete(int id) => await base.Delete(id);
     }
 }

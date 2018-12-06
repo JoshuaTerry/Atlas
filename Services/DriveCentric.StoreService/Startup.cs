@@ -1,5 +1,8 @@
-﻿using DriveCentric.BusinessLogic.Configuration;
-using DriveCentric.ModuleService.Services;
+﻿using DriveCentric.BaseService.Interfaces;
+using DriveCentric.BaseService.Services;
+using DriveCentric.BusinessLogic.Configuration;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Data.DataRepository;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace DriveCentric.ModuleService
 {
@@ -24,18 +28,18 @@ namespace DriveCentric.ModuleService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(services);
             services.AddSingleton(Configuration);
 
             AddSecurityServices(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            //services.Add(HttpContextAccessor);
-            services.AddSingleton<IContextInfoAccessor, ContextInfoAccessor>();
-
-            services.AddSingleton<IModuleService, Services.ModuleService>();
-
+            services.AddHttpContextAccessor();
+            services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IBaseService<DriveCentric.Core.Models.Module>, BaseService<DriveCentric.Core.Models.Module>>();
             services.AddBusinessLogic();
+
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Module Service", Version = "v1" }));
         }
 
         private void AddSecurityServices(IServiceCollection services)
