@@ -30,6 +30,13 @@ namespace DriveCentric.TaskService
         {
             services.AddSingleton(Configuration);
 
+            services.AddCors(c => c.AddPolicy("DrivePolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
             AddSecurityServices(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -83,6 +90,7 @@ namespace DriveCentric.TaskService
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
+            app.UseCors("DrivePolicy");
         }
     }
 }

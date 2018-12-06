@@ -30,6 +30,13 @@ namespace DriveCentric.ModuleService
         {
             services.AddSingleton(Configuration);
 
+            services.AddCors(c => c.AddPolicy("DrivePolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
             AddSecurityServices(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -77,9 +84,13 @@ namespace DriveCentric.ModuleService
                 app.UseHsts();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Module - V1"));
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
+            app.UseCors("DrivePolicy");
         }
     }
 }
