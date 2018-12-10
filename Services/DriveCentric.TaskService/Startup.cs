@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using ServiceStack.Text;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace DriveCentric.TaskService
@@ -68,6 +69,8 @@ namespace DriveCentric.TaskService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            JsConfig.TreatEnumAsInteger = true;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

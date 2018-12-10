@@ -1,4 +1,7 @@
-﻿using DriveCentric.Data.DataRepository.Configuration;
+﻿using DriveCentric.BusinessLogic.Implementation;
+using DriveCentric.Core.Models;
+using DriveCentric.Data.DataRepository.Configuration;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DriveCentric.BusinessLogic.Configuration
@@ -7,6 +10,7 @@ namespace DriveCentric.BusinessLogic.Configuration
     {
         public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
         {
+            services.AddScoped<AbstractValidator<Task>, TaskValidator>();
             services.AddDataRepository();
             return services;
         }

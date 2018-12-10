@@ -15,7 +15,10 @@ namespace DriveCentric.BusinessLogic.Implementation
             Repository = repository;
         }
 
-        public abstract bool ValidateAdd(T entity);
+        public virtual bool ValidateAdd(T entity)
+        {
+            return true;
+        }
 
         public abstract bool ValidateUpdate(T entity);
 
