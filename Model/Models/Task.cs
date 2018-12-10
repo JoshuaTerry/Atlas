@@ -1,4 +1,5 @@
 ﻿using DriveCentric.Core.Interfaces;
+using DriveCentric.Core.Validators;
 using DriveCentric.Model.Enums;
 using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
@@ -48,6 +49,7 @@ namespace DriveCentric.Core.Models
         [Alias("Description")]
         public string Notes { get; set; }
 
+        [DateValidator(ErrorMessage = "Due date must be greater than current Date")]
         public DateTime? DateDue { get; set; }
 
         [JsonIgnore]
@@ -58,7 +60,10 @@ namespace DriveCentric.Core.Models
         [Alias("fkDealID")]
         public int DealId { get; set; }
 
-        public ActionType ActionType { get; set; }
+        [System.ComponentModel.DataAnnotations.Required]
+        [ServiceStack.DataAnnotations.Required]
+        //[EnumDataType(typeof(ActionType))]
+        public ActionType? ActionType { get; set; }
 
         [Alias("GUID")]
         public Guid ExternalId { get; set; }

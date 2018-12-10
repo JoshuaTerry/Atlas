@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\IModuleService.cs" />
+    <Compile Remove="Services\ModuleService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
