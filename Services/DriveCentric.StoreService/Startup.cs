@@ -37,6 +37,7 @@ namespace DriveCentric.ModuleService
             services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBaseService<DriveCentric.Core.Models.Module>, BaseService<DriveCentric.Core.Models.Module>>();
+
             services.AddBusinessLogic();
 
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Module Service", Version = "v1" }));

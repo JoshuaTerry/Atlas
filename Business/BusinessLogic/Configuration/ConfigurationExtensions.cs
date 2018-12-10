@@ -11,6 +11,7 @@ namespace DriveCentric.BusinessLogic.Configuration
         public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
         {
             services.AddScoped<AbstractValidator<Task>, TaskValidator>();
+            services.AddScoped<AbstractValidator<Module>, ModuleValidator>();
             services.AddDataRepository();
             return services;
         }
