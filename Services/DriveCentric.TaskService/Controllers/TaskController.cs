@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace DriveCentric.TaskService.Controllers
 {
     [Produces("application/json")]
-    public class TaskController : BaseController<Core.Models.Task>
+    public class TaskController : BaseController<Core.Models.UserTask>
     {
         protected override string FieldsForAll => "Id,Customer,CreatedByUser,User,ActionType,DateDue,Notes";
         protected override string FieldsForSingle => "Id,Customer.FirstName";
@@ -21,7 +21,7 @@ namespace DriveCentric.TaskService.Controllers
         public TaskController(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
-            IBaseService<DriveCentric.Core.Models.Task> service
+            IBaseService<DriveCentric.Core.Models.UserTask> service
             ) : base(httpContextAccessor, contextInfoAccessor, service) { }
 
         [MonitorAsyncAspect]
@@ -45,12 +45,12 @@ namespace DriveCentric.TaskService.Controllers
         [MonitorAsyncAspect]
         [HttpPost]
         [Route("api/v1/task")]
-        public override async Task<IActionResult> Post([FromBody] Core.Models.Task entity)
+        public override async Task<IActionResult> Post([FromBody] Core.Models.UserTask entity)
             => await base.Post(entity);
 
         [HttpPatch()]
         [Route("api/v1/task/{id}")]
-        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Core.Models.Task> patch)
+        public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Core.Models.UserTask> patch)
             => await base.Patch(id, patch);
 
         [MonitorAsyncAspect]

@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("DriveCentric.Services.Tests")]
 
 namespace DriveCentric.BaseService
 {

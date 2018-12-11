@@ -44,7 +44,7 @@ namespace DriveCentric.TaskService
             services.AddHttpContextAccessor();
             services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IBaseService<DriveCentric.Core.Models.Task>, BaseService<DriveCentric.Core.Models.Task>>();
+            services.AddScoped<IBaseService<DriveCentric.Core.Models.UserTask>, BaseService<DriveCentric.Core.Models.UserTask>>();
             services.AddBusinessLogic();
 
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" }));
