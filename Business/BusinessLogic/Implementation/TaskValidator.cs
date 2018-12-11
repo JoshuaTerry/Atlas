@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace DriveCentric.BusinessLogic.Implementation
 {
-    public class TaskValidator : AbstractValidator<Task>
+    public class TaskValidator : AbstractValidator<UserTask>
     {
         public TaskValidator()
         {
@@ -16,6 +16,7 @@ namespace DriveCentric.BusinessLogic.Implementation
 
             RuleSet("Update", () =>
             {
+                RuleFor(x => x.Id).NotNull();
                 RuleFor(x => x.ActionType).NotNull();
                 RuleFor(x => x.DateDue).NotNull();
                 RuleFor(x => x.UserId).NotNull();
@@ -23,7 +24,7 @@ namespace DriveCentric.BusinessLogic.Implementation
 
             RuleSet("Delete", () =>
             {
-                RuleFor(x => x.Id).NotNull();
+                RuleFor(x => x.Id).NotEqual(0);
             });
         }
     }
