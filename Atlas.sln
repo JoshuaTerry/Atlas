@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.TaskService", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.BaseService", "Services\DriveCentric.BaseService\DriveCentric.BaseService.csproj", "{70662E69-08D8-45DB-B933-6543D4EA788C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.ModuleService", "Services\DriveCentric.StoreService\DriveCentric.ModuleService.csproj", "{8F6B53BB-E64C-4E87-BBBA-37FF62C849F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.ModuleService", "Services\DriveCentric.ModuleService\DriveCentric.ModuleService.csproj", "{8F6B53BB-E64C-4E87-BBBA-37FF62C849F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.BusinessLogic.CoreTests", "Business\BusinessLogic.CoreTests\DriveCentric.BusinessLogic.CoreTests.csproj", "{C32FFBA8-F410-49B2-B5DE-422F996651AF}"
 EndProject

@@ -7,6 +7,7 @@ using System;
 
 namespace DriveCentric.Core.Models
 {
+    [Alias("Task")]
     public class UserTask : IBaseModel, IStarEntity
     {
         [PrimaryKey]
