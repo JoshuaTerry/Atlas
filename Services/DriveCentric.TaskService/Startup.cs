@@ -1,12 +1,14 @@
 using DriveCentric.BaseService.Interfaces;
+using DriveCentric.BaseService.Middleware;
 using DriveCentric.BaseService.Services;
 using DriveCentric.BusinessLogic.Configuration;
 using DriveCentric.Core.Interfaces;
-using DriveCentric.Data.DataRepository;
+using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,8 +45,8 @@ namespace DriveCentric.TaskService
 
             services.AddHttpContextAccessor();
             services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IBaseService<DriveCentric.Core.Models.UserTask>, BaseService<DriveCentric.Core.Models.UserTask>>();
+
+            services.AddScoped<IBaseService<UserTask>, BaseService<UserTask>>();
             services.AddBusinessLogic();
 
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" }));
@@ -74,7 +76,12 @@ namespace DriveCentric.TaskService
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            IContextInfoAccessor contextInfoAccessor,
+            IHttpContextAccessor httpContextAccessor,
+            IUnitOfWork unitOfWork)
         {
             JsConfig.TreatEnumAsInteger = true;
 
@@ -92,6 +99,9 @@ namespace DriveCentric.TaskService
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+
+            app.UseMiddleware<PermissionsToClaimsMiddleware>();
+
             app.UseMvc();
             app.UseCors("DrivePolicy");
         }

@@ -12,6 +12,7 @@ namespace DriveCentric.Core.Models
 
         public PageableSearch()
         {
+            OrderBy = "Id";
         }
 
         public PageableSearch(int? offset, int? limit, string orderBy)

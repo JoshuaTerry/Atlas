@@ -1,46 +1,56 @@
-﻿using DriveCentric.Core.Interfaces;
-using DriveCentric.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Data.DataRepository.Interfaces;
 using DriveCentric.Data.DataRepository.Repositories;
 using DriveCentric.Utilities.Context;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace DriveCentric.Data.DataRepository
 {
     public class UnitOfWork : IUnitOfWork, IContextAccessible
     {
-        private readonly IConfiguration configuration;
         private Dictionary<string, IRepository> repositories;
-        private Queue<Func<Task<long>>> actions;
-
-        public UnitOfWork(IContextInfoAccessor contextInfoAccessor, IConfiguration configuration)
-        {
-            this.ContextInfoAccessor = contextInfoAccessor;
-            this.configuration = configuration;
-            actions = new Queue<Func<Task<long>>>();
-
-            repositories = new Dictionary<string, IRepository>();
-            repositories.Add("Galaxy", new SqlRepository(configuration.GetSection("SqlDBInfo:ConnectionString").Value));
-            repositories.Add("Star", new SqlRepository(GetStarConnectionString()));
-        }
-
-        //var driveServerId = Convert.ToInt32(ContextInfoAccessor.ContextInfo.User.Claims.Single(c => c.Type == "custom:DriveServerId"));
-        private string GetStarConnectionString()
-            => repositories["Galaxy"].GetSingle<DriveServer>(x => x.Id == 21).ConnectionString;
+        private readonly Queue<Func<Task<long>>> actions;
 
         public IContextInfoAccessor ContextInfoAccessor { get; }
+        private IDriveServerCollection DriveServerCollection { get; }
+
+        public UnitOfWork(IContextInfoAccessor contextInfoAccessor, IConfiguration configuration, IDriveServerCollection driveServerCollection)
+        {
+            ContextInfoAccessor = contextInfoAccessor;
+            DriveServerCollection = driveServerCollection;
+
+            actions = new Queue<Func<Task<long>>>();
+        }
+
+        private void LoadRepositories()
+        {
+            var driveServerId = Convert.ToInt32(ContextInfoAccessor.ContextInfo.User.Claims.Single(c => c.Type == "custom:DriveServerId").Value);
+
+            repositories = new Dictionary<string, IRepository>
+            {
+                { "Galaxy", new SqlRepository(DriveServerCollection.GalaxyConnectionString) },
+                { "Star", new SqlRepository(DriveServerCollection.GetConnectionStringById(driveServerId)) }
+            };
+        }
 
         private IRepository GetRepoByEntityType(Type type)
         {
+            if (repositories == null)
+            {
+                LoadRepositories();
+            }
+
             if (typeof(IGalaxyEntity).IsAssignableFrom(type))
                 return repositories["Galaxy"];
             else if (typeof(IStarEntity).IsAssignableFrom(type))
                 return repositories["Star"];
             else
-                throw new Exception("Type requested does not have an assiged Repository.");
+                throw new Exception("Type requested does not have an assigned Repository.");
         }
 
         public Task<long> GetCount<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()

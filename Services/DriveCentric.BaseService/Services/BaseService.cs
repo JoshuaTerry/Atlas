@@ -1,13 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using DriveCentric.BaseService.Interfaces;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Services
 {
@@ -15,7 +15,6 @@ namespace DriveCentric.BaseService.Services
     {
         private const string InsertRuleSet = "Insert";
         private const string UpdateRuleSet = "Update";
-        private const string DeleteRuleSet = "Delete";
 
         protected readonly IContextInfoAccessor contextInfoAccessor;
         protected readonly IUnitOfWork unitOfWork;
