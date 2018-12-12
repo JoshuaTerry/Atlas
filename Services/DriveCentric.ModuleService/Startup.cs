@@ -1,8 +1,7 @@
 ﻿using DriveCentric.BaseService.Interfaces;
+using DriveCentric.BaseService.Middleware;
 using DriveCentric.BaseService.Services;
 using DriveCentric.BusinessLogic.Configuration;
-using DriveCentric.Core.Interfaces;
-using DriveCentric.Data.DataRepository;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -42,7 +41,7 @@ namespace DriveCentric.ModuleService
 
             services.AddHttpContextAccessor();
             services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddScoped<IBaseService<DriveCentric.Core.Models.Module>, BaseService<DriveCentric.Core.Models.Module>>();
 
             services.AddBusinessLogic();
@@ -90,6 +89,9 @@ namespace DriveCentric.ModuleService
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+
+            app.UseMiddleware<PermissionsToClaimsMiddleware>();
+
             app.UseMvc();
             app.UseCors("DrivePolicy");
         }

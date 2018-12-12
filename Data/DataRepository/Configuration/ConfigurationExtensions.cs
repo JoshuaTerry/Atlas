@@ -1,9 +1,10 @@
-﻿using DriveCentric.Core.Interfaces;
+﻿using System;
+using DriveCentric.Core.Interfaces;
+using DriveCentric.Data.DataRepository.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using System;
 
 namespace DriveCentric.Data.DataRepository.Configuration
 {
@@ -27,28 +28,22 @@ namespace DriveCentric.Data.DataRepository.Configuration
 
             if (orm.Equals(SQLORMLITE, StringComparison.InvariantCultureIgnoreCase))
             {
-                services.AddSqlOrmLite();
+                services.AddSqlOrmLite(provider);
             }
         }
 
-        public static IServiceCollection AddSqlOrmLite(this IServiceCollection services)
+        public static IServiceCollection AddSqlOrmLite(this IServiceCollection services, ServiceProvider provider)
         {
-            ConfigureConnectionFactory(services);
+            ConfigureConnectionFactory(services, provider);
 
+            services.AddSingleton<IDriveServerCollection, DriveServerCollection>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            InstantiateDriveServerCollection(services);
 
             return services;
         }
 
-        private static void InstantiateDriveServerCollection(IServiceCollection services)
+        private static void ConfigureConnectionFactory(IServiceCollection services, ServiceProvider provider)
         {
-            var serviceProvider = services.BuildServiceProvider();
-        }
-
-        private static void ConfigureConnectionFactory(IServiceCollection services)
-        {
-            var provider = services.BuildServiceProvider();
             var configuration = provider.GetService<IConfiguration>();
 
             var connectionString = configuration.GetSection("SqlDBInfo:ConnectionString").Value;

@@ -1,4 +1,6 @@
-﻿using DriveCentric.BaseService.Context;
+﻿using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using DriveCentric.BaseService.Interfaces;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
@@ -7,9 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Controllers
 {
@@ -66,6 +65,8 @@ namespace DriveCentric.BaseService.Controllers
 
             try
             {
+                var claims = ContextInfoAccessor.ContextInfo.User.Claims;
+
                 var result = await Service.GetSingleByExpressionAsync(predicate, ReferenceFields);
                 if (result.TotalResults < 1)
                 {

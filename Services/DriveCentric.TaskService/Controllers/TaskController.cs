@@ -3,6 +3,7 @@ using DriveCentric.BaseService.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace DriveCentric.TaskService.Controllers
             IBaseService<DriveCentric.Core.Models.UserTask> service
             ) : base(httpContextAccessor, contextInfoAccessor, service) { }
 
+        [Authorize]
         [MonitorAsyncAspect]
         [HttpGet]
         [Route("api/v1/task/{id}")]
