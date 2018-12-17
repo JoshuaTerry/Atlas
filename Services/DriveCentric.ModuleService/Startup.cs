@@ -43,7 +43,7 @@ namespace DriveCentric.ModuleService
 
             services.AddBusinessLogic();
 
-            services.AddCors(c => c.AddPolicy("DrivePolicy", builder =>
+            services.AddCors(c => c.AddPolicy(Configuration.GetSection("CacheConfig:Name").Value, builder =>
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
@@ -93,7 +93,7 @@ namespace DriveCentric.ModuleService
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Module - V1"));
 
-            app.UseCors("DrivePolicy");
+            app.UseCors(Configuration.GetSection("CacheConfig:Name").Value);
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
