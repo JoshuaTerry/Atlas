@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using PostSharp.Patterns.Caching;
 
 namespace DriveCentric.TaskService.Controllers
 {
@@ -25,14 +26,16 @@ namespace DriveCentric.TaskService.Controllers
             IBaseService<DriveCentric.Core.Models.UserTask> service
             ) : base(httpContextAccessor, contextInfoAccessor, service) { }
 
+        [MonitorAsyncAspect(AspectPriority = 1)]
+        [Cache(AspectPriority = 2)]
         [Authorize]
-        [MonitorAsyncAspect]
         [HttpGet]
         [Route("api/v1/task/{id}")]
         public async Task<IActionResult> Get(int id, string fields = null)
             => await GetSingle(x => x.Id == id, fields);
 
-        [MonitorAsyncAspect]
+        [MonitorAsyncAspect(AspectPriority = 1)]
+        [Cache(AspectPriority = 2)]
         [HttpGet]
         [Route("api/v1/task/user/{id}")]
         public async Task<IActionResult> GetByUser(

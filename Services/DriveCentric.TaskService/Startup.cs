@@ -14,6 +14,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PostSharp.Patterns.Caching;
+using PostSharp.Patterns.Caching.Backends;
+using PostSharp.Patterns.Caching.Backends.Redis;
+using StackExchange.Redis;
 using ServiceStack.Text;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -97,13 +101,31 @@ namespace DriveCentric.TaskService
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1"));
 
+            app.UseCors("DrivePolicy");
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
 
             app.UseMiddleware<PermissionsToClaimsMiddleware>();
 
             app.UseMvc();
-            app.UseCors("DrivePolicy");
+        }
+
+        private void ConfigureRedisCache()
+        {
+            string connectionConfiguration = "redisdev.fzrb0f.ng.0001.use1.cache.amazonaws.com:6379";
+            ConnectionMultiplexer connection = ConnectionMultiplexer.Connect(connectionConfiguration);
+            RedisCachingBackendConfiguration configuration = new RedisCachingBackendConfiguration()
+            {
+                IsLocallyCached = true
+            };
+
+            CachingServices.DefaultBackend = RedisCachingBackend.Create(connection, configuration);
+        }
+
+        private void ConfigureMemoryCache()
+        {
+            CachingServices.DefaultBackend = new MemoryCachingBackend();
         }
     }
 }

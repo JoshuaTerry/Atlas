@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using PostSharp.Patterns.Caching;
 
 namespace DriveCentric.ModuleService.Controllers
 {
@@ -26,12 +27,13 @@ namespace DriveCentric.ModuleService.Controllers
         {
         }
 
-        [MonitorAsyncAspect]
+        [MonitorAsyncAspect(AspectPriority = 1)]
         [HttpGet]
         [Route("api/v1/module/{id}")]
         public async Task<IActionResult> Get(int id, string fields = null)
             => await GetSingle(x => x.Id == id, fields);
 
+        [MonitorAsyncAspect(AspectPriority = 1)]
         [HttpGet]
         [Route("api/v1/module")]
         public async Task<IActionResult> GetAll()
