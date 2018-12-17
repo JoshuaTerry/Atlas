@@ -11,6 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PostSharp.Patterns.Caching;
+using PostSharp.Patterns.Caching.Backends;
+using PostSharp.Patterns.Caching.Backends.Redis;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace DriveCentric.ModuleService
@@ -29,13 +33,6 @@ namespace DriveCentric.ModuleService
         {
             services.AddSingleton(Configuration);
 
-            services.AddCors(c => c.AddPolicy("DrivePolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
-            }));
-
             AddSecurityServices(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -45,6 +42,13 @@ namespace DriveCentric.ModuleService
             services.AddScoped<IBaseService<DriveCentric.Core.Models.Module>, BaseService<DriveCentric.Core.Models.Module>>();
 
             services.AddBusinessLogic();
+
+            services.AddCors(c => c.AddPolicy("DrivePolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
 
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Module Service", Version = "v1" }));
         }
@@ -78,14 +82,18 @@ namespace DriveCentric.ModuleService
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                ConfigureMemoryCache();
             }
             else
             {
                 app.UseHsts();
+                ConfigureRedisCache();
             }
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Module - V1"));
+
+            app.UseCors("DrivePolicy");
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
@@ -93,7 +101,23 @@ namespace DriveCentric.ModuleService
             app.UseMiddleware<PermissionsToClaimsMiddleware>();
 
             app.UseMvc();
-            app.UseCors("DrivePolicy");
+        }
+
+        private void ConfigureRedisCache()
+        {
+            string connectionConfiguration = "redisdev.fzrb0f.ng.0001.use1.cache.amazonaws.com:6379";
+            ConnectionMultiplexer connection = ConnectionMultiplexer.Connect(connectionConfiguration);
+            RedisCachingBackendConfiguration configuration = new RedisCachingBackendConfiguration()
+            {
+                IsLocallyCached = true
+            };
+            
+            CachingServices.DefaultBackend = RedisCachingBackend.Create(connection, configuration);
+        }
+
+        private void ConfigureMemoryCache()
+        {
+            CachingServices.DefaultBackend = new MemoryCachingBackend();
         }
     }
 }
