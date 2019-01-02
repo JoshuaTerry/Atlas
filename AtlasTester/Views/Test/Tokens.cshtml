@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewData["Title"] = "Tokens";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+@Html.Label("Id Token")
+<br />
+<textarea readonly rows="10" cols="160">@ViewData["IdToken"]</textarea>
+@Html.Label("Id Token Expiration")
+<br />
+<textarea readonly rows="1" cols="160">@ViewData["IdTokenExpires"]</textarea>
+<br />
+@Html.Label("Refresh Token")
+<br />
+<textarea readonly rows="15" cols="160">@ViewData["RefreshToken"]</textarea>
+
