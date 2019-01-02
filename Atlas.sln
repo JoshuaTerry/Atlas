@@ -37,6 +37,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.Utilities.Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveCentric.Services.Tests", "Services\DriveCentric.Services.Tests\DriveCentric.Services.Tests.csproj", "{6F765F5F-823E-466B-96F9-6338C80EC258}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AtlasTester", "AtlasTester", "{6AAA855A-ADED-4532-B96D-202850EFB5F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtlasTester", "AtlasTester\AtlasTester.csproj", "{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,10 @@ Global
 		{6F765F5F-823E-466B-96F9-6338C80EC258}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F765F5F-823E-466B-96F9-6338C80EC258}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F765F5F-823E-466B-96F9-6338C80EC258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +108,7 @@ Global
 		{C32FFBA8-F410-49B2-B5DE-422F996651AF} = {FC6D7A80-5F29-45EF-98E3-ED740A077281}
 		{44A7DFC5-EE0F-4604-AF11-4F2376155917} = {3177FB36-9E26-46AF-9CA4-7F3308D9BF5B}
 		{6F765F5F-823E-466B-96F9-6338C80EC258} = {7309CAB3-7CE6-4E8B-A8DF-5AF484917734}
+		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED} = {6AAA855A-ADED-4532-B96D-202850EFB5F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A3FE7591-A740-44F4-8D2F-E87940C4465C}

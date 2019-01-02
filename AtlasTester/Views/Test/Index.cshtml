@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "Test Page";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+@using (Html.BeginForm("Test", "Test", FormMethod.Post))
+{
+    <label for="host" style="width:100px">Host:</label>
+    <input type="text" name="host" value="@ViewData["Host"]" />
+    <br />
+    <label for="port" style="width:100px">Port:</label>
+    <input type="text" name="port" value="@ViewData["Port"]" />
+    <br />
+    <label for="resource" style="width:100px">Resource:</label>
+    <input type="text" name="resource" value="@ViewData["Resource"]" />
+    <br />
+    <label for="queryString" style="width:100px">Query String:</label>
+    <input type="text" name="queryString" value="@ViewData["QueryString"]" />
+    <br />
+    <div style="float:right">
+        <input type="submit" name="test" value="Test" />
+    </div>
+    <br />
+    <br />
+    <label for="results">Results:</label>
+    <div style="float:right">
+        <text>@ViewData["Url"]</text>
+    </div>
+    <textarea readonly name="results" rows="20" cols="160">@ViewData["Data"]</textarea>
+    <br />
+}
