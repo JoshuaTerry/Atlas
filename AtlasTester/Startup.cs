@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,14 +39,14 @@ namespace AtlasTester
             .AddCookie()
             .AddOpenIdConnect(options =>
             {
-                options.ResponseType = "code";
-                options.MetadataAddress = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_reAgM5vKR/.well-known/openid-configuration";
-                options.ClientId = "16s21edbo2tejlkqjg455i7lg7";
-                options.ClientSecret = "e9482kjq7j6jpe8edfr0qkqrmkda71raf8r58g5hrc9qtqqq0vf";
+                var config = Configuration.GetSection("Authentication:Cognito");
+                
+                options.ResponseType = config.GetValue<string>("ResponseType");
+                options.MetadataAddress = config.GetValue<string>("MetadataAddress");
+                options.ClientId = config.GetValue<string>("ClientId");
+                options.ClientSecret = config.GetValue<string>("ClientSecret");
                 options.ClaimActions.Remove("exp");
-                options.SaveTokens = true;
-
-
+                options.SaveTokens = config.GetValue<bool>("SaveTokens");
             });
         }
 
@@ -75,19 +68,6 @@ namespace AtlasTester
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
-            //app.Use(async (HttpContext context, Func<Task> next) =>
-            //{
-            //    int i = 1;
-            //    if (1==i)
-            //    {
-            //        await next.Invoke();
-
-            //        return;
-            //    }
-
-            //    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            //});
 
             app.UseMvc(routes =>
             {

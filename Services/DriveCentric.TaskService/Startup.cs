@@ -89,10 +89,12 @@ namespace DriveCentric.TaskService
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                ConfigureMemoryCache();
             }
             else
             {
                 app.UseHsts();
+                ConfigureRedisCache();
             }
 
             app.UseSwagger();
