@@ -37,7 +37,7 @@ namespace DriveCentric.TaskService
         {
             services.AddSingleton(Configuration);
 
-            services.AddCors(c => c.AddPolicy("DrivePolicy", builder =>
+            services.AddCors(c => c.AddPolicy(Configuration.GetSection("CacheConfig:Name").Value, builder =>
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
@@ -100,7 +100,7 @@ namespace DriveCentric.TaskService
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1"));
 
-            app.UseCors("DrivePolicy");
+            app.UseCors(Configuration.GetSection("CacheConfig:Name").Value);
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
