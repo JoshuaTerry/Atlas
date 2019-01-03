@@ -91,7 +91,7 @@ namespace AtlasTester.Controllers
                 }
                 else
                 {
-                    ViewData["Data"] = "Data failed to load";
+                    ViewData["Data"] = $"Data failed to load (with status code {response.StatusCode})";
                 }
             }
 
