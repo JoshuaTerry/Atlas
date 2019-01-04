@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using DriveCentric.BaseService.Interfaces;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
 using DriveCentric.Utilities.Context;
 using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Services
 {
@@ -27,6 +27,9 @@ namespace DriveCentric.BaseService.Services
             this.contextInfoAccessor = contextInfoAccessor;
             this.validator = validator;
         }
+
+        public virtual async Task<IDataResponse<object>> GetHealthCheck()
+            => new DataResponse<object>(new { Databases = await unitOfWork.GetDatabaseHealthCheck() });
 
         [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<T>> GetSingleByExpressionAsync(Expression<Func<T, bool>> expression = null, string[] referenceFields = null)

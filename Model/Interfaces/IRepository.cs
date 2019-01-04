@@ -7,9 +7,11 @@ namespace DriveCentric.Core.Interfaces
 {
     public interface IRepository
     {
+        Task<bool> IsDatabaseAvailable();
+
         Task<IEnumerable<T>> GetAllAsync<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null) where T : class, IBaseModel, new();
 
-        Task<long> GetCount<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new();
+        Task<long> GetCountAsync<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new();
 
         Task<long> DeleteByIdAsync<T>(int id) where T : IBaseModel, new();
 

@@ -7,6 +7,8 @@ namespace DriveCentric.Core.Interfaces
 {
     public interface IUnitOfWork
     {
+        Task<Dictionary<string, bool>> GetDatabaseHealthCheck();
+
         Task<long> SaveChanges();
 
         void Delete<T>(int id) where T : IBaseModel, new();
