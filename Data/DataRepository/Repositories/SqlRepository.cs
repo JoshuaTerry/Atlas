@@ -1,12 +1,12 @@
-﻿using System;
+﻿using DriveCentric.Core.Interfaces;
+using ServiceStack.Data;
+using ServiceStack.OrmLite;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using DriveCentric.Core.Interfaces;
-using ServiceStack.Data;
-using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.DataRepository.Repositories
 {
@@ -17,6 +17,18 @@ namespace DriveCentric.Data.DataRepository.Repositories
         public SqlRepository(string connectionString)
         {
             factory = new OrmLiteConnectionFactory(connectionString, SqlServerDialect.Provider);
+        }
+
+        public async Task<bool> IsDatabaseAvailable()
+        {
+            try
+            {
+                using (var connection = factory.CreateDbConnection())
+                    connection.Open();
+
+                return await Task.FromResult<bool>(true);
+            }
+            catch { return await Task.FromResult<bool>(false); }
         }
 
         public async Task<long> DeleteAsync<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
@@ -31,7 +43,7 @@ namespace DriveCentric.Data.DataRepository.Repositories
                 return await connection.DeleteByIdAsync<T>(id);
         }
 
-        public async Task<long> GetCount<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
+        public async Task<long> GetCountAsync<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
                 return await connection.CountAsync<T>(expression);

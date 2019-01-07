@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using PostSharp.Patterns.Caching;
+using System.Threading.Tasks;
 
 namespace DriveCentric.TaskService.Controllers
 {
@@ -25,6 +25,12 @@ namespace DriveCentric.TaskService.Controllers
             IContextInfoAccessor contextInfoAccessor,
             IBaseService<DriveCentric.Core.Models.UserTask> service
             ) : base(httpContextAccessor, contextInfoAccessor, service) { }
+
+        [Authorize]
+        [HttpGet]
+        [Route("api/v1/task/healthcheck")]
+        public async Task<IActionResult> Get()
+            => Ok(await Service.GetHealthCheck());
 
         [MonitorAsyncAspect(AspectPriority = 1)]
         [Cache(AspectPriority = 2)]

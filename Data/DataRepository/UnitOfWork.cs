@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using DriveCentric.Core.Interfaces;
+﻿using DriveCentric.Core.Interfaces;
 using DriveCentric.Data.DataRepository.Interfaces;
 using DriveCentric.Data.DataRepository.Repositories;
 using DriveCentric.Utilities.Context;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace DriveCentric.Data.DataRepository
 {
@@ -23,8 +23,20 @@ namespace DriveCentric.Data.DataRepository
         {
             ContextInfoAccessor = contextInfoAccessor;
             DriveServerCollection = driveServerCollection;
-
+            LoadRepositories();
             actions = new Queue<Func<Task<long>>>();
+        }
+
+        public async Task<Dictionary<string, bool>> GetDatabaseHealthCheck()
+        {
+            var connections = new Dictionary<string, bool>();
+
+            foreach (var kvp in repositories)
+            {
+                connections.Add(kvp.Key, await kvp.Value.IsDatabaseAvailable());
+            }
+
+            return connections;
         }
 
         private void LoadRepositories()
@@ -40,11 +52,6 @@ namespace DriveCentric.Data.DataRepository
 
         private IRepository GetRepoByEntityType(Type type)
         {
-            if (repositories == null)
-            {
-                LoadRepositories();
-            }
-
             if (typeof(IGalaxyEntity).IsAssignableFrom(type))
                 return repositories["Galaxy"];
             else if (typeof(IStarEntity).IsAssignableFrom(type))
@@ -54,7 +61,7 @@ namespace DriveCentric.Data.DataRepository
         }
 
         public Task<long> GetCount<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
-            => GetRepoByEntityType(typeof(T)).GetCount<T>(expression);
+            => GetRepoByEntityType(typeof(T)).GetCountAsync<T>(expression);
 
         public async Task<T> GetEntity<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
             => await GetRepoByEntityType(typeof(T)).GetSingleAsync<T>(expression, referenceFields);
