@@ -1,10 +1,10 @@
-﻿using System;
-using DriveCentric.Core.Interfaces;
+﻿using DriveCentric.Core.Interfaces;
 using DriveCentric.Data.DataRepository.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
+using System;
 
 namespace DriveCentric.Data.DataRepository.Configuration
 {
@@ -36,7 +36,8 @@ namespace DriveCentric.Data.DataRepository.Configuration
         {
             ConfigureConnectionFactory(services, provider);
 
-            services.AddSingleton<IDriveServerCollection, DriveServerCollection>();
+            services.AddScoped<IDriveServerCollection, DriveServerCollection>();
+            services.AddScoped<IDatabaseCollectionManager, DatabaseCollectionManager>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

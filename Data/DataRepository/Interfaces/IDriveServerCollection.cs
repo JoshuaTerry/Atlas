@@ -1,13 +1,10 @@
-﻿using System;
+﻿using DriveCentric.Core.Models;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DriveCentric.Data.DataRepository.Interfaces
 {
-    public interface IDriveServerCollection
+    public interface IDriveServerCollection : IDictionary<int, DriveServer>
     {
         string GalaxyConnectionString { get; }
-
-        string GetConnectionStringById(int id);
     }
 }

@@ -1,11 +1,8 @@
 ﻿using DriveCentric.Core.Interfaces;
-using DriveCentric.Data.DataRepository.Interfaces;
-using DriveCentric.Data.DataRepository.Repositories;
 using DriveCentric.Utilities.Context;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -15,15 +12,14 @@ namespace DriveCentric.Data.DataRepository
     {
         private Dictionary<string, IRepository> repositories;
         private readonly Queue<Func<Task<long>>> actions;
-
+        private IDatabaseCollectionManager dbManager;
         public IContextInfoAccessor ContextInfoAccessor { get; }
-        private IDriveServerCollection DriveServerCollection { get; }
 
-        public UnitOfWork(IContextInfoAccessor contextInfoAccessor, IConfiguration configuration, IDriveServerCollection driveServerCollection)
+        public UnitOfWork(IContextInfoAccessor contextInfoAccessor, IConfiguration configuration, IDatabaseCollectionManager manager)
         {
             ContextInfoAccessor = contextInfoAccessor;
-            DriveServerCollection = driveServerCollection;
-            LoadRepositories();
+            dbManager = manager;
+            repositories = manager.Repositories;
             actions = new Queue<Func<Task<long>>>();
         }
 
@@ -37,17 +33,6 @@ namespace DriveCentric.Data.DataRepository
             }
 
             return connections;
-        }
-
-        private void LoadRepositories()
-        {
-            var driveServerId = Convert.ToInt32(ContextInfoAccessor.ContextInfo.User.Claims.Single(c => c.Type == "custom:DriveServerId").Value);
-
-            repositories = new Dictionary<string, IRepository>
-            {
-                { "Galaxy", new SqlRepository(DriveServerCollection.GalaxyConnectionString) },
-                { "Star", new SqlRepository(DriveServerCollection.GetConnectionStringById(driveServerId)) }
-            };
         }
 
         private IRepository GetRepoByEntityType(Type type)
