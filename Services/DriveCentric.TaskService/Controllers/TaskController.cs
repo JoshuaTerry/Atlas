@@ -23,7 +23,7 @@ namespace DriveCentric.TaskService.Controllers
         public TaskController(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
-            IBaseService<DriveCentric.Core.Models.UserTask> service
+            IBaseService<UserTask> service
             ) : base(httpContextAccessor, contextInfoAccessor, service) { }
 
         [Authorize]

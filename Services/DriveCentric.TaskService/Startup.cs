@@ -2,13 +2,11 @@ using DriveCentric.BaseService.Interfaces;
 using DriveCentric.BaseService.Middleware;
 using DriveCentric.BaseService.Services;
 using DriveCentric.BusinessLogic.Configuration;
-using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +15,8 @@ using Microsoft.IdentityModel.Tokens;
 using PostSharp.Patterns.Caching;
 using PostSharp.Patterns.Caching.Backends;
 using PostSharp.Patterns.Caching.Backends.Redis;
-using StackExchange.Redis;
 using ServiceStack.Text;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace DriveCentric.TaskService
@@ -48,7 +46,7 @@ namespace DriveCentric.TaskService
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddHttpContextAccessor();
-            services.AddScoped<IContextInfoAccessor, ContextInfoAccessor>();
+            services.AddSingleton<IContextInfoAccessor, ContextInfoAccessor>();
 
             services.AddScoped<IBaseService<UserTask>, BaseService<UserTask>>();
             services.AddBusinessLogic();

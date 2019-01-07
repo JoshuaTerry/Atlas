@@ -1,4 +1,5 @@
 using DriveCentric.BaseService.Interfaces;
+using DriveCentric.BusinessLogic.Implementation;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
@@ -18,14 +19,14 @@ namespace DriveCentric.BaseService.Services
 
         protected readonly IContextInfoAccessor contextInfoAccessor;
         protected readonly IUnitOfWork unitOfWork;
-        protected readonly AbstractValidator<T> validator;
+        protected readonly LogicBase<T> logic;
         public IContextInfoAccessor ContextInfoAccessor { get { return contextInfoAccessor; } }
 
-        public BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork, AbstractValidator<T> validator)
+        public BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork, LogicBase<T> logic)
         {
             this.unitOfWork = unitOfWork;
             this.contextInfoAccessor = contextInfoAccessor;
-            this.validator = validator;
+            this.logic = logic;
         }
 
         public virtual async Task<IDataResponse<object>> GetHealthCheck()
@@ -49,7 +50,7 @@ namespace DriveCentric.BaseService.Services
         [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<long>> InsertAsync(T entity)
         {
-            await validator.ValidateAndThrowAsync(entity, InsertRuleSet);
+            await logic.ValidateAndThrowAsync(entity, InsertRuleSet);
             unitOfWork.Insert(entity);
 
             return new DataResponse<long> { Data = await unitOfWork.SaveChanges() };
@@ -58,7 +59,7 @@ namespace DriveCentric.BaseService.Services
         [MonitorAsyncAspect]
         public virtual async Task<IDataResponse<long>> UpdateAsync(T entity)
         {
-            await validator.ValidateAndThrowAsync(entity, UpdateRuleSet);
+            await logic.ValidateAndThrowAsync(entity, UpdateRuleSet);
             unitOfWork.Update(entity);
 
             return new DataResponse<long> { Data = await unitOfWork.SaveChanges() };

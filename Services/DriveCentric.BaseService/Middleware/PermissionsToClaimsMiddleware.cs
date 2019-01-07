@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using DriveCentric.BaseService.Services;
+﻿using DriveCentric.BaseService.Services;
 using DriveCentric.BusinessLogic.Implementation;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 using Serilog;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Middleware
 {
@@ -54,14 +52,14 @@ namespace DriveCentric.BaseService.Middleware
 
             await next(context);
         }
-        
+
         private static async System.Threading.Tasks.Task AddStarClaims(
             IContextInfoAccessor contextInfoAccessor,
             IUnitOfWork unitOfWork,
             ClaimsIdentity user,
             Guid userGuid)
         {
-            var starService = new BaseService<StarClaimPermission>(contextInfoAccessor, unitOfWork, new StarClaimPermissionValidator());
+            var starService = new BaseService<StarClaimPermission>(contextInfoAccessor, unitOfWork, new NoLogic<StarClaimPermission>(null));
             var starPermissions =
                 await starService.GetAllByExpressionAsync(
                     x => x.ExternalId == userGuid, PageableSearch.Max);
@@ -78,7 +76,7 @@ namespace DriveCentric.BaseService.Middleware
             ClaimsIdentity user,
             Guid userGuid)
         {
-            var service = new BaseService<GalaxyClaimPermission>(contextInfoAccessor, unitOfWork, new GalaxyClaimPermissionValidator());
+            var service = new BaseService<GalaxyClaimPermission>(contextInfoAccessor, unitOfWork, new NoLogic<GalaxyClaimPermission>(null));
             var permissions =
                 await service.GetAllByExpressionAsync(
                     x => x.ExternalId == userGuid, PageableSearch.Max);
