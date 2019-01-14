@@ -7,13 +7,26 @@ stages:
 build_job:
   stage: build
   script:
+    - dotnet sonarscanner begin
+      /k:crmsdk
+      /d:sonar.host.url=http://sonar.drivecentric.com:9000
+      /d:sonar.login=%SONAR_API_KEY%
+      /d:sonar.gitlab.project_id=%CI_PROJECT_PATH%
+      /d:sonar.gitlab.commit_sha=%CI_COMMIT_SHA%
+      /d:sonar.gitlab.ref_name=%CI_COMMIT_REF_NAME%
+      /d:sonar.gitlab.failure_notification_mode=commit-status
+      /d:sonar.gitlab.json_mode=CODECLIMATE
+      /d:sonar.gitlab.all_issues=false
+      /d:sonar.analysis.mode=publish
+      /d:sonar.cs.opencover.reportsPaths=%CD%/testResults/coverage.opencover.xml
+      /d:sonar.branch.name=%CI_COMMIT_REF_NAME%
     - dotnet build
   artifacts:
     paths:
       - "*/bin"
       - "*/obj"
-
-
+      - ".sonarqube"
+      - codeclimate.json
 
 publish_job:
   stage: publish
