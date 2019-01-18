@@ -5,14 +5,14 @@ namespace DriveCentric.Utilities.Context
 {
     public class ContextInfo : IContextInfo
     {
-        public ClaimsPrincipal User { get; }
-
-        public int? Identifier { get; }
-
         public ContextInfo(IHttpContextAccessor httpContextAccessor)
         {
             User = httpContextAccessor.HttpContext?.User;
             Identifier = httpContextAccessor.HttpContext?.Request?.GetHashCode();
         }
+
+        public ClaimsPrincipal User { get; }
+
+        public int? Identifier { get; }
     }
 }

@@ -54,6 +54,37 @@ namespace DriveCentric.TaskService
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "Atlas - Task Service", Version = "v1" }));
         }
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env)
+        {
+            JsConfig.TreatEnumAsInteger = true;
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                ConfigureMemoryCache();
+            }
+            else
+            {
+                app.UseHsts();
+                ConfigureRedisCache();
+            }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint(Configuration.GetValue<string>("SwaggerEndpoint"), "Atlas - Task - V1"));
+
+            app.UseCors(Configuration.GetSection("CacheConfig:Name").Value);
+
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
+
+            app.UseMiddleware<PermissionsToClaimsMiddleware>();
+
+            app.UseMvc();
+        }
+
         private void AddSecurityServices(IServiceCollection services)
         {
             services.Configure<JwtBearerOptions>(Configuration.GetSection("Authentication:Cognito"));
@@ -75,37 +106,6 @@ namespace DriveCentric.TaskService
                     ValidateIssuer = authOptions.Value.TokenValidationParameters.ValidateIssuer
                 };
             });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(
-            IApplicationBuilder app,
-            IHostingEnvironment env)
-        {
-            JsConfig.TreatEnumAsInteger = true;
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                ConfigureMemoryCache();
-            }
-            else
-            {
-                app.UseHsts();
-                ConfigureRedisCache();
-            }
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas - Task - V1"));
-
-            app.UseCors(Configuration.GetSection("CacheConfig:Name").Value);
-
-            app.UseHttpsRedirection();
-            app.UseAuthentication();
-
-            app.UseMiddleware<PermissionsToClaimsMiddleware>();
-
-            app.UseMvc();
         }
 
         private void ConfigureRedisCache()

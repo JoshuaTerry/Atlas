@@ -8,6 +8,7 @@ namespace DriveCentric.Core.Models
     public class StarClaimPermission : IBaseModel, IStarEntity, IClaimPermission
     {
         public string Key { get; set; }
+
         public string Value { get; set; }
 
         [Alias("UserId")]

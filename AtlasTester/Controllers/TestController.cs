@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AtlasTester.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using System.Net.Http;
-using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Newtonsoft.Json.Linq;
 
 namespace AtlasTester.Controllers
 {
@@ -19,10 +16,14 @@ namespace AtlasTester.Controllers
     public class TestController : Controller
     {
         public string Host { get; set; } = "https://localhost";
+
         public string Port { get; set; } = "44321";
+
         public string Resource { get; set; } = "/api/v1/task/4165495";
-        public string QueryString { get; set; } = String.Empty;
-        public string QueryUrl { get; set; } = String.Empty;
+
+        public string QueryString { get; set; } = string.Empty;
+
+        public string QueryUrl { get; set; } = string.Empty;
 
         public IActionResult Index()
         {
@@ -38,9 +39,8 @@ namespace AtlasTester.Controllers
         public async Task<IActionResult> Tokens()
         {
             ViewData["IdToken"] = await HttpContext.GetTokenAsync("id_token");
-            var exp = User.Claims.Where(claim => claim.Type == "exp").First().Value;
-            ViewData["IdTokenExpires"] = 
-                new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            var exp = User.Claims.First(claim => claim.Type == "exp").Value;
+            ViewData["IdTokenExpires"] = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 .AddSeconds(double.Parse(exp)).ToLocalTime().ToString();
 
             ViewData["RefreshToken"] = await HttpContext.GetTokenAsync("refresh_token");
@@ -65,12 +65,13 @@ namespace AtlasTester.Controllers
 
             using (var client = new HttpClient())
             {
-                var urlString  = Host + ":" + Port + Resource;
+                var urlString = Host + ":" + Port + Resource;
 
-                if (!String.IsNullOrEmpty(QueryString))
+                if (!string.IsNullOrEmpty(QueryString))
                 {
                     urlString += "?" + QueryString;
                 }
+
                 QueryUrl = urlString;
                 var url = new Uri(urlString);
                 ViewData["Url"] = url;
@@ -87,6 +88,7 @@ namespace AtlasTester.Controllers
                     {
                         json = await content.ReadAsStringAsync();
                     }
+
                     ViewData["Data"] = JValue.Parse(json).ToString(Formatting.Indented);
                 }
                 else

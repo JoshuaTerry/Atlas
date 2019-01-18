@@ -1,12 +1,12 @@
-﻿using DriveCentric.Core.Interfaces;
-using ServiceStack.Data;
-using ServiceStack.OrmLite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DriveCentric.Core.Interfaces;
+using ServiceStack.Data;
+using ServiceStack.OrmLite;
 
 namespace DriveCentric.Data.DataRepository.Repositories
 {
@@ -24,32 +24,47 @@ namespace DriveCentric.Data.DataRepository.Repositories
             try
             {
                 using (var connection = factory.CreateDbConnection())
+                {
                     connection.Open();
+                }
 
                 return await Task.FromResult<bool>(true);
             }
-            catch { return await Task.FromResult<bool>(false); }
+            catch
+            {
+                return await Task.FromResult<bool>(false);
+            }
         }
 
-        public async Task<long> DeleteAsync<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
+        public async Task<long> DeleteAsync<T>(Expression<Func<T, bool>> expression)
+            where T : IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
+            {
                 return await connection.DeleteAsync(expression);
+            }
         }
 
-        public async Task<long> DeleteByIdAsync<T>(int id) where T : IBaseModel, new()
+        public async Task<long> DeleteByIdAsync<T>(int id)
+            where T : IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
+            {
                 return await connection.DeleteByIdAsync<T>(id);
+            }
         }
 
-        public async Task<long> GetCountAsync<T>(Expression<Func<T, bool>> expression) where T : IBaseModel, new()
+        public async Task<long> GetCountAsync<T>(Expression<Func<T, bool>> expression)
+            where T : IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
+            {
                 return await connection.CountAsync<T>(expression);
+            }
         }
 
-        public async Task<T> GetSingleAsync<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
+        public async Task<T> GetSingleAsync<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null)
+            where T : IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
             {
@@ -60,7 +75,8 @@ namespace DriveCentric.Data.DataRepository.Repositories
             }
         }
 
-        public T GetSingle<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null) where T : IBaseModel, new()
+        public T GetSingle<T>(Expression<Func<T, bool>> expression, string[] referenceFields = null)
+            where T : IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
             {
@@ -71,19 +87,26 @@ namespace DriveCentric.Data.DataRepository.Repositories
             }
         }
 
-        public async Task<long> InsertAsync<T>(T item) where T : IBaseModel, new()
+        public async Task<long> InsertAsync<T>(T item)
+            where T : IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
+            {
                 return await connection.InsertAsync(item, selectIdentity: true);
+            }
         }
 
-        public async Task<long> UpdateAsync<T>(T item) where T : IBaseModel, new()
+        public async Task<long> UpdateAsync<T>(T item)
+            where T : IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
+            {
                 return await connection.SaveAsync(item) ? 1 : 0;
+            }
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields) where T : class, IBaseModel, new()
+        public async Task<IEnumerable<T>> GetAllAsync<T>(Expression<Func<T, bool>> expression, IPageable paging, string[] referenceFields = null)
+            where T : class, IBaseModel, new()
         {
             using (var connection = factory.OpenDbConnection())
             {

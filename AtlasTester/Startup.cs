@@ -40,7 +40,7 @@ namespace AtlasTester
             .AddOpenIdConnect(options =>
             {
                 var config = Configuration.GetSection("Authentication:Cognito");
-                
+
                 options.ResponseType = config.GetValue<string>("ResponseType");
                 options.MetadataAddress = config.GetValue<string>("MetadataAddress");
                 options.ClientId = config.GetValue<string>("ClientId");
@@ -59,7 +59,7 @@ namespace AtlasTester
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler(Configuration.GetValue<string>("ErrorUrl"));
                 app.UseHsts();
             }
 

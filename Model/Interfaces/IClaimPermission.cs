@@ -7,6 +7,7 @@ namespace DriveCentric.Core.Interfaces
     public interface IClaimPermission
     {
         string Key { get; set; }
+
         string Value { get; set; }
     }
 }

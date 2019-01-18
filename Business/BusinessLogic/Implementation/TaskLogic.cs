@@ -6,7 +6,8 @@ namespace DriveCentric.BusinessLogic.Implementation
 {
     public class TaskLogic : LogicBase<UserTask>
     {
-        public TaskLogic(IReadOnlyUnitOfWork uow) : base(uow)
+        public TaskLogic(IReadOnlyUnitOfWork uow)
+            : base(uow)
         {
             RuleSet("Insert", () =>
             {

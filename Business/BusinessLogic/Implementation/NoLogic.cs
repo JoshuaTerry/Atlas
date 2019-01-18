@@ -4,7 +4,9 @@ namespace DriveCentric.BusinessLogic.Implementation
 {
     public class NoLogic<T> : LogicBase<T>
     {
-        public NoLogic(IReadOnlyUnitOfWork uow) : base(uow)
-        { }
+        public NoLogic(IReadOnlyUnitOfWork uow)
+            : base(uow)
+        {
+        }
     }
 }

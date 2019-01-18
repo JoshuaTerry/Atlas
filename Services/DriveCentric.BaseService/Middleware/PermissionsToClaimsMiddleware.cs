@@ -1,14 +1,14 @@
-﻿using DriveCentric.BaseService.Services;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using DriveCentric.BaseService.Services;
 using DriveCentric.BusinessLogic.Implementation;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 using Serilog;
-using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace DriveCentric.BaseService.Middleware
 {
@@ -37,7 +37,6 @@ namespace DriveCentric.BaseService.Middleware
 
                     var userGuidClaim = claims.FirstOrDefault(claim => claim.Type == "custom:UserGuid")?.Value;
                     Guid userGuid = new Guid(userGuidClaim);
-                    var driveServerIdClaim = claims.FirstOrDefault(claim => claim.Type == "custom:DriveServerId")?.Value;
 
                     contextInfoAccessor.ContextInfo = new ContextInfo(httpContextAccessor);
 

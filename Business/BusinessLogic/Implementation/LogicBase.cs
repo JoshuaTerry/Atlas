@@ -7,7 +7,7 @@ namespace DriveCentric.BusinessLogic.Implementation
     {
         private readonly IReadOnlyUnitOfWork unitOfWork;
 
-        public LogicBase(IReadOnlyUnitOfWork uow)
+        protected LogicBase(IReadOnlyUnitOfWork uow)
         {
             unitOfWork = uow;
         }
