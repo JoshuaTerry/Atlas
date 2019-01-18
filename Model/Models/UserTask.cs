@@ -1,9 +1,9 @@
-﻿using DriveCentric.Core.Interfaces;
+﻿using System;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Validators;
 using DriveCentric.Model.Enums;
 using Newtonsoft.Json;
 using ServiceStack.DataAnnotations;
-using System;
 
 namespace DriveCentric.Core.Models
 {
@@ -63,7 +63,6 @@ namespace DriveCentric.Core.Models
 
         [System.ComponentModel.DataAnnotations.Required]
         [ServiceStack.DataAnnotations.Required]
-        //[EnumDataType(typeof(ActionType))]
         public ActionType? ActionType { get; set; }
 
         [Alias("GUID")]

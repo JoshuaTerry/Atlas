@@ -1,6 +1,6 @@
-﻿using DriveCentric.Core.Interfaces;
+﻿using System;
+using DriveCentric.Core.Interfaces;
 using ServiceStack.DataAnnotations;
-using System;
 
 namespace DriveCentric.Core.Models
 {

@@ -9,10 +9,13 @@ namespace DriveCentric.Core.Interfaces
 
         Task<long> SaveChanges();
 
-        void Delete<T>(int id) where T : IBaseModel, new();
+        void Delete<T>(int id)
+            where T : IBaseModel, new();
 
-        void Update<T>(T entity) where T : IBaseModel, new();
+        void Update<T>(T entity)
+            where T : IBaseModel, new();
 
-        void Insert<T>(T entity) where T : IBaseModel, new();
+        void Insert<T>(T entity)
+            where T : IBaseModel, new();
     }
 }

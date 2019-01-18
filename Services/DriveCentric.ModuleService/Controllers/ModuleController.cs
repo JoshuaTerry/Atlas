@@ -1,4 +1,5 @@
-﻿using DriveCentric.BaseService.Controllers;
+﻿using System.Threading.Tasks;
+using DriveCentric.BaseService.Controllers;
 using DriveCentric.BaseService.Interfaces;
 using DriveCentric.Core.Models;
 using DriveCentric.Utilities.Aspects;
@@ -6,26 +7,27 @@ using DriveCentric.Utilities.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using PostSharp.Patterns.Caching;
 
 namespace DriveCentric.ModuleService.Controllers
 {
     [Produces("application/json")]
     public class ModuleController : BaseController<Module>
     {
-        protected override string FieldsForAll => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
-        protected override string FieldsForSingle => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
-        protected override string FieldsForList => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
-        protected override string[] ReferenceFields => new string[] { };
-
         public ModuleController(
             IHttpContextAccessor httpContextAccessor,
             IContextInfoAccessor contextInfoAccessor,
-            IBaseService<Module> service
-            ) : base(httpContextAccessor, contextInfoAccessor, service)
+            IBaseService<Module> service)
+            : base(httpContextAccessor, contextInfoAccessor, service)
         {
         }
+
+        protected override string FieldsForAll => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
+
+        protected override string FieldsForSingle => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
+
+        protected override string FieldsForList => "Id,Name,Description,Category,Icon,Cost,IsOwned,DateCreated,DateModified";
+
+        protected override string[] ReferenceFields => new string[] { };
 
         [MonitorAsyncAspect(AspectPriority = 1)]
         [HttpGet]
@@ -45,13 +47,13 @@ namespace DriveCentric.ModuleService.Controllers
         public override async Task<IActionResult> Post([FromBody] Module entity)
             => await base.Post(entity);
 
-        [HttpPatch()]
+        [HttpPatch]
         [Route("api/v1/module/{id}")]
         public override async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Module> patch)
             => await base.Patch(id, patch);
 
         [MonitorAsyncAspect]
-        [HttpDelete()]
+        [HttpDelete]
         [Route("api/v1/module/{id}")]
         public override async Task<IActionResult> Delete(int id) => await base.Delete(id);
     }

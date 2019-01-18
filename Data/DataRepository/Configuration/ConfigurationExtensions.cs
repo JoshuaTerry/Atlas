@@ -1,10 +1,10 @@
-﻿using DriveCentric.Core.Interfaces;
+﻿using System;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Data.DataRepository.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using System;
 
 namespace DriveCentric.Data.DataRepository.Configuration
 {
@@ -15,6 +15,17 @@ namespace DriveCentric.Data.DataRepository.Configuration
         public static IServiceCollection AddDataRepository(this IServiceCollection services)
         {
             ConfigureORM(services);
+
+            return services;
+        }
+
+        public static IServiceCollection AddSqlOrmLite(this IServiceCollection services, ServiceProvider provider)
+        {
+            ConfigureConnectionFactory(services, provider);
+
+            services.AddScoped<IDriveServerCollection, DriveServerCollection>();
+            services.AddScoped<IDatabaseCollectionManager, DatabaseCollectionManager>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
@@ -32,17 +43,6 @@ namespace DriveCentric.Data.DataRepository.Configuration
             }
         }
 
-        public static IServiceCollection AddSqlOrmLite(this IServiceCollection services, ServiceProvider provider)
-        {
-            ConfigureConnectionFactory(services, provider);
-
-            services.AddScoped<IDriveServerCollection, DriveServerCollection>();
-            services.AddScoped<IDatabaseCollectionManager, DatabaseCollectionManager>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            return services;
-        }
-
         private static void ConfigureConnectionFactory(IServiceCollection services, ServiceProvider provider)
         {
             var configuration = provider.GetService<IConfiguration>();
@@ -52,9 +52,7 @@ namespace DriveCentric.Data.DataRepository.Configuration
             services.AddSingleton<IDbConnectionFactory>(
                 _ => new OrmLiteConnectionFactory(
                     connectionString,
-                    SqlServerDialect.Provider
-                    )
-                );
+                    SqlServerDialect.Provider));
         }
     }
 }

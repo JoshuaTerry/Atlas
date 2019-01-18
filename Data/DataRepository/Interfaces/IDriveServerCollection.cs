@@ -1,5 +1,5 @@
-﻿using DriveCentric.Core.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DriveCentric.Core.Models;
 
 namespace DriveCentric.Data.DataRepository.Interfaces
 {
