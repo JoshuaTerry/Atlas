@@ -2,7 +2,6 @@
 using System.Linq;
 using DriveCentric.Core.Models;
 using DriveCentric.Data.DataRepository.Interfaces;
-using Microsoft.Extensions.Configuration;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 

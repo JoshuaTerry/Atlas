@@ -12,16 +12,10 @@ using Serilog;
 
 namespace DriveCentric.BaseService.Controllers
 {
-    public abstract class BaseController<T> : Controller, IContextAccessible where T : class, IBaseModel, new()
+    public abstract class BaseController<T> : Controller, IContextAccessible
+        where T : class, IBaseModel, new()
     {
         private readonly ResponseReducer responseReducer;
-        protected virtual string FieldsForAll => string.Empty;
-        protected virtual string FieldsForSingle => string.Empty;
-        protected virtual string FieldsForList => string.Empty;
-        protected virtual string[] ReferenceFields => new string[] { };
-        protected IBaseService<T> Service { get; }
-
-        public IContextInfoAccessor ContextInfoAccessor { get; }
 
         protected BaseController(
             IHttpContextAccessor httpContextAccessor,
@@ -33,6 +27,18 @@ namespace DriveCentric.BaseService.Controllers
             ContextInfoAccessor = contextInfoAccessor;
             this.Service = service;
         }
+
+        public IContextInfoAccessor ContextInfoAccessor { get; }
+
+        protected virtual string FieldsForAll => string.Empty;
+
+        protected virtual string FieldsForSingle => string.Empty;
+
+        protected virtual string FieldsForList => string.Empty;
+
+        protected virtual string[] ReferenceFields => new string[] { };
+
+        protected IBaseService<T> Service { get; }
 
         public virtual async Task<IActionResult> GetAll(Expression<Func<T, bool>> predicate = null, int? limit = SearchParameters.LimitMax, int? offset = SearchParameters.OffsetDefault, string orderBy = null, string fields = null)
         {
@@ -65,8 +71,6 @@ namespace DriveCentric.BaseService.Controllers
 
             try
             {
-                var claims = ContextInfoAccessor.ContextInfo.User.Claims;
-
                 var result = await Service.GetSingleByExpressionAsync(predicate, ReferenceFields);
                 if (result.TotalResults < 1)
                 {
@@ -138,6 +142,42 @@ namespace DriveCentric.BaseService.Controllers
             }
         }
 
+        public virtual IActionResult FinalizeReponse<U>(IDataResponse<U> response, string fields = null)
+        {
+            try
+            {
+                if (response.Data == null)
+                {
+                    if (response.ErrorMessages.Count > 0)
+                    {
+                        return BadRequest(string.Join(",", response.ErrorMessages));
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+
+                if (!response.IsSuccessful)
+                {
+                    return BadRequest(string.Join(",", response.ErrorMessages));
+                }
+
+                var dynamicResponse = responseReducer.ToDynamicResponse(response, fields);
+
+                if (!dynamicResponse.IsSuccessful)
+                {
+                    throw new ArgumentException(string.Join(", ", dynamicResponse.ErrorMessages));
+                }
+
+                return Ok(dynamicResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Exception(ex.Message));
+            }
+        }
+
         protected virtual string[] ConvertFieldList(string fields, string defaultFields = "")
         {
             if (string.IsNullOrWhiteSpace(fields))
@@ -150,34 +190,6 @@ namespace DriveCentric.BaseService.Controllers
             }
 
             return fields.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        }
-
-        public virtual IActionResult FinalizeReponse<U>(IDataResponse<U> response, string fields = null)
-        {
-            try
-            {
-                if (response.Data == null)
-                {
-                    if (response.ErrorMessages.Count > 0)
-                        return BadRequest(string.Join(",", response.ErrorMessages));
-                    else
-                        return NotFound();
-                }
-
-                if (!response.IsSuccessful)
-                    return BadRequest(string.Join(",", response.ErrorMessages));
-
-                var dynamicResponse = responseReducer.ToDynamicResponse(response, fields);
-
-                if (!dynamicResponse.IsSuccessful)
-                    throw new Exception(string.Join(", ", dynamicResponse.ErrorMessages));
-
-                return Ok(dynamicResponse);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new Exception(ex.Message));
-            }
         }
     }
 }

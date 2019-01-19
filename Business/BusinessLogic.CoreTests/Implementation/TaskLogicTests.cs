@@ -1,11 +1,11 @@
-﻿using DriveCentric.BusinessLogic.Implementation;
+﻿using System;
+using System.Threading.Tasks;
+using DriveCentric.BusinessLogic.Implementation;
 using DriveCentric.Core.Interfaces;
 using DriveCentric.Core.Models;
 using FluentValidation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Threading.Tasks;
 
 namespace DriveCentric.BusinessLogic.CoreTests.Implementation
 {

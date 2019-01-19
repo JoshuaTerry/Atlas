@@ -21,6 +21,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="2.5.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
@@ -36,6 +40,11 @@
     <ProjectReference Include="..\..\Model\DriveCentric.Core.csproj" />
     <ProjectReference Include="..\..\Utilities\DriveCentric.Utilities.csproj" />
     <ProjectReference Include="..\DataRepository\DriveCentric.Data.DataRepository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
