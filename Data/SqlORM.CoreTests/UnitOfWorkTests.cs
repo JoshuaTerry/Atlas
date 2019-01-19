@@ -1,13 +1,13 @@
-﻿using DriveCentric.Core.Interfaces;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using DriveCentric.Core.Interfaces;
 using DriveCentric.Data.DataRepository;
 using DriveCentric.Data.DataRepository.Interfaces;
 using DriveCentric.Utilities.Context;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DriveCentric.Data.SqlORM.CoreTests
 {
@@ -19,7 +19,6 @@ namespace DriveCentric.Data.SqlORM.CoreTests
         {
             var contextInfo = new Mock<IContextInfoAccessor>();
             var config = new Mock<IConfiguration>();
-            var driveServerCollection = new Mock<IDriveServerCollection>();
 
             var repo = new Mock<IRepository>();
             repo.Setup(r => r.IsDatabaseAvailable()).Returns(Task.FromResult<bool>(true));

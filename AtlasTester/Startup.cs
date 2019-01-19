@@ -59,7 +59,7 @@ namespace AtlasTester
             }
             else
             {
-                app.UseExceptionHandler(Configuration.GetValue<string>("ErrorUrl"));
+                app.UseExceptionHandler(Configuration.GetValue<string>("ExceptionHandlerUrl"));
                 app.UseHsts();
             }
 

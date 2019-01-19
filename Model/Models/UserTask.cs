@@ -50,7 +50,7 @@ namespace DriveCentric.Core.Models
         [Alias("Description")]
         public string Notes { get; set; }
 
-        [DateValidator(ErrorMessage = "Due date must be greater than current Date")]
+        [DateValidatorAttribute(ErrorMessage = "Due date must be greater than current Date")]
         public DateTime? DateDue { get; set; }
 
         [JsonIgnore]

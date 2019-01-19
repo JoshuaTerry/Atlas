@@ -20,24 +20,22 @@ namespace DriveCentric.BaseService
         public static string NameFor<T>(Expression<Func<T, object>> property, bool shouldContainObjectPath = false)
         {
             var member = property.Body as MemberExpression;
-            if (member == null)
+            if (member == null && property.Body is UnaryExpression unary)
             {
-                if (property.Body is UnaryExpression unary)
-                {
-                    member = unary.Operand as MemberExpression;
-                }
+                member = unary.Operand as MemberExpression;
             }
+
             if (shouldContainObjectPath && member != null)
             {
-                var path = member.Expression.ToString();
                 var objectPath = member.Expression.ToString().Split('.').Where(a => !a.Equals("First()")).ToArray();
                 if (objectPath.Length >= 2)
                 {
-                    path = String.Join(".", objectPath, 1, objectPath.Length - 1);
+                    var path = string.Join(".", objectPath, 1, objectPath.Length - 1);
                     return $"{path}.{member.Member.Name}";
                 }
             }
-            return member?.Member.Name ?? String.Empty;
+
+            return member?.Member.Name ?? string.Empty;
         }
 
         /// <summary>
@@ -100,6 +98,7 @@ namespace DriveCentric.BaseService
             {
                 string field = NameFor(path, true);
                 int pos = field.LastIndexOf('.');
+
                 if (pos > 0)
                 {
                     field = field.Substring(0, pos + 1) + FieldExcludePrefix + field.Substring(pos + 1);
@@ -108,6 +107,7 @@ namespace DriveCentric.BaseService
                 {
                     field = FieldExcludePrefix + field;
                 }
+
                 fields.Add(pathPrefix + field);
                 return this;
             }
