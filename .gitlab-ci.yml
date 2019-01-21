@@ -27,6 +27,7 @@ build_job:
     - dotnet build
     - dotnet sonarscanner end /d:sonar.login=%SONAR_API_KEY%
   after_script:
+    - powershell -Command "(gc codeclimate.json) -replace 'check_name', 'description' | Out-File codeclimate.json"
     - rename codeclimate.json gl-code-quality-report.json
   artifacts:
     paths:
@@ -52,12 +53,14 @@ test_job:
     - dotnet test .\Business\BusinessLogic.CoreTests\DriveCentric.BusinessLogic.CoreTests.csproj
       /p:CollectCoverage=true
       /p:CoverletOutput=%CD%\testResults\
+      /p:Threshold=%CODE_COVERAGE_THRESHOLD_BUSINESS_LOGIC%
     - dotnet test .\Data\SqlORM.CoreTests\DriveCentric.Data.SqlORM.CoreTests.csproj
       /p:CollectCoverage=true
       /p:CoverletOutputFormat=opencover
       /p:MergeWith=%CD%\testResults\coverage.json
       /p:CoverletOutput=%CD%\testResults\
     - dotnet sonarscanner end /d:sonar.login=%SONAR_API_KEY%
+  coverage: '/Total   \| (\d+.\d+)/'
   artifacts:
     paths:
       - "%CD%/testResults"
@@ -78,4 +81,4 @@ deploy_job:
     - publish_job
   script:
     - C:\Tools\Octo\Octo.exe pack -id Atlas-TaskService --version %CI_COMMIT_VERSION% --basePath Services\DriveCentric.TaskService\bin\Release\netcoreapp2.1\publish
-    - C:\Tools\Octo\Octo.exe push --package .//Atlas-TaskService.%CI_COMMIT_VERSION%.nupkg --replace-existing --server https://deploy2.drivecentric.com --apiKey %OCTOPUS_API_KEY%    
+    - C:\Tools\Octo\Octo.exe push --package .//Atlas-TaskService.%CI_COMMIT_VERSION%.nupkg --replace-existing --server https://deploy2.drivecentric.com --apiKey %OCTOPUS_API_KEY%
