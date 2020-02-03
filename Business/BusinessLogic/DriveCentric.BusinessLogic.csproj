@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <Compile Remove="Implementation\BaseLogic.cs" />
-    <Compile Remove="Implementation\CustomerLogic.cs" />
     <Compile Remove="Implementation\DealershipGroupLogic.cs" />
     <Compile Remove="Implementation\DealLogic.cs" />
     <Compile Remove="LogicController.cs" />

@@ -19,11 +19,11 @@ namespace DriveCentric.BaseService.Services
 
         private const string UpdateRuleSet = "Update";
 
-        private readonly IContextInfoAccessor contextInfoAccessor;
+        protected readonly IContextInfoAccessor contextInfoAccessor;
 
-        private readonly IUnitOfWork unitOfWork;
+        protected readonly IUnitOfWork unitOfWork;
 
-        private readonly LogicBase<T> logic;
+        protected readonly LogicBase<T> logic;
 
         public BaseService(IContextInfoAccessor contextInfoAccessor, IUnitOfWork unitOfWork, LogicBase<T> logic)
         {

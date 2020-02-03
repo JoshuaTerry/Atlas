@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AtlasTester", "AtlasTester"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtlasTester", "AtlasTester\AtlasTester.csproj", "{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriveCentric.CustomerService", "Customer\DriveCentric.CustomerService.csproj", "{15A593BA-DB7E-4B0A-B57F-D4294E71852C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15A593BA-DB7E-4B0A-B57F-D4294E71852C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15A593BA-DB7E-4B0A-B57F-D4294E71852C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15A593BA-DB7E-4B0A-B57F-D4294E71852C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15A593BA-DB7E-4B0A-B57F-D4294E71852C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{44A7DFC5-EE0F-4604-AF11-4F2376155917} = {3177FB36-9E26-46AF-9CA4-7F3308D9BF5B}
 		{6F765F5F-823E-466B-96F9-6338C80EC258} = {7309CAB3-7CE6-4E8B-A8DF-5AF484917734}
 		{AA6CEC92-7762-4D79-A4CE-1421F14C37ED} = {6AAA855A-ADED-4532-B96D-202850EFB5F1}
+		{15A593BA-DB7E-4B0A-B57F-D4294E71852C} = {7309CAB3-7CE6-4E8B-A8DF-5AF484917734}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A3FE7591-A740-44F4-8D2F-E87940C4465C}

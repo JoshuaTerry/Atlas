@@ -11,6 +11,7 @@ namespace DriveCentric.Data.DataRepository.Configuration
     {
         public DriveServerCollection(IDbConnectionFactory factory)
         {
+            GalaxyConnectionString = factory.CreateDbConnection().ConnectionString;
             using (var connection = factory.OpenDbConnection())
             {
                 foreach (var kvp in connection.Select<DriveServer>().ToDictionary(server => server.Id))
